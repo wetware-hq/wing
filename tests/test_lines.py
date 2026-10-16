@@ -61,7 +61,7 @@ def test_help_heard_time_only_from_assignment(tmp_path):
     t = "We heard you. [Role] is coming to see you within [time]. Press the call button."
     v, p = _v2(tmp_path, GOOD), _pins(tmp_path, {"LT-REACH-HEARD-PT": t})
     assert "within 30 minutes" in lines.help_heard({"role": "The nurse", "minutes": 30}, path=v, pin_file=p)
-    assert "within as soon as they can" in lines.help_heard({"role": "The nurse"}, path=v, pin_file=p)
+    assert "The nurse is coming to see you right away." in lines.help_heard({"role": "The nurse"}, path=v, pin_file=p)
 
 
 def test_tampered_help_heard_without_assignment():

@@ -43,12 +43,17 @@ def line(lid, path=V2, pin_file=PIN_FILE, profile=None, **slots):
 
 
 def help_heard(assignment, profile=None, **kw):
-    """The site's help_heard line: [Role] and [time] only from the assignment record; no time -> "as soon as they can"."""
+    """The site's help_heard line: [Role] and [time] only from the assignment record; no time on record -> "[Role] is coming to see you right away." (Physician ruling)."""
     if not assignment or not assignment.get("role"):
         raise CheckFail("WG-HELP-NO-ASSIGNMENT")
     t = assignment.get("minutes")
-    return line(used(profile)["help_heard"], profile=profile, Role=assignment["role"],
-                time=f"{t} minutes" if t else "as soon as they can", **kw)
+    if t:
+        return line(used(profile)["help_heard"], profile=profile, Role=assignment["role"], time=f"{t} minutes", **kw)
+    text = line(used(profile)["help_heard"], profile=profile, Role=assignment["role"], **kw)
+    out = re.sub(r"is coming to see you within \[time\]\.", "is coming to see you right away.", text)
+    if "[time]" in out:
+        raise CheckFail("WG-LINE-SLOT", "time")
+    return out
 
 
 def stability(path=V2, profile=None):
