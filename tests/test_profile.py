@@ -31,11 +31,71 @@ def test_tampered_no_profile():
     assert r.stdout.strip() == "WG-PROFILE-MISSING", r.stderr
 
 
-def test_tampered_uncited_value(tmp_path):
+def variant(tmp_path, old, new, signed=True):
     p = tmp_path / "x.toml"
-    p.write_text((P / "test.toml").read_text().replace('cite = "TEST synthetic value"\n[zones]', '[zones]', 1)
-                 .replace('[family_review]\nminutes = 30\ncite = "TEST synthetic value"', '[family_review]\nminutes = 30'))
+    b = profile.body((P / "test.toml").read_text())
+    assert old in b
+    p.write_text(b.replace(old, new, 1))
+    if signed:
+        profile.sign(p, "TEST clinical lead")
+    return p
+
+
+def test_tampered_uncited_value(tmp_path):
+    p = variant(tmp_path, '[family_review]\nminutes = 30\ncite = "TEST synthetic value"', '[family_review]\nminutes = 30')
     caught("WG-PROFILE-UNCITED", profile.Profile, p)
+
+
+def test_tampered_no_defaults_deleted_value(tmp_path):
+    p = variant(tmp_path, '[emergency_number]\nvalue = "TEST-000"\ncite = "TEST synthetic value"\n', '')
+    caught("WG-PROFILE-FIELD", profile.Profile, p)
+
+
+def test_tampered_unsigned_profile(tmp_path):
+    caught("WG-PROFILE-UNSIGNED", profile.Profile, variant(tmp_path, 'name = "test"', 'name = "test"', signed=False))
+
+
+def test_tampered_edited_after_signing(tmp_path):
+    p = variant(tmp_path, 'name = "test"', 'name = "test"')
+    p.write_text(p.read_text().replace('value = "TEST-000"', 'value = "TEST-001"'))
+    caught("WG-PROFILE-HASH", profile.Profile, p)
+
+
+def test_profiles_signed_by_named_lead():
+    assert profile.Profile(P / "nsw-au.toml").signer.startswith("Physician")
+    assert profile.Profile(P / "test.toml").signer == "TEST clinical lead"
+
+
+def _line_files(tmp_path, rows_by_lang):
+    import hashlib
+    pin = ['status = "confirmed"', "[sha256]"]
+    for lang, rows in rows_by_lang.items():
+        name = "v.md" if lang == "en" else f"v.{lang}.md"
+        (tmp_path / name).write_text("".join(f"| {i} | {t} | v2 SIGNED |\n" for i, t in rows.items()))
+        pin += [f'"{i if lang == "en" else lang + "/" + i}" = "{hashlib.sha256(t.encode()).hexdigest()}"'
+                for i, t in rows.items()]
+    (tmp_path / "pins.toml").write_text("\n".join(pin) + "\n")
+    return tmp_path / "v.md", tmp_path / "pins.toml"
+
+
+def test_tampered_empty_profile_value_leaves_placeholder(tmp_path):
+    v, pin = _line_files(tmp_path, {"en": {"LT-X-PT": "Call [Emergency number] if worse."}})
+    ok = lines.render("LT-X-PT", path=v, pin_file=pin, profile=profile.Profile(P / "test.toml"))
+    assert ok == "Call TEST-000 if worse."
+    bad = profile.Profile(variant(tmp_path, 'value = "TEST-000"', 'value = ""'))
+    caught("WG-LINE-UNFILLED", lines.render, "LT-X-PT", path=v, pin_file=pin, profile=bad)
+
+
+def test_tampered_unfilled_record_placeholder(tmp_path):
+    v, pin = _line_files(tmp_path, {"en": {"LT-X-PT": "You are allergic to [drug]."}})
+    caught("WG-LINE-UNFILLED", lines.render, "LT-X-PT", path=v, pin_file=pin, profile=profile.Profile(P / "test.toml"))
+
+
+def test_signed_translation_used_and_missing_copy_stops(tmp_path):
+    v, pin = _line_files(tmp_path, {"en": {"LT-X-PT": "Hello.", "LT-Y-PT": "Bye."}, "xx": {"LT-X-PT": "XX-hello."}})
+    xx = profile.Profile(variant(tmp_path, 'value = "en"', 'value = "xx"'))
+    assert lines.render("LT-X-PT", path=v, pin_file=pin, profile=xx) == "XX-hello."
+    caught("WG-LINE-NO-TRANSLATION", lines.render, "LT-Y-PT", path=v, pin_file=pin, profile=xx)
 
 
 def test_test_profiles_stable_and_labelled():

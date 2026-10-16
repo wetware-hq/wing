@@ -4,7 +4,7 @@
 
 ## What it does
 
-- **Site profile** (`profiles/*.toml`, `WING_PROFILE`): the only place for escalation tier names and time limits, observation zone table, escalation-program name, handover headings and displayed line ids. Every value carries a citation or is PENDING; PENDING keeps the site not stable. Core holds no jurisdiction names or constants and refuses to run without a profile. `test` and `test-b` are synthetic (TEST); `nsw-au` holds only cited timings (NSW Health PD2025_014 s4.2) with zones PENDING.
+- **Site profile** (`profiles/*.toml`, `WING_PROFILE`): the only place for escalation tier names and time limits, observation zone table, escalation-program name, handover headings and displayed line ids. Every value carries a citation or is PENDING; PENDING keeps the site not stable. Profiles also hold emergency number, emergency department name, family-doctor term, escalation role and language, are signed by a named clinical lead and pinned by sha256 (`python3 -m wing.profile sign FILE NAME`); an unsigned or edited profile, a missing value, or an unfilled placeholder stops the run on its own check id. Core holds no jurisdiction names or constants and refuses to run without a profile. `test` and `test-b` are synthetic (TEST); `nsw-au` holds only cited timings (NSW Health PD2025_014 s4.2) with zones PENDING.
 
 - **One clock, guards and trace**: ward's (`ward.harness.Harness`, `ward.live.live_guard`). wing has no clock of its own.
 - **Everything is a form**: observations, the one-tap help form, the 7-item handover, and the optional patient's-own-words field (moves only on a recorded "Yes"; default "Not now"; never enters an agent prompt).
@@ -14,7 +14,7 @@
 - **Agent plug**: records in, one JSON action from a fixed list out, per-room pinned model; scripted agents only. Replay store keyed by hash(prompt+commit), labelled REPLAY, key-scanned. Budget precompute cuts seeds, never guards.
 - **Exit**: a stay closes only with a discharge, transfer, AMA or death record ("leave" keeps it open).
 - **Multi-patient, multi-ward** (`wing/multi.py`): one tick steps the whole wing; shared staff and beds; ward ids; a move is a checked handover; writes and views are scoped to the agent's own patient; escalations jump the queue, overflow to a finite last-tier team, and an unanswered one fails the run.
-- **Lines**: only signed lines from `wording/v2_lines_SIGNED.md`, each pinned by sha256 from `wing/line_pins.toml` (status: awaiting final confirm, so no line displays yet).
+- **Lines**: only signed lines from `wording/v2_lines_SIGNED.md`, each pinned by sha256 from `wing/line_pins.toml` (LT-REACH-HEARD-PT unpinned until re-signed). Other languages need a signed copy per language under the same id (`v2_lines_SIGNED.<lang>.md`); never machine-translated.
 
 ## Run
 

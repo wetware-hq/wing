@@ -1,5 +1,20 @@
-# Per-line sha256 pins for /workspace/wording/v2_lines_SIGNED.md (text column only).
-# AWAITING FINAL CONFIRM: Physician has not confirmed the final file, so no line is pinned yet and no line displays.
-# After confirmation: run `python3 -m wing.lines --print-pins`, paste the table below, set status = "confirmed".
-status = "awaiting final confirm"
+# Per-line sha256 pins (text column only) of /workspace/wording/v2_lines_SIGNED.md, pinned 2026-10-16.
+# LT-REACH-HEARD-PT deliberately NOT pinned: wording awaiting Physician re-sign (earlier hash superseded).
+# Other languages pin as "<lang>/<id>".
+status = "confirmed"
 [sha256]
+"LT-MEDS-UNCHANGED-PT" = "1be66c8d151a4d96acf921cc3cacd889222dbba88e8eef0c96878a9f0d5000bc"
+"LT-MEDS-UNREVIEWED-PT" = "512d394bcfd60718174f909612fe861d400357798ce2c7229b7d12d5a7842756"
+"LT-REACH-NURSE-PT" = "225a247ff90adcd53ca725284d2104e879a43cf68052075959c4c2308f58b8c7"
+"LT-REACH-BUTTON-PT" = "7d624423ab323850ccaaa3b6167661aa62549206ab9806ef5e08631c9d39110e"
+"LT-OWNWORDS-LABEL" = "3dcfbf5264dae9672c0c2f6ed93245faec630e3e51c3df9ea6da51e84b0939a6"
+"LT-OWNWORDS-ASK-TEAM-PT" = "a06d242a25b4574c0d88150e3e2e7a8a81268d0a970cbb106916a9b64d18fcee"
+"LT-OWNWORDS-ASK-GP-PT" = "ef57842537458815ec7508034807f3d08f0630945909c62bc171fa193e97b2c0"
+"LT-RESULT-INPERSON-PT" = "09af5602dc48f38511cd4aafea73f521ba9ee572f322ab5be6d79be1d28e1072"
+"LT-ALLERGY-READBACK-PT" = "e8061eca866ea3e760b0cdc399f66cbd214177537ead6491389cca10ffe26c7e"
+"LT-AMA-WATCH-PT" = "d5848391141c8bf5c38e77327d9942c0c76f0d935a434da0719f44bafec8c1f1"
+"PW-HIV" = "493da24ced1a33fa0e8a243d4f9e7021509e042d5b3298576d240426ca29e35f"
+"PW-BRCA1" = "3ad8529ead5b99f8a0190590c82227d63e791f76a7b189a162ac5cdad2b051d7"
+"PW-CD4" = "909dcb03141db5b7822d558e73f5d9aae1ed69f73580d94061a4ff57aea2f06d"
+"PW-VL" = "e86ae9174bb85c12cca9a930654d0ad7d1e7b5ff0b0a42e9258cc920c778d6ca"
+"LT-ALLERGY-NONE-PT" = "f54231933bca2cdbd6c4793a754d96b7669557559909290b3ecac0d65b35f866"

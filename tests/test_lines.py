@@ -21,6 +21,10 @@ GOOD = "| LT-MEDS-UNCHANGED-PT | Your doctor checked this medicine and it stays 
        "| LT-REACH-HEARD-PT | We heard you. [Role] is coming to see you within [time]. Press the call button. | v2 |\n"
 
 
+def test_help_heard_not_pinned_awaiting_resign():
+    assert "LT-REACH-HEARD-PT" not in lines.pins()[1]
+
+
 @pytest.mark.parametrize("lid", lines.used().values())
 def test_used_line_is_signed_and_pinned(lid):
     try:
@@ -61,7 +65,7 @@ def test_help_heard_time_only_from_assignment(tmp_path):
     t = "We heard you. [Role] is coming to see you within [time]. Press the call button."
     v, p = _v2(tmp_path, GOOD), _pins(tmp_path, {"LT-REACH-HEARD-PT": t})
     assert "within 30 minutes" in lines.help_heard({"role": "The nurse", "minutes": 30}, path=v, pin_file=p)
-    assert "The nurse is coming to see you right away." in lines.help_heard({"role": "The nurse"}, path=v, pin_file=p)
+    caught("WG-LINE-UNFILLED", lines.help_heard, {"role": "The nurse"}, path=v, pin_file=p)   # [time] only from record
 
 
 def test_tampered_help_heard_without_assignment():

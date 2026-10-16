@@ -23,3 +23,21 @@ cite = "TEST synthetic value"
 [lines]            # signed wording ids the site displays (ids in the signed wording file)
 value = {help_button = "LT-REACH-BUTTON-PT", own_words_label = "LT-OWNWORDS-LABEL", own_words_ask = "LT-OWNWORDS-ASK-TEAM-PT", meds_unchanged = "LT-MEDS-UNCHANGED-PT", meds_unreviewed = "LT-MEDS-UNREVIEWED-PT", help_heard = "LT-REACH-HEARD-PT", allergy_readback = "LT-ALLERGY-READBACK-PT"}
 cite = "TEST synthetic value"
+[emergency_number]
+value = "TEST-000"
+cite = "TEST synthetic value"
+[emergency_department]
+value = "TEST Emergency Department"
+cite = "TEST synthetic value"
+[family_doctor_term]
+value = "TEST family doctor"
+cite = "TEST synthetic value"
+[escalation_role]
+value = "TEST duty nurse"
+cite = "TEST synthetic value"
+[language]
+value = "en"
+cite = "TEST synthetic value"
+[signature]
+signer = "TEST clinical lead"
+sha256 = "325423c74620408af2d1fc91eb7c93514670f577bbdac96ef4d20bd3c79267d9"

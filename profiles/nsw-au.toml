@@ -23,3 +23,21 @@ pending = true
 [lines]
 value = {help_button = "LT-REACH-BUTTON-PT", own_words_label = "LT-OWNWORDS-LABEL", own_words_ask = "LT-OWNWORDS-ASK-TEAM-PT", meds_unchanged = "LT-MEDS-UNCHANGED-PT", meds_unreviewed = "LT-MEDS-UNREVIEWED-PT", help_heard = "LT-REACH-HEARD-PT", allergy_readback = "LT-ALLERGY-READBACK-PT"}
 cite = "wording/v2_lines_SIGNED.md"
+[emergency_number]
+value = "PENDING"
+pending = true
+[emergency_department]
+value = "PENDING"
+pending = true
+[family_doctor_term]
+value = "PENDING"
+pending = true
+[escalation_role]
+value = "PENDING"
+pending = true
+[language]
+value = "en"
+cite = "site default (Physician)"
+[signature]
+signer = "Physician (BIO room)"
+sha256 = "34bf6fc7dafb9bfdc1b9e38e6df1cc7b8a2f70e198bad65f158dcf91ff6f3aed"
