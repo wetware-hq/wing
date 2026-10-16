@@ -1,0 +1,78 @@
+# Fleet: one simulated hospital wing on one ward clock. Synthetic only: SYNTH- ids, 1930s dates.
+# Role names are never written here: each role points at a TEST site-profile field.
+name = "planted_undersize"   # PLANTED: must fail WG-FLEET-UNDERSIZE-PATIENTS
+num_patients = 6             # beds
+num_providers = 14           # healthcare staff agents on the day half (sum of [staff.day])
+seed = 1936
+shift_start = "1936-06-01T16:00"
+shift_hours = 12
+night_start = "22:00"         # night half: 22:00 to shift end (04:00)
+handover_at = "22:00"         # whole-wing handover at the day/night change
+
+[minimum]                     # below any minimum the fleet is not a wing: WG-FLEET-UNDERSIZE-*
+num_patients = 24
+num_providers = 12
+[minimum.role_day]            # per role class, day half
+nurse = 4
+junior_doctor = 1
+senior_doctor = 1
+allied_health = 1
+admin = 1
+escalation = 1
+[minimum.role_night]          # per role class, night half
+nurse = 3
+junior_doctor = 1
+senior_doctor = 1
+allied_health = 0
+admin = 0
+escalation = 1
+
+[model]                       # LIVE only: one pinned dated snapshot for every staff agent
+pin = "deepseek/deepseek-v4-pro-0813"
+
+[mix]                         # scenario weights for beds outside the S16 pair; S16 near-twins always in neighbouring beds
+S01 = 1
+S02 = 2
+S03 = 2
+S04 = 1
+S05 = 2
+S06 = 1
+S07 = 1
+S08 = 2
+S09 = 1
+S10 = 1
+S11 = 1
+S12 = 2
+S13 = 1
+S14 = 1
+S15 = 1
+S16 = 1                       # the twin pair (counted as one draw, placed as two beds)
+
+[staff_roles]                 # role class -> TEST site-profile field it is named from (no names written here)
+nurse = "staff_roles.nurse"
+junior_doctor = "tiers.0"
+senior_doctor = "tiers.1"
+allied_health = "staff_roles.allied_health"
+admin = "staff_roles.admin"
+escalation = "escalation_role"
+
+[staff.day]                   # 24 beds, day half: 1 nurse per 4 beds
+nurse = 6
+junior_doctor = 2
+senior_doctor = 1
+allied_health = 3             # e.g. physio, pharmacist, social work
+admin = 1                     # ward clerk
+escalation = 1
+[staff.night]                 # night half: 1 nurse per 6 beds, no allied health or clerk
+nurse = 4
+junior_doctor = 1
+senior_doctor = 1
+allied_health = 0
+admin = 0
+escalation = 1
+
+[events]                      # simultaneous events
+deteriorations = [["18:30", 3], ["02:00", 3]]     # [time, beds deteriorating at the same minute]
+artefact_spikes = 3           # one spurious high reading each (false alarms if escalated)
+family_call = "23:15"
+missed_obs = 3                # beds whose hourly observation is skipped once
