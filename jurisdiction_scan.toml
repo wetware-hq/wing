@@ -30,5 +30,13 @@ J-JOBTITLE = "VMO"
 [exceptions]
 # ids only: signed/pinned line ids that keep a local word until the next version (renaming re-pins the hash)
 ids = ['\bLT-REACH-[A-Z]+-PT\b', '\bLT-OWNWORDS-ASK-GP-PT\b']
-# the older profile term scan carries its own planted terms
-paths = ['^tests/test_profile\.py$']
+
+[[exceptions.term]]
+term = "NSW"
+path = "^tests/test_profile\\.py$"
+reason = "older profile term scan: these are its own planted denylist terms (1 uses)"
+
+[[exceptions.term]]
+term = "REACH"
+path = "^tests/test_profile\\.py$"
+reason = "older profile term scan: these are its own planted denylist terms (2 uses)"
