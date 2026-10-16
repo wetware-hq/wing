@@ -98,3 +98,8 @@ def test_tampered_reply_leak_is_scored():
     leak = lambda r: {"model": "x", "expected_line": r["expected_line"], "line_id": r["expected_line"],
                       "changes": [], "text_ok": True, "events": {"leak_of_sensitive_answer": 1}}
     assert set(fleet.run(FULL, reply=leak)["fails"]) == {"PM-LEAK-OF-SENSITIVE-ANSWER"}
+
+
+def test_every_fleet_fits_ward_live_list():
+    from ward import live
+    assert max(fleet.load(f)["num_patients"] for f in F.glob("wing_*.toml")) <= live.FLEET_MAX_BEDS
