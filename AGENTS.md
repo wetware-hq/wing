@@ -22,7 +22,7 @@ Normative rules for agents that operate or modify wing. Wording uses RFC 2119. N
 2. If real patient data appears, the agent **MUST** stop and tell the user to report a privacy incident.
 3. Wording files and answer files **MUST NOT** be written; held-out folders **MUST NOT** be opened.
 
-## Operating
+## Operating the environment
 
 1. An agent acts only through the plug: records in, one JSON action from `ALLOWED_ACTIONS` out.
 2. Med, allergy and resus changes by an agent are proposals until a simulated clinician signs.
@@ -35,3 +35,8 @@ Normative rules for agents that operate or modify wing. Wording uses RFC 2119. N
 - wing **MUST NOT** add its own clock or guards.
 - A new check **MUST** get a stable `WG-` id and a tampered run asserting that id.
 - No remote is set; nothing is pushed until the room signs off (target: wetware-hq/wing).
+
+## Out of scope
+
+- Real patients, hosted services, clinical advice
+- Writing answer files, wording files or site profiles' signatures
