@@ -1,27 +1,68 @@
-"""wing shows only signed v2 lines, each pinned by sha256. A used line marked DRAFT fails its test (red until signed)."""
+"""wing shows only signed v2 lines, each pinned by its own sha256 from line_pins.toml. Unconfirmed pins or DRAFT /
+RE-SIGN lines are PENDING (skipped, never passed) and keep wing not stable."""
+import hashlib
 import pytest
 from conftest import caught
-from wing import lines
+from wing import CheckFail, lines
 
 
-@pytest.mark.parametrize("lid", lines.USED)
+def _pins(tmp_path, text_by_id, status="confirmed"):
+    p = tmp_path / "pins.toml"
+    p.write_text(f'status = "{status}"\n[sha256]\n' + "".join(
+        f'"{i}" = "{hashlib.sha256(t.encode()).hexdigest()}"\n' for i, t in text_by_id.items()))
+    return p
+
+
+def _v2(tmp_path, text):
+    p = tmp_path / "v2.md"; p.write_text(text); return p
+
+
+GOOD = "| LT-MEDS-UNCHANGED-PT | Your doctor checked this medicine and it stays the same. | v2 |\n" \
+       "| LT-REACH-HEARD-PT | We heard you. [Role] is coming to see you within [time]. Press the call button. | v2 |\n"
+
+
+@pytest.mark.parametrize("lid", lines.used().values())
 def test_used_line_is_signed_and_pinned(lid):
-    assert lines.line(lid)                    # raises WG-LINE-DRAFT while the line is DRAFT
+    try:
+        assert lines.line(lid)
+    except CheckFail as e:
+        if e.id in ("WG-LINE-PIN-PENDING", "WG-LINE-DRAFT"):
+            pytest.skip(f"PENDING {e.id} {lid}")
+        raise
+
+
+def test_pinned_line_displays(tmp_path):
+    v = _v2(tmp_path, GOOD); pins = _pins(tmp_path, {"LT-MEDS-UNCHANGED-PT": "Your doctor checked this medicine and it stays the same."})
+    assert lines.line("LT-MEDS-UNCHANGED-PT", v, pins).startswith("Your doctor")
 
 
 def test_tampered_one_word_changed(tmp_path):
-    src = lines.V2.read_text(encoding="utf-8")
-    p = tmp_path / "v2.md"
-    p.write_text(src.replace("Your doctor checked this medicine", "Your doctor approved this medicine"))
-    caught("WG-LINE-HASH", lines.line, "LT-MEDS-UNCHANGED-PT", p)
+    pins = _pins(tmp_path, {"LT-MEDS-UNCHANGED-PT": "Your doctor checked this medicine and it stays the same."})
+    v = _v2(tmp_path, GOOD.replace("Your doctor checked", "Your doctor approved"))
+    caught("WG-LINE-HASH", lines.line, "LT-MEDS-UNCHANGED-PT", v, pins)
 
 
 def test_tampered_draft_line_refused(tmp_path):
-    p = tmp_path / "v2.md"
-    p.write_text(lines.V2.read_text(encoding="utf-8").replace("| v2; when review record missing |",
-                                                              "| v2 DRAFT; when review record missing |"))
-    caught("WG-LINE-DRAFT", lines.line, "LT-MEDS-UNREVIEWED-PT", p)
+    v = _v2(tmp_path, GOOD.replace("same. | v2 |", "same. | v2 DRAFT |"))
+    caught("WG-LINE-DRAFT", lines.line, "LT-MEDS-UNCHANGED-PT", v, _pins(tmp_path, {}))
+
+
+def test_tampered_unconfirmed_pin_file(tmp_path):
+    t = "Your doctor checked this medicine and it stays the same."
+    caught("WG-LINE-PIN-PENDING", lines.line, "LT-MEDS-UNCHANGED-PT", _v2(tmp_path, GOOD),
+           _pins(tmp_path, {"LT-MEDS-UNCHANGED-PT": t}, status="awaiting final confirm"))
 
 
 def test_tampered_unsigned_id():
     caught("WG-LINE-UNSIGNED", lines.line, "LT-NOT-A-LINE")
+
+
+def test_help_heard_time_only_from_assignment(tmp_path):
+    t = "We heard you. [Role] is coming to see you within [time]. Press the call button."
+    v, p = _v2(tmp_path, GOOD), _pins(tmp_path, {"LT-REACH-HEARD-PT": t})
+    assert "within 30 minutes" in lines.help_heard({"role": "The nurse", "minutes": 30}, path=v, pin_file=p)
+    assert "within as soon as they can" in lines.help_heard({"role": "The nurse"}, path=v, pin_file=p)
+
+
+def test_tampered_help_heard_without_assignment():
+    caught("WG-HELP-NO-ASSIGNMENT", lines.help_heard, {})

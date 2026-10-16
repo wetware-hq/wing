@@ -47,8 +47,8 @@ def test_tampered_move_with_bad_handover():
 
 
 def _safety(seed):
-    m = M(seed, staff=1, rrt=1)
-    for k, p in (("routine", A), ("routine", B), ("reach", B), ("routine", A)):
+    m = M(seed, staff=1, team=1)
+    for k, p in (("routine", A), ("routine", B), ("help-call", B), ("routine", A)):
         m.submit(k, p)
     m.tick(); m.tick(); m.tick(); m.tick()
     first = m.log[0]
@@ -57,24 +57,24 @@ def _safety(seed):
 
 def test_shuffle_seeds_hold_all_safety_results():
     assert len({_safety(s) for s in range(1, 21)}) == 1
-    assert _safety(1)[:3] == ("reach", "staff", 0)
+    assert _safety(1)[:3] == ("help-call", "staff", 0)
 
 
-def test_tampered_reach_behind_routine():
+def test_tampered_help_call_behind_routine():
     m = M(order=lambda tasks, rng: sorted(tasks, key=lambda t: t[0] != "routine"))
-    m.submit("reach", A); m.submit("routine", B)
+    m.submit("help-call", A); m.submit("routine", B)
     caught("WG-ESCALATION-QUEUED", m.tick)
 
 
-def test_escalation_beyond_staff_goes_to_rrt_and_is_recorded():
-    m = M(staff=1, rrt=1); m.submit("reach", A); m.submit("zone", B); m.tick()
-    assert [r["by"] for r in m.log] == ["staff", "RRT"]
-    assert [r["by"] for r in m.h.trace if r.get("op") == "task"] == ["staff", "RRT"]
+def test_escalation_beyond_staff_goes_to_team_and_is_recorded():
+    m = M(staff=1, team=1); m.submit("help-call", A); m.submit("zone", B); m.tick()
+    assert [r["by"] for r in m.log] == ["staff", m.team_name]
+    assert [r["by"] for r in m.h.trace if r.get("op") == "task"] == ["staff", m.team_name]
 
 
 def test_tampered_flood_not_answered_fails_run():
-    m = M(staff=1, rrt=1)
+    m = M(staff=1, team=1)
     for p in (A, B, A):
-        m.submit("reach", p)
+        m.submit("help-call", p)
     caught("WG-ESCALATION-NOT-ANSWERED", m.tick)
     assert m.log[-1]["by"] == "not answered"

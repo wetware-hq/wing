@@ -1,10 +1,10 @@
 """Multi-patient, multi-ward wing on ONE ward clock: one tick steps the whole wing. Shared staff time and beds;
-wards are ids; an inter-ward move is a handover with the 7-item check; a finite rapid response team (RRT)."""
+wards are ids; an inter-ward move is a handover with the 7-item check; a finite last-tier team (name from the site profile)."""
 import random
 from . import CheckFail
 from .core import Wing, Harness
 
-ESCALATIONS = ("reach", "zone", "obs-overdue")
+ESCALATIONS = ("help-call", "zone", "obs-overdue")
 
 
 def priority_order(tasks, rng):
@@ -15,15 +15,16 @@ def priority_order(tasks, rng):
 
 
 class MultiWing:
-    def __init__(self, answer_files, beds, seed=1, staff=2, rrt=1, order=priority_order):
-        first = Wing(answer_files[0])
+    def __init__(self, answer_files, beds, seed=1, staff=2, team=1, order=priority_order, profile=None):
+        first = Wing(answer_files[0], profile=profile)
+        self.team_name = first.profile.get("tiers")[-1]["name"]
         self.h = first.h                                        # the one clock and trace
         self.pts = {}
         for f in answer_files:
-            w = first if f == answer_files[0] else Wing(f, harness=self.h)
+            w = first if f == answer_files[0] else Wing(f, harness=self.h, profile=first.profile)
             self.pts[w.record.get("id")] = w
         self.beds, self.where = dict(beds), {}
-        self.rng, self.staff, self.rrt, self.order = random.Random(seed), staff, rrt, order
+        self.rng, self.staff, self.team, self.order = random.Random(seed), staff, team, order
         self.agents, self.queue, self.log, self.not_answered = {}, [], [], []
 
     # ---- placement and moves
@@ -75,7 +76,7 @@ class MultiWing:
     def tick(self):
         now = self.h.tick(1)
         tasks, self.queue = self.order(self.queue, self.rng), []
-        free, rrt = self.staff, self.rrt
+        free, team = self.staff, self.team
         seen_routine = False
         for kind, pid in tasks:
             esc = kind in ESCALATIONS
@@ -84,8 +85,8 @@ class MultiWing:
             seen_routine |= not esc
             if free:
                 free -= 1; by = "staff"
-            elif esc and rrt:
-                rrt -= 1; by = "RRT"
+            elif esc and team:
+                team -= 1; by = self.team_name
             elif esc:
                 by = "not answered"
                 self.not_answered.append((now, pid))

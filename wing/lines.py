@@ -3,40 +3,72 @@ import hashlib, os, pathlib, re, tomllib
 from . import CheckFail
 
 V2 = pathlib.Path(os.environ.get("WING_V2_LINES", "/workspace/wording/v2_lines_SIGNED.md"))
-PINS = tomllib.loads((pathlib.Path(__file__).parent / "line_pins.toml").read_text())["sha256"]
+PIN_FILE = pathlib.Path(__file__).parent / "line_pins.toml"
+UNSIGNED_MARKS = ("DRAFT", "RE-SIGN")
+
+
+def pins(pin_file=PIN_FILE):
+    d = tomllib.loads(pathlib.Path(pin_file).read_text())
+    return d.get("status"), d.get("sha256", {})
 ROW = re.compile(r"^\| ([A-Z]{2,}-[A-Z0-9-]+) \| (.*?) \| (.*?) \|$", re.M)
-USED = ("LT-REACH-BUTTON-PT", "LT-OWNWORDS-LABEL", "LT-OWNWORDS-ASK-TEAM-PT", "LT-MEDS-UNCHANGED-PT",
-        "LT-MEDS-UNREVIEWED-PT", "LT-REACH-HEARD-PT", "LT-ALLERGY-READBACK-PT")
+from .profile import load as load_profile
+
+
+def used(profile=None):
+    """Signed line ids this site displays, by role; ids come from the site profile."""
+    return (profile or load_profile()).get("lines")
 
 
 def rows(path=V2):
     return {i: (t, note) for i, t, note in ROW.findall(pathlib.Path(path).read_text(encoding="utf-8"))}
 
 
-def line(lid, path=V2):
+def line(lid, path=V2, pin_file=PIN_FILE, profile=None, **slots):
     r = rows(path)
+    status, pinned = pins(pin_file)
     if lid not in r:
         raise CheckFail("WG-LINE-UNSIGNED", lid)
     text, note = r[lid]
-    if hashlib.sha256(text.encode()).hexdigest() != PINS.get(lid):
-        raise CheckFail("WG-LINE-HASH", lid)
-    if "DRAFT" in note:
+    if any(m in note for m in UNSIGNED_MARKS):
         raise CheckFail("WG-LINE-DRAFT", lid)
+    if status != "confirmed" or lid not in pinned:
+        raise CheckFail("WG-LINE-PIN-PENDING", lid)
+    if hashlib.sha256(text.encode()).hexdigest() != pinned[lid]:
+        raise CheckFail("WG-LINE-HASH", lid)
+    if "[Program]" in text:
+        slots.setdefault("Program", (profile or load_profile()).get("program"))
+    for k, v in slots.items():
+        text = text.replace(f"[{k}]", v)
     return text
 
 
-def stability(path=V2):
-    """-> list of (id, check id) for every used line that is not displayable. Empty = stable."""
-    out = []
-    for lid in USED:
+def help_heard(assignment, profile=None, **kw):
+    """The site's help_heard line: [Role] and [time] only from the assignment record; no time -> "as soon as they can"."""
+    if not assignment or not assignment.get("role"):
+        raise CheckFail("WG-HELP-NO-ASSIGNMENT")
+    t = assignment.get("minutes")
+    return line(used(profile)["help_heard"], profile=profile, Role=assignment["role"],
+                time=f"{t} minutes" if t else "as soon as they can", **kw)
+
+
+def stability(path=V2, profile=None):
+    """-> list of (item, check id) blocking stability: pending profile values, then undisplayable used lines."""
+    prof = profile or load_profile()
+    out = [(f, "WG-PROFILE-PENDING") for f in prof.pending]
+    for lid in (used(prof).values() if "lines" not in prof.pending else ()):
         try:
-            line(lid, path)
+            line(lid, path, profile=prof)
         except CheckFail as e:
             out.append((lid, e.id))
     return out
 
 
 if __name__ == "__main__":
+    import sys
+    if "--print-pins" in sys.argv:
+        for i, (t, _) in rows().items():
+            print(f'"{i}" = "{hashlib.sha256(t.encode()).hexdigest()}"')
+        raise SystemExit(0)
     bad = stability()
     for lid, cid in bad:
         print(f"{cid} {lid}")

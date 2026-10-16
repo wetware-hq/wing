@@ -44,7 +44,7 @@ def test_handover_passes_against_record():
     ("1_id_allergies", lambda f: f.update(id="SYNTH-P9999"), "WG-HANDOVER-ID"),
     ("1_id_allergies", lambda f: f.update(allergies=[]), "WG-HANDOVER-ALLERGY"),
     ("2_meds", lambda f: f.append({"name": "x"}), "WG-HANDOVER-MEDS"),
-    ("3_resus_limits", lambda f: f.update(resus="not for CPR"), "WG-HANDOVER-RESUS"),
+    ("3_limits", lambda f: f.update(resuscitation="limited"), "WG-HANDOVER-LIMITS"),
     ("4_private", lambda f: f.update(answer="mh_q9"), "WG-HANDOVER-DECLINED-LEAK"),
     ("5_outstanding", lambda f: f.clear(), "WG-HANDOVER-TASKS"),
 ])
@@ -91,8 +91,8 @@ def test_tampered_unsigned_confirmed_allergy_add():
     caught("WG-CAUTION-LOOSEN", check_change, "allergies", [], [{"drug": "x", "status": "confirmed"}])
 
 
-@pytest.mark.parametrize("field", ["resus", "limits_of_care"])
-def test_tampered_resus_either_direction_unsigned(field):
+@pytest.mark.parametrize("field", ["resuscitation", "limits_of_care"])
+def test_tampered_resuscitation_either_direction_unsigned(field):
     caught("WG-CAUTION-UNSIGNED", check_change, field, "a", "b")
     caught("WG-CAUTION-NO-WISHES", check_change, field, "a", "b", signed=True)
 
@@ -103,7 +103,7 @@ def test_tampered_unmarked_field_defaults_to_both():
 
 # ---- rule 6
 def test_escalation_signal_only_to_ward_and_clinician():
-    w = W(); w.obs_form(7); w.reach_form("chest tight")
+    w = W(); w.obs_form(7); w.help_form("chest tight")
     assert [s["to"] for s in w.signals] == ["ward", "clinician"] * 2
     assert all(set(s) == {"signal", "patient", "at", "to"} for s in w.signals)
     assert "chest tight" not in json.dumps(w.signals)
@@ -115,7 +115,7 @@ def test_overdue_on_shared_clock():
 
 
 def test_tampered_escalation_lowered_unsigned():
-    w = W(); w.reach_form()
+    w = W(); w.help_form()
     caught("WG-CAUTION-LOOSEN", check_change, "escalation", w.escalation, 0)
 
 
@@ -130,8 +130,8 @@ def test_tampered_agent_signs_own_proposal():
     caught("WG-SIGN-NOT-CLINICIAN", w.sign, 0, "SYNTH-agent-05")
 
 
-def test_tampered_resus_proposal_signed_without_wishes():
-    w = W(); w.propose("resus", "not for CPR", "SYNTH-agent-05")
+def test_tampered_resuscitation_proposal_signed_without_wishes():
+    w = W(); w.propose("resuscitation", "limited", "SYNTH-agent-05")
     caught("WG-CAUTION-NO-WISHES", w.sign, 0, "SYNTH-dr-05")
 
 
@@ -206,3 +206,21 @@ def test_share_script_excludes_replay():
     from wing.share import share
     r = {"S05": {"status": "PASS"}, "S07": {"status": "PASS", "replay": True}, "S03": {"status": "FAIL"}}
     assert share(r) == (1, 20)
+
+
+# ---- tier timing from the profile
+def test_review_within_first_tier_limit_then_next_tier():
+    w = W(); lim = [t["minutes"] for t in w.profile.get("tiers")]
+    w.obs_form(7); w.h.tick(lim[0] - 1); assert w.check_timing() is None
+    w.review("SYNTH-dr-05"); w.h.tick(lim[1] + 1)
+    assert w.check_timing() == w.profile.get("tiers")[1]["name"]
+
+
+def test_tampered_review_overdue():
+    w = W(); w.obs_form(7); w.h.tick(w.profile.get("tiers")[0]["minutes"] + 1)
+    caught("WG-REVIEW-OVERDUE", w.check_timing)
+
+
+def test_tampered_family_call_review_overdue():
+    w = W(); w.help_form(by="family"); w.h.tick(w.profile.get("family_review")["minutes"] + 1)
+    caught("WG-REVIEW-OVERDUE", w.check_timing)

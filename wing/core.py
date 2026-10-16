@@ -1,22 +1,22 @@
-"""wing v2 core. Clock, guards and trace are ward's (ward.harness.Harness, ward.live.live_guard); wing has none."""
+"""wing v2 core. Site specifics come only from a site profile (wing/profile.py). Clock, guards and trace are ward's (ward.harness.Harness, ward.live.live_guard); wing has none."""
 import hashlib, json, pathlib, tomllib
 from . import CheckFail
+from .profile import load as load_profile
 from ward.harness import Harness                 # the ONE approved clock + trace
 from ward.live import live_guard                 # the ONE approved live guard
 from ward.live_client import MODEL as WARD_MODEL
 
 ROOMS = {"ward": WARD_MODEL, "forms": None, "orders": None, "letters": None, "figures": None, "cards": None}
-ALLOWED_ACTIONS = ("observe", "record_obs", "reach", "propose_med_change", "propose_allergy", "propose_resus",
+ALLOWED_ACTIONS = ("observe", "record_obs", "help_call", "propose_med_change", "propose_allergy", "propose_resuscitation",
                    "handover", "noop")
 EXIT_TYPES = ("discharge", "transfer", "AMA", "death", "leave")
-ZONES = ((0, 4, "green"), (5, 6, "amber"), (7, 99, "red"))
 OBS_EVERY_MIN = 60
 
 # ---- caution table: one table, one checker
 TIGHTEN_OK = "tighten-unsigned-ok"
 BOTH = "both-directions-need-signature"
 CAUTION = {"allergies": TIGHTEN_OK, "escalation": TIGHTEN_OK, "med_review": TIGHTEN_OK,
-           "resus": BOTH, "limits_of_care": BOTH}
+           "resuscitation": BOTH, "limits_of_care": BOTH}
 
 
 def _strength(field, v):
@@ -35,7 +35,7 @@ def check_change(field, old, new, signed=False, wishes=None):
     if kind == BOTH:
         if not signed:
             raise CheckFail("WG-CAUTION-UNSIGNED", field)
-        if field in ("resus", "limits_of_care") and not wishes:
+        if field in ("resuscitation", "limits_of_care") and not wishes:
             raise CheckFail("WG-CAUTION-NO-WISHES", field)
         return new
     if field == "allergies" and not signed:
@@ -63,12 +63,14 @@ class PatientRecord:
 
 
 class Wing:
-    def __init__(self, answer_file, seed=1, harness=None):
+    def __init__(self, answer_file, seed=1, harness=None, profile=None):
+        self.profile = profile or load_profile()          # refuses to run without a site profile
         self.record = PatientRecord(answer_file)
         sc = self.record.scenario
         self.h = harness or Harness(sc["ward_scenario"], seed, start=sc["start"])   # shared clock + trace
         self.allergies = self.record.get("allergies")
-        self.escalation, self.last_obs, self.open_reach, self.zone = 0, None, [], "green"
+        self.escalation, self.last_obs, self.open_help, self.zone = 0, None, [], None
+        self.open_esc = None
         self.ownwords, self.ownwords_consent = None, "Not now"
         self.proposals, self.signals, self.exit, self.prompts = [], [], None, []
 
@@ -82,14 +84,16 @@ class Wing:
     def _escalate(self, signal):
         self.escalation = check_change("escalation", self.escalation, self.escalation + 1)
         msg = {"signal": signal, "patient": self.record.get("id"), "at": self.now()}
+        self.open_esc = self.open_esc or {"at": self.h.clock, "reviewed": None, "tier": 0}
         for to in ("ward", "clinician"):
             self.signals.append(dict(msg, to=to))
         self.trace("escalate", **msg)
 
     def obs_form(self, score):
         self.last_obs = {"score": score, "at": self.now()}
-        zone = next(z for lo, hi, z in ZONES if lo <= score <= hi)
-        if zone != self.zone and zone != "green":
+        bands = self.profile.get("zones")                  # PENDING zones raise WG-PROFILE-PENDING
+        zone = next(z for lo, hi, z in bands if lo <= score <= hi)
+        if zone != self.zone and zone != bands[0][2]:
             self._escalate("zone:" + zone)
         self.zone = zone
         self.trace("obs", score=score)
@@ -99,15 +103,43 @@ class Wing:
                 self.last_obs["at"])).total_seconds() / 60 > OBS_EVERY_MIN:
             self._escalate("obs-overdue")
 
-    def reach_form(self, more=""):                         # one tap: no required fields
-        self.open_reach.append({"at": self.now(), "more": more})
-        self._escalate("reach")
+    def help_form(self, more="", by="patient"):            # one tap: no required fields
+        self.open_help.append({"at": self.now(), "more": more, "by": by})
+        self._escalate("help-call")
+
+    def _mins(self, since):
+        return (self.h.clock - since).total_seconds() / 60
+
+    def review(self, clinician):
+        if self.open_esc and not self.open_esc["reviewed"]:
+            self.open_esc["reviewed"] = self.h.clock
+            self.trace("review", by=clinician)
+
+    def resolve(self):
+        self.open_esc = None
+
+    def check_timing(self):
+        """Tier limits from the profile: first review within tier[0] minutes (family/patient calls: family_review);
+        not resolved within tier[1] minutes of review -> next tier. Returns the tier name raised, if any."""
+        e, tiers = self.open_esc, self.profile.get("tiers")
+        if not e:
+            return None
+        if not e["reviewed"]:
+            lim = self.profile.get("family_review")["minutes"] if self.open_help else tiers[0]["minutes"]
+            if self._mins(e["at"]) > lim:
+                raise CheckFail("WG-REVIEW-OVERDUE", tiers[0]["name"])
+            return None
+        if e["tier"] == 0 and self._mins(e["reviewed"]) > tiers[1]["minutes"]:
+            e["tier"] = 1
+            self.trace("tier", name=tiers[1]["name"])
+            return tiers[1]["name"]
+        return None
 
     def own_words(self, text, answer=None):
         self.ownwords = text
         self.ownwords_consent = "Yes" if answer == "Yes" else "Not now"
 
-    # ---- rule 7: agent med/allergy/resus changes are proposals until a clinician signs
+    # ---- rule 7: agent med/allergy/resuscitation changes are proposals until a clinician signs
     def propose(self, field, new, by):
         self.proposals.append({"field": field, "new": new, "by": by, "signed": False})
         if field == "allergies":                        # unsigned add as possible blocks the drug now
@@ -130,17 +162,21 @@ class Wing:
         """Values in effect; any unsigned agent change applied would be a rule-7 breach."""
         return [p for p in self.proposals if p["field"] == field and p["signed"]]
 
-    # ---- ISBAR handover form, checked against the separate record
+    # ---- 7-item handover form, checked against the separate record; headings from the profile
+    def handover_view(self, form):
+        heads = self.profile.get("handover_headings")
+        return {h: form[k] for h, k in zip(heads, sorted(k for k in form if k[0].isdigit()))}
+
     def handover(self):
         r = self.record
         g = r.get("grant")
         form = {
             "1_id_allergies": {"id": r.get("id"), "allergies": self.allergies},
             "2_meds": r.get("meds"),
-            "3_resus_limits": {"resus": r.get("resus"), "limits_of_care": r.get("limits_of_care")},
+            "3_limits": {"resuscitation": r.get("resuscitation"), "limits_of_care": r.get("limits_of_care")},
             "4_private": {"kept_private": bool(r.get("declined")), "grant_holder": g["holder"], "expiry": g["expiry"]},
             "5_outstanding": r.get("tasks"),
-            "6_latest": {"obs": self.last_obs, "open_reach": len(self.open_reach), "escalation": self.escalation},
+            "6_latest": {"obs": self.last_obs, "open_help": len(self.open_help), "escalation": self.escalation},
             "7_contact": {"contact": r.get("contact"), "interpreter": r.get("interpreter"),
                           "signed_line_ids": ["LT-OWNWORDS-LABEL"] if self.ownwords_consent == "Yes" else []},
         }
@@ -150,7 +186,7 @@ class Wing:
 
     def check_handover(self, form):
         r = self.record
-        if set(k for k in form if k[0].isdigit()) != {"1_id_allergies", "2_meds", "3_resus_limits", "4_private",
+        if set(k for k in form if k[0].isdigit()) != {"1_id_allergies", "2_meds", "3_limits", "4_private",
                                                        "5_outstanding", "6_latest", "7_contact"}:
             raise CheckFail("WG-HANDOVER-FIELDS")
         if form["1_id_allergies"]["id"] != r.get("id"):
@@ -159,8 +195,8 @@ class Wing:
             raise CheckFail("WG-HANDOVER-ALLERGY")
         if form["2_meds"] != r.get("meds"):
             raise CheckFail("WG-HANDOVER-MEDS")
-        if form["3_resus_limits"] != {"resus": r.get("resus"), "limits_of_care": r.get("limits_of_care")}:
-            raise CheckFail("WG-HANDOVER-RESUS")
+        if form["3_limits"] != {"resuscitation": r.get("resuscitation"), "limits_of_care": r.get("limits_of_care")}:
+            raise CheckFail("WG-HANDOVER-LIMITS")
         if set(form["4_private"]) != {"kept_private", "grant_holder", "expiry"} or \
                 any(d in json.dumps(form) for d in r.get("declined")):
             raise CheckFail("WG-HANDOVER-DECLINED-LEAK")

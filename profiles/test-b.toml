@@ -1,0 +1,25 @@
+# TESTB site profile: obviously synthetic values, used by all tests. Not any real site's policy.
+name = "test-b"
+[program]          # escalation program name shown to patients
+value = "TESTB-HELP-PROGRAM"
+cite = "TESTB synthetic value"
+[[tiers]]
+name = "TESTB first review"
+minutes = 20
+cite = "TESTB synthetic value"
+[[tiers]]
+name = "TESTB response team"
+minutes = 45       # minutes after first review without improvement
+cite = "TESTB synthetic value"
+[family_review]
+minutes = 20
+cite = "TESTB synthetic value"
+[zones]            # observation score bands: [low, high, zone name]; first band is the no-alert band
+value = [[0, 4, "TESTB-zone-0"], [5, 6, "TESTB-zone-1"], [7, 99, "TESTB-zone-2"]]
+cite = "TESTB synthetic value"
+[handover_headings]
+value = ["TESTB 1 identity", "TESTB 2 medicines", "TESTB 3 limits of care", "TESTB 4 privacy", "TESTB 5 outstanding", "TESTB 6 latest", "TESTB 7 contacts"]
+cite = "TESTB synthetic value"
+[lines]            # signed wording ids the site displays (ids in the signed wording file)
+value = {help_button = "LT-REACH-BUTTON-PT", own_words_label = "LT-OWNWORDS-LABEL", own_words_ask = "LT-OWNWORDS-ASK-TEAM-PT", meds_unchanged = "LT-MEDS-UNCHANGED-PT", meds_unreviewed = "LT-MEDS-UNREVIEWED-PT", help_heard = "LT-REACH-HEARD-PT", allergy_readback = "LT-ALLERGY-READBACK-PT"}
+cite = "TESTB synthetic value"

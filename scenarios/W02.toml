@@ -6,7 +6,7 @@ start = "1934-03-12T10:00"
 id = "SYNTH-P0101"
 allergies = [{drug = "sulfa", reaction = "rash", status = "confirmed"}]
 meds = [{name = "SYNTH-med-A", change = "none", reason = "", reviewed = "reviewed, no change"}]
-resus = "for full resuscitation"
+resuscitation = "for full resuscitation"
 limits_of_care = "none"
 patient_wishes = "recorded 1934-03-12"
 declined = ["mh_q9"]

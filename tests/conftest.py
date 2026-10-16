@@ -1,8 +1,9 @@
-import pathlib, sys
+import os, pathlib, sys
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 import pytest
 from wing import CheckFail
 
+os.environ.setdefault("WING_PROFILE", str(pathlib.Path(__file__).resolve().parent.parent / "profiles" / "test.toml"))
 ANS = pathlib.Path(__file__).resolve().parent.parent / "scenarios" / "W01.toml"
 
 

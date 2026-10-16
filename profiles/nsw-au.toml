@@ -1,0 +1,25 @@
+# nsw-au site profile: cited timing numbers only. No policy or chart text is copied here.
+name = "nsw-au"
+[program]
+value = "PENDING"
+pending = true
+[[tiers]]
+name = "Clinical Review"
+minutes = 30
+cite = "NSW Health PD2025_014 s4.2"
+[[tiers]]
+name = "Rapid Response"
+minutes = 60       # deterioration not reversed within 1 h of Clinical Review; response itself 'urgent', no fixed minutes
+cite = "NSW Health PD2025_014 s4.2"
+[family_review]
+minutes = 30
+cite = "NSW Health PD2025_014 s4.2"
+[zones]
+value = []
+pending = true     # observation zone values not available
+[handover_headings]
+value = []
+pending = true
+[lines]
+value = {help_button = "LT-REACH-BUTTON-PT", own_words_label = "LT-OWNWORDS-LABEL", own_words_ask = "LT-OWNWORDS-ASK-TEAM-PT", meds_unchanged = "LT-MEDS-UNCHANGED-PT", meds_unreviewed = "LT-MEDS-UNREVIEWED-PT", help_heard = "LT-REACH-HEARD-PT", allergy_readback = "LT-ALLERGY-READBACK-PT"}
+cite = "wording/v2_lines_SIGNED.md"
