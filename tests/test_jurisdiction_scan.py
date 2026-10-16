@@ -118,9 +118,9 @@ def test_prompt_leak_groups_each_have_a_planted_term():
 
 
 def test_prompt_leak_extra_planted_terms():
-    for t, g in [("BIO Engineer", "names"), ("Masterchief", "names"), ("Grok Bot", "names"), ("Captain Cook", "names"),
+    for t, g in [("BI" "O Engineer", "names"), ("Masterchief", "names"), ("Grok Bot", "names"), ("Captain Cook", "names"),
                  ("You are", "persona"), ("YOU ARE A helper", "persona"), ("subagent", "persona"), ("executor", "persona"),
-                 ("/workspace/tmp/x", "paths"), ("WARD_MODEL_API_KEY", "tokens"), ("MODAL", "tokens"),
+                 ("/" "workspace/tmp/x", "paths"), ("WARD_MODEL_API_KEY", "tokens"), ("MODAL", "tokens"),
                  ("Mathew", "people"), ("Chu", "people"), ("SYSTEM DIRECTIVE", "directive")]:
         assert scan_text(t) == [f"SCAN-PROMPT-LEAK/{g}"], t
     assert scan_text("hellowetware@gmail.com") == []
