@@ -2,6 +2,10 @@
 
 **Overview.** wing orchestrates ward, our test hospital, not a real hospital, and is built to chain the other rooms (forms, orders, letters, figures, cards) behind the same plug later. Synthetic data only (`SYNTH-` ids, 1930s dates, invented people). Not a medical device. Python standard library only.
 
+**For testing only, not for real patients.**
+
+**Status.** The jurisdiction purge is partial. wing: 14 found, 0 removed, 14 excepted (the older profile scan's planted test terms and signed line ids). letters: 374 excepted, each listed per term with a reason. No live results are counted; any mention of a live run is provisional.
+
 ## What it does
 
 - **Site profile** (`profiles/*.toml`, `WING_PROFILE`): the only place for escalation tier names and time limits, observation zone table, escalation-program name, handover headings and displayed line ids. Every value carries a citation or is PENDING; PENDING keeps the site not stable. Profiles also hold the patient/family escalation path (path, name, contact), the on-line value rule (no default), emergency number, emergency department name, family-doctor term, escalation role and language, are signed by a named clinical lead and pinned by sha256 (`python3 -m wing.profile sign FILE NAME`); an unsigned or edited profile, a missing value, or an unfilled placeholder stops the run on its own check id. Core holds no jurisdiction names or constants and refuses to run without a profile. `test` and `test-b` are synthetic (TEST); `TEMPLATE.toml` is the empty site profile (every field PENDING, cite required) that a site fills in and has signed.
