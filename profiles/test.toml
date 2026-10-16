@@ -41,6 +41,14 @@ cite = "TEST synthetic value"
 [language]
 value = "en"
 cite = "TEST synthetic value"
+[patient_family_escalation]   # how a patient or family member escalates directly
+path = "TEST call-line path"
+name = "TEST family call"
+contact = "TEST-555"
+cite = "TEST synthetic value"
+[on_line_value_rule]          # a value exactly on a shared band edge goes to the ... band
+value = "more_severe"
+cite = "TEST synthetic value"
 [signature]
 signer = "TEST clinical lead"
-sha256 = "7a9bf43b46a84de981e8596b9a3e0b5b6f3c18e378a43dfc6071af3463f35dc5"
+sha256 = "44a90172d73b95973934df8525eb12e461b7ede019771118a4e2d8d13341a736"

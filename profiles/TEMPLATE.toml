@@ -56,3 +56,13 @@ pending = true
 value = ""
 cite = ""
 pending = true
+[patient_family_escalation]   # path + name + contact, all required
+path = ""
+name = ""
+contact = ""
+cite = ""
+pending = true
+[on_line_value_rule]          # "more_severe" or "less_severe"; no default
+value = ""
+cite = ""
+pending = true

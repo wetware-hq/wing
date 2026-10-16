@@ -132,3 +132,31 @@ def test_full_suite_on_second_profile():
     r = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider"], cwd=ROOT, env=env,
                        capture_output=True, text=True)
     assert r.returncode == 0, r.stdout[-2000:]
+
+
+def test_tampered_missing_family_escalation(tmp_path):
+    p = variant(tmp_path, '[patient_family_escalation]', '[unused_section]')
+    caught("WG-PROFILE-NO-FAMILY-ESCALATION", profile.Profile, p)
+
+
+def test_tampered_family_escalation_without_contact(tmp_path):
+    p = variant(tmp_path, 'contact = "TEST-555"\n', '')
+    caught("WG-PROFILE-NO-FAMILY-ESCALATION", profile.Profile, p)
+
+
+def test_tampered_missing_on_line_rule(tmp_path):
+    p = variant(tmp_path, '[on_line_value_rule]', '[unused_rule]')
+    caught("WG-PROFILE-NO-ON-LINE-RULE", profile.Profile, p)
+
+
+def test_tampered_unknown_on_line_rule(tmp_path):
+    p = variant(tmp_path, 'value = "more_severe"', 'value = "whatever"')
+    caught("WG-PROFILE-NO-ON-LINE-RULE", profile.Profile, p)
+
+
+@pytest.mark.parametrize("rule,want", [("more_severe", "TEST-zone-1"), ("less_severe", "TEST-zone-0")])
+def test_shared_edge_value_follows_profile_rule(tmp_path, rule, want):
+    p = variant(tmp_path, '[10, 24, "TEST-zone-0"], [25, 29,', '[10, 25, "TEST-zone-0"], [25, 29,')
+    p.write_text(profile.body(p.read_text()).replace('value = "more_severe"', f'value = "{rule}"'))
+    profile.sign(p, "TEST clinical lead")
+    assert profile.vital_zone(profile.Profile(p), "rr", 25) == want

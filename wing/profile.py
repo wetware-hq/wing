@@ -4,7 +4,10 @@ import hashlib, os, pathlib, re, sys, tomllib
 from . import CheckFail
 
 FIELDS = ("program", "tiers", "family_review", "zones", "vital_zones", "handover_headings", "lines", "emergency_number",
-          "emergency_department", "family_doctor_term", "escalation_role", "language")
+          "emergency_department", "family_doctor_term", "escalation_role", "language",
+          "patient_family_escalation", "on_line_value_rule")
+OWN_IDS = {"patient_family_escalation": "WG-PROFILE-NO-FAMILY-ESCALATION", "on_line_value_rule": "WG-PROFILE-NO-ON-LINE-RULE"}
+ON_LINE_RULES = ("more_severe", "less_severe")
 # patient-facing placeholders filled from the profile, never hard-coded
 SLOTS = {"Program": "program", "Emergency number": "emergency_number", "Emergency department": "emergency_department",
          "Family doctor": "family_doctor_term", "Escalation role": "escalation_role"}
@@ -36,13 +39,19 @@ class Profile:
         self.name, self.pending = d.get("name", ""), []
         for f in FIELDS:
             if f not in d:
-                raise CheckFail("WG-PROFILE-FIELD", f)
+                raise CheckFail(OWN_IDS.get(f, "WG-PROFILE-FIELD"), f)       # no defaults
             for e in (d[f] if isinstance(d[f], list) else [d[f]]):
                 if e.get("pending"):
                     self.pending.append(f)
                 elif not str(e.get("cite", "")).strip():
                     raise CheckFail("WG-PROFILE-UNCITED", f)
         self._d = d
+        fe = d["patient_family_escalation"]
+        if not fe.get("pending") and not all(str(fe.get(k, "")).strip() for k in ("path", "name", "contact")):
+            raise CheckFail("WG-PROFILE-NO-FAMILY-ESCALATION", "path, name and contact are all required")
+        r = d["on_line_value_rule"]
+        if not r.get("pending") and r.get("value") not in ON_LINE_RULES:
+            raise CheckFail("WG-PROFILE-NO-ON-LINE-RULE", str(r.get("value")))
 
     def get(self, f):
         if f in self.pending:
@@ -64,8 +73,12 @@ def sign(path, signer):
 def vital_zone(profile, vital, value):
     """Zone of one vital-sign value from the profile's bands (inclusive). A gap or overlap is a profile error."""
     hits = [z for lo, hi, z in profile.get("vital_zones")[vital]["bands"] if lo <= value <= hi]
-    if len(hits) != 1:
+    if not hits or len(hits) > 2:
         raise CheckFail("WG-ZONE-GAP", f"{vital}={value}")
+    if len(hits) == 2:                                     # value on a shared edge: the profile's own rule decides
+        order = [z for _, _, z in profile.get("zones")]   # severity = position in the aggregate zone list
+        hits.sort(key=order.index)
+        return hits[-1] if profile.get("on_line_value_rule") == "more_severe" else hits[0]
     return hits[0]
 
 
