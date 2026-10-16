@@ -2,9 +2,9 @@
 
 **Overview.** wing orchestrates ward, our test hospital, not a real hospital, and is built to chain the other rooms (forms, orders, letters, figures, cards) behind the same plug later. Synthetic data only (`SYNTH-` ids, 1930s dates, invented people). Not a medical device. Python standard library only.
 
-**For testing only, not for real patients.**
+**For testing only. Not for use with real patients.**
 
-**Status.** The jurisdiction purge is partial. wing: 14 found, 0 removed, 14 excepted (the older profile scan's planted test terms and signed line ids). letters: 38 excepted, each listed per term with a reason. No live results are counted; any mention of a live run is provisional.
+**Status.** The jurisdiction purge is partial. wing: 14 found, 0 removed, 14 excepted (the older profile scan's planted test terms and signed line ids). letters: 38 excepted, each listed per term with a reason. Live results: provisional, not counted.
 
 ## What it does
 
