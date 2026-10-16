@@ -21,7 +21,7 @@ cite = "TESTB synthetic value"
 value = ["TESTB 1 identity", "TESTB 2 medicines", "TESTB 3 limits of care", "TESTB 4 privacy", "TESTB 5 outstanding", "TESTB 6 latest", "TESTB 7 contacts"]
 cite = "TESTB synthetic value"
 [lines]            # signed wording ids the site displays (ids in the signed wording file)
-value = {help_button = "LT-REACH-BUTTON-PT", own_words_label = "LT-OWNWORDS-LABEL", own_words_ask = "LT-OWNWORDS-ASK-TEAM-PT", meds_unchanged = "LT-MEDS-UNCHANGED-PT", meds_unreviewed = "LT-MEDS-UNREVIEWED-PT", help_heard = "LT-REACH-HEARD-PT", allergy_readback = "LT-ALLERGY-READBACK-PT"}
+value = {help_button = "LT-REACH-BUTTON-PT", own_words_label = "LT-OWNWORDS-LABEL", own_words_ask = "LT-OWNWORDS-ASK-TEAM-PT", meds_unchanged = "LT-MEDS-UNCHANGED-PT", meds_unreviewed = "LT-MEDS-UNREVIEWED-PT", help_heard = "LT-REACH-HEARD-PT", help_on_way = "LT-REACH-ONWAY-PT", allergy_readback = "LT-ALLERGY-READBACK-PT"}
 cite = "TESTB synthetic value"
 [emergency_number]
 value = "TESTB-111"
@@ -40,4 +40,4 @@ value = "en"
 cite = "TESTB synthetic value"
 [signature]
 signer = "TESTB clinical lead"
-sha256 = "de6cd38ec002b6b7d59b57ab5385027559a9d7d8a8dbf5bc338ba6491f614414"
+sha256 = "3d6fce3e5af3c14b853a7a54d3822145d1f56fe59302cfa5b0ee279f6a2d0a05"

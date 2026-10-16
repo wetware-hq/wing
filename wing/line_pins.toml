@@ -1,10 +1,12 @@
-# Per-line sha256 pins (text column only) of /workspace/wording/v2_lines_SIGNED.md, pinned 2026-10-16.
-# LT-REACH-HEARD-PT deliberately NOT pinned: wording awaiting Physician re-sign (earlier hash superseded).
-# Other languages pin as "<lang>/<id>".
+# Frozen v2 wording: full-file sha256 of /workspace/wording/v2_lines_SIGNED.md (full digest compared), plus per-line
+# sha256 of each text column. Other languages pin as "<lang>/<id>".
 status = "confirmed"
+file_sha256 = "660902407f598f297f9772189c5422f311e83db04eb35436ee8bc939887cfa76"
 [sha256]
 "LT-MEDS-UNCHANGED-PT" = "1be66c8d151a4d96acf921cc3cacd889222dbba88e8eef0c96878a9f0d5000bc"
 "LT-MEDS-UNREVIEWED-PT" = "512d394bcfd60718174f909612fe861d400357798ce2c7229b7d12d5a7842756"
+"LT-REACH-HEARD-PT" = "99d4f3624c4ec1b1790fbc418b2010fa98590778f47579e2a64663c94b2e1b0e"
+"LT-REACH-ONWAY-PT" = "c52b2129e99e93e06a3b6362a57889e109b1db188429302e813b72405d8d1fde"
 "LT-REACH-NURSE-PT" = "225a247ff90adcd53ca725284d2104e879a43cf68052075959c4c2308f58b8c7"
 "LT-REACH-BUTTON-PT" = "7d624423ab323850ccaaa3b6167661aa62549206ab9806ef5e08631c9d39110e"
 "LT-OWNWORDS-LABEL" = "3dcfbf5264dae9672c0c2f6ed93245faec630e3e51c3df9ea6da51e84b0939a6"

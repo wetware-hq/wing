@@ -21,8 +21,22 @@ GOOD = "| LT-MEDS-UNCHANGED-PT | Your doctor checked this medicine and it stays 
        "| LT-REACH-HEARD-PT | We heard you. [Role] is coming to see you within [time]. Press the call button. | v2 |\n"
 
 
-def test_help_heard_not_pinned_awaiting_resign():
-    assert "LT-REACH-HEARD-PT" not in lines.pins()[1]
+def test_v2_file_full_digest_pinned():
+    assert lines.file_pin() == "660902407f598f297f9772189c5422f311e83db04eb35436ee8bc939887cfa76"
+    assert {"LT-REACH-HEARD-PT", "LT-REACH-ONWAY-PT"} <= set(lines.pins()[1])
+
+
+def test_tampered_one_character_file_edit(tmp_path):
+    raw = lines.V2.read_bytes()
+    i = raw.index(b"heard you") + 1
+    p = tmp_path / "v2_lines_SIGNED.md"; p.write_bytes(raw[:i] + b"E" + raw[i + 1:])
+    caught("WG-LINE-FILE-HASH", lines.line, "LT-MEDS-UNCHANGED-PT", p)
+
+
+def test_help_line_selected_by_time_on_record():
+    a = lines.help_heard({"role": "The nurse", "minutes": 30})
+    b = lines.help_heard({"role": "The nurse"})
+    assert "within 30 minutes" in a and b.startswith("We heard you. The nurse is on the way.")
 
 
 @pytest.mark.parametrize("lid", lines.used().values())
@@ -65,7 +79,7 @@ def test_help_heard_time_only_from_assignment(tmp_path):
     t = "We heard you. [Role] is coming to see you within [time]. Press the call button."
     v, p = _v2(tmp_path, GOOD), _pins(tmp_path, {"LT-REACH-HEARD-PT": t})
     assert "within 30 minutes" in lines.help_heard({"role": "The nurse", "minutes": 30}, path=v, pin_file=p)
-    caught("WG-LINE-UNFILLED", lines.help_heard, {"role": "The nurse"}, path=v, pin_file=p)   # [time] only from record
+    caught("WG-LINE-UNSIGNED", lines.help_heard, {"role": "The nurse"}, path=v, pin_file=p)   # on-way line absent here
 
 
 def test_tampered_help_heard_without_assignment():

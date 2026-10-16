@@ -26,6 +26,10 @@ def pins(pin_file=PIN_FILE):
     return d.get("status"), d.get("sha256", {})
 
 
+def file_pin(pin_file=PIN_FILE):
+    return tomllib.loads(pathlib.Path(pin_file).read_text()).get("file_sha256")
+
+
 def lang_path(path, lang):
     p = pathlib.Path(path)
     return p if lang == "en" else p.with_name(p.name.replace(".md", f".{lang}.md"))
@@ -37,6 +41,9 @@ def line(lid, path=V2, pin_file=PIN_FILE, profile=None, **slots):
     src = lang_path(path, lang)
     if lang != "en" and (not src.is_file() or lid not in rows(src)):
         raise CheckFail("WG-LINE-NO-TRANSLATION", f"{lang}/{lid}")
+    fp = file_pin(pin_file)
+    if fp is not None and hashlib.sha256(pathlib.Path(path).read_bytes()).hexdigest() != fp:
+        raise CheckFail("WG-LINE-FILE-HASH", str(path))      # full digest, never a prefix
     r = rows(src)
     if lid not in r:
         raise CheckFail("WG-LINE-UNSIGNED", lid)
@@ -68,13 +75,14 @@ def render(lid, **kw):
 
 
 def help_heard(assignment, profile=None, **kw):
-    """The site's help_heard line: [Role] and [time] only from the assignment record."""
+    """help_heard when the assignment record has a time, else help_on_way; [Role]/[time] only from the record."""
     if not assignment or not assignment.get("role"):
         raise CheckFail("WG-HELP-NO-ASSIGNMENT")
-    s = {"Role": assignment["role"]}
+    ids = used(profile)
     if assignment.get("minutes"):
-        s["time"] = f"{assignment['minutes']} minutes"
-    return render(used(profile)["help_heard"], profile=profile, **kw, **s)
+        return render(ids["help_heard"], profile=profile, Role=assignment["role"],
+                      time=f"{assignment['minutes']} minutes", **kw)
+    return render(ids["help_on_way"], profile=profile, Role=assignment["role"], **kw)   # no time on record
 
 
 def stability(path=V2, profile=None, pin_file=PIN_FILE):
