@@ -4,7 +4,7 @@
 
 **For testing only, not for real patients.**
 
-**Status.** The jurisdiction purge is partial. wing: 14 found, 0 removed, 14 excepted (the older profile scan's planted test terms and signed line ids). letters: 374 excepted, each listed per term with a reason. No live results are counted; any mention of a live run is provisional.
+**Status.** The jurisdiction purge is partial. wing: 14 found, 0 removed, 14 excepted (the older profile scan's planted test terms and signed line ids). letters: 38 excepted, each listed per term with a reason. No live results are counted; any mention of a live run is provisional.
 
 ## What it does
 
