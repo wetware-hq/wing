@@ -63,10 +63,10 @@ class PatientRecord:
 
 
 class Wing:
-    def __init__(self, answer_file, seed=1):
+    def __init__(self, answer_file, seed=1, harness=None):
         self.record = PatientRecord(answer_file)
         sc = self.record.scenario
-        self.h = Harness(sc["ward_scenario"], seed, start=sc["start"])   # shared clock + trace
+        self.h = harness or Harness(sc["ward_scenario"], seed, start=sc["start"])   # shared clock + trace
         self.allergies = self.record.get("allergies")
         self.escalation, self.last_obs, self.open_reach, self.zone = 0, None, [], "green"
         self.ownwords, self.ownwords_consent = None, "Not now"

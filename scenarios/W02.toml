@@ -1,0 +1,16 @@
+# Scenario answer file: the separate patient record is built from this, never from the admission form.
+scenario = "W02-second-patient"
+ward_scenario = "S05-mh-screen-by-patient-agent"     # ward fixture whose clock and guards wing reuses
+start = "1934-03-12T10:00"
+[patient]
+id = "SYNTH-P0101"
+allergies = [{drug = "sulfa", reaction = "rash", status = "confirmed"}]
+meds = [{name = "SYNTH-med-A", change = "none", reason = "", reviewed = "reviewed, no change"}]
+resus = "for full resuscitation"
+limits_of_care = "none"
+patient_wishes = "recorded 1934-03-12"
+declined = ["mh_q9"]
+grant = {holder = "SYNTH-agent-01", expiry = "1934-03-19"}
+tasks = ["repeat bloods 1934-03-13"]
+contact = "SYNTH-carer-01"
+interpreter = false

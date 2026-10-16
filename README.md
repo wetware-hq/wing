@@ -11,6 +11,7 @@
 - **Rule 6** escalation (overdue obs, zone crossing, REACH) goes to ward and clinician, signal only. **Rule 7** agent med/allergy/resus changes are proposals until a clinician signs.
 - **Agent plug**: records in, one JSON action from a fixed list out, per-room pinned model; scripted agents only. Replay store keyed by hash(prompt+commit), labelled REPLAY, key-scanned. Budget precompute cuts seeds, never guards.
 - **Exit**: a stay closes only with a discharge, transfer, AMA or death record ("leave" keeps it open).
+- **Multi-patient, multi-ward** (`wing/multi.py`): one tick steps the whole wing; shared staff and beds; ward ids; a move is a checked handover; writes and views are scoped to the agent's own patient; escalations jump the queue, overflow to a finite RRT, and an unanswered one fails the run.
 - **Lines**: only signed lines from `wording/v2_lines_SIGNED.md`, each pinned by sha256 (`wing/line_pins.toml`).
 
 ## Run
