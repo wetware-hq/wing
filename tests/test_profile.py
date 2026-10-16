@@ -62,7 +62,6 @@ def test_tampered_edited_after_signing(tmp_path):
 
 
 def test_profiles_signed_by_named_lead():
-    assert profile.Profile(P / "nsw-au.toml").signer.startswith("Physician")
     assert profile.Profile(P / "test.toml").signer == "TEST clinical lead"
 
 
@@ -104,22 +103,17 @@ def test_test_profiles_stable_and_labelled():
         assert pr.stable and "TEST" in pr.get("program")
 
 
-def test_nsw_profile_cited_timings_and_pending_zones():
-    pr = profile.Profile(P / "nsw-au.toml")
-    assert [t["minutes"] for t in pr.get("tiers")] == [30, 60] and pr.get("family_review")["minutes"] == 30
-    assert all(t["cite"] == "NSW Health PD2025_014 s4.2" for t in pr.get("tiers"))
-    assert not pr.stable and "zones" in pr.pending
-    assert ("zones", "WG-PROFILE-PENDING") in lines.stability(profile=pr)
+def test_template_every_field_pending_with_cite_slot():
+    import tomllib
+    d = tomllib.loads((P / "TEMPLATE.toml").read_text())
+    for f in profile.FIELDS:
+        for e in (d[f] if isinstance(d[f], list) else [d[f]]):
+            assert e.get("pending") is True and "cite" in e, f
+    caught("WG-PROFILE-UNSIGNED", profile.Profile, P / "TEMPLATE.toml")
 
 
-def test_zone_tests_on_nsw_report_pending():
-    w = Wing(ANS, profile=profile.Profile(P / "nsw-au.toml"))
-    try:
-        w.obs_form(7)
-    except CheckFail as e:
-        assert e.id == "WG-PROFILE-PENDING"
-        pytest.skip("PENDING: observation zone values not available for nsw-au")
-    pytest.fail("zones used without values")
+def test_only_generic_profiles_shipped():
+    assert sorted(p.name for p in P.glob("*.toml")) == ["TEMPLATE.toml", "test-b.toml", "test.toml"]
 
 
 def test_patient_wording_uses_profile_names(tmp_path):

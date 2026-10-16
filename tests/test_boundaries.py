@@ -1,5 +1,4 @@
-"""Every zone edge tested at the value and one step either side, from the profile's own bands (TEST now; nsw-au
-once signed, PENDING until then)."""
+"""Every zone edge tested at the value and one step either side, from the profile's own bands (generic TEST profiles)."""
 import pathlib
 import pytest
 from wing import CheckFail, profile
@@ -25,7 +24,7 @@ def _profile(name):
         raise
 
 
-@pytest.mark.parametrize("name", ["test", "test-b", "nsw-au"])
+@pytest.mark.parametrize("name", ["test", "test-b"])
 def test_every_edge_value_and_one_step_either_side(name):
     pr = _profile(name)
     n = 0

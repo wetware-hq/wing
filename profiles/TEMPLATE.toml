@@ -1,0 +1,58 @@
+# TEMPLATE site profile. Copy, fill every field, add a cite for each value (remove "pending"), then have the
+# named clinical lead sign it: python3 -m wing.profile sign FILE "Name, role". Unfilled = PENDING = not stable.
+# Shapes: see profiles/test.toml. This file is deliberately unsigned and cannot be loaded as-is.
+name = "TEMPLATE"
+[program]
+value = ""
+cite = ""
+pending = true
+[[tiers]]
+name = ""
+minutes = 0
+cite = ""
+pending = true
+[[tiers]]
+name = ""
+minutes = 0
+cite = ""
+pending = true
+[family_review]
+value = ""
+cite = ""
+pending = true
+[zones]
+value = []
+cite = ""
+pending = true
+[vital_zones]
+value = ""
+cite = ""
+pending = true
+[handover_headings]
+value = []
+cite = ""
+pending = true
+[lines]
+value = ""
+cite = ""
+pending = true
+[emergency_number]
+value = ""
+cite = ""
+pending = true
+[emergency_department]
+value = ""
+cite = ""
+pending = true
+[family_doctor_term]
+value = ""
+cite = ""
+pending = true
+[escalation_role]
+value = ""
+cite = ""
+pending = true
+[language]
+value = ""
+cite = ""
+pending = true
