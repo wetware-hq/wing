@@ -9,7 +9,7 @@ CAP_USD = 1.00
 PRICE_IN, PRICE_OUT = 0.66e-6, 1.98e-6               # OpenRouter deepseek/deepseek-v4-pro-0813, $ per token
 TOKENS_IN = 1000                                     # ceiling per reply (prompt is ~300); out is the client's max_tokens
 PER_REPLY = TOKENS_IN * PRICE_IN + 120 * PRICE_OUT
-LEDGER = pathlib.Path(os.environ.get("WING_LIVE_LEDGER", "/workspace/tmp/live_spend.json"))
+LEDGER = pathlib.Path(os.environ.get("WING_LIVE_LEDGER", "live_spend.json"))
 SITUATION = {"help_heard": "the patient or family pressed for help; tell them they were heard",
              "help_on_way": "an escalation was sent; tell the patient help is on the way",
              "own_words_ask": "ask the patient if they want to add their own words for the team",
@@ -36,7 +36,7 @@ def make_reply(seed, lines, post=None):
     def reply(rec_in):
         rec = {"patient": rec_in["patient"], "date": rec_in["date"], "choices": choices,
                "situation": SITUATION[key_of[rec_in["expected_line"]]],
-               "instruction": "You are a ward staff agent in a synthetic test. Pick the one signed line id for the "
+               "instruction": "Ward staff reply, synthetic test. Pick the one signed line id for the "
                               'situation. Reply with JSON {"line_id": "<id>"} only.'}
         got = live.send_guarded([rec], send)            # guard first; a non-pinned model raises ModelMismatch
         return {"model": send.models[-1], "expected_line": rec_in["expected_line"], "line_id": got.get("line_id"),
