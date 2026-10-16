@@ -3,7 +3,7 @@ Every value carries a citation or is marked pending; pending values keep the sit
 import hashlib, os, pathlib, re, sys, tomllib
 from . import CheckFail
 
-FIELDS = ("program", "tiers", "family_review", "zones", "handover_headings", "lines", "emergency_number",
+FIELDS = ("program", "tiers", "family_review", "zones", "vital_zones", "handover_headings", "lines", "emergency_number",
           "emergency_department", "family_doctor_term", "escalation_role", "language")
 # patient-facing placeholders filled from the profile, never hard-coded
 SLOTS = {"Program": "program", "Emergency number": "emergency_number", "Emergency department": "emergency_department",
@@ -59,6 +59,14 @@ def sign(path, signer):
     """Tool for the named clinical lead's signature: (re)writes the [signature] table over the current body."""
     b = body(pathlib.Path(path).read_text())
     pathlib.Path(path).write_text(b + f'[signature]\nsigner = "{signer}"\nsha256 = "{digest(b)}"\n')
+
+
+def vital_zone(profile, vital, value):
+    """Zone of one vital-sign value from the profile's bands (inclusive). A gap or overlap is a profile error."""
+    hits = [z for lo, hi, z in profile.get("vital_zones")[vital]["bands"] if lo <= value <= hi]
+    if len(hits) != 1:
+        raise CheckFail("WG-ZONE-GAP", f"{vital}={value}")
+    return hits[0]
 
 
 def load(path=None):

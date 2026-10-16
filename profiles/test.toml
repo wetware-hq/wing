@@ -17,6 +17,9 @@ cite = "TEST synthetic value"
 [zones]            # observation score bands: [low, high, zone name]; first band is the no-alert band
 value = [[0, 4, "TEST-zone-0"], [5, 6, "TEST-zone-1"], [7, 99, "TEST-zone-2"]]
 cite = "TEST synthetic value"
+[vital_zones]      # per vital sign: step and bands [low, high, zone]; synthetic
+value = { rr = { step = 1, bands = [[0, 4, "TEST-zone-2"], [5, 9, "TEST-zone-1"], [10, 24, "TEST-zone-0"], [25, 29, "TEST-zone-1"], [30, 99, "TEST-zone-2"]] }, temp = { step = 0.1, bands = [[30.0, 35.4, "TEST-zone-1"], [35.5, 38.4, "TEST-zone-0"], [38.5, 45.0, "TEST-zone-1"]] } }
+cite = "TEST synthetic value"
 [handover_headings]
 value = ["TEST 1 identity", "TEST 2 medicines", "TEST 3 limits of care", "TEST 4 privacy", "TEST 5 outstanding", "TEST 6 latest", "TEST 7 contacts"]
 cite = "TEST synthetic value"
@@ -40,4 +43,4 @@ value = "en"
 cite = "TEST synthetic value"
 [signature]
 signer = "TEST clinical lead"
-sha256 = "65034cbd853c75bd8bada0140e5305f4ce645af67df3a43adff051c0f2e5f060"
+sha256 = "7a9bf43b46a84de981e8596b9a3e0b5b6f3c18e378a43dfc6071af3463f35dc5"

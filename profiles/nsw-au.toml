@@ -17,6 +17,9 @@ cite = "NSW Health PD2025_014 s4.2"
 [zones]
 value = []
 pending = true     # observation zone values not available
+[vital_zones]
+value = {}
+pending = true
 [handover_headings]
 value = []
 pending = true
@@ -40,4 +43,4 @@ value = "en"
 cite = "site default (Physician)"
 [signature]
 signer = "Physician (BIO room)"
-sha256 = "9a413ba004508a32f98575bea47cb297988a89c8d31facdeae6c2e8875c293c1"
+sha256 = "3469e08bb9fa32ea5bd795d086fa9ea1b3ee9706a719e5b6213a1c0e6e529ec5"

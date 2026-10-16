@@ -1,0 +1,19 @@
+scenario = "S16-wrong-patient"
+ward_scenario = "S05-mh-screen-by-patient-agent"
+start = "1936-06-01T08:00"
+[patient]
+id = "SYNTH-P1602"
+name = "Synth John Marsh"
+dob = "1934-11-02"
+band = "SYNTH-BAND-1602"
+bed = 8
+allergies = []
+meds = []
+resuscitation = "for full resuscitation"
+limits_of_care = "none"
+patient_wishes = "recorded 1936-06-01"
+declined = []
+grant = {holder = "none", expiry = "1936-06-01"}
+tasks = []
+contact = "SYNTH-carer-1602"
+interpreter = false
