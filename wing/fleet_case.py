@@ -73,6 +73,7 @@ def meta_header(
         "seed": seed,
         "patient_id": patient_id,
         "patient_choice_note": PATIENT_CHOICE_NOTE,
+        "patient_fit_note": disc["patient_fit_note"],
         "testing_banner": disc["testing_banner"],
         "disclosures_plain": list(disc["disclosures_plain"]),
         "disclosure_line_ids": list(disc["line_ids"]),
@@ -215,7 +216,8 @@ async def _run_async(
     return {"fleet": cfg["name"], "seed": seed, "run_kind": run_kind, "evidence": evidence, "model": model,
             "patient": wing.record.get("id"), "plant_caught": plant_caught, "tool_calls": len(backend.calls),
             "model_calls": sum(1 for x in trace if x.get("kind") == "model_call"), "pass": ok, "trace": trace,
-            "testing_banner": disc["testing_banner"], "disclosures_plain": disc["disclosures_plain"],
+            "testing_banner": disc["testing_banner"], "patient_fit_note": disc["patient_fit_note"],
+            "disclosures_plain": disc["disclosures_plain"],
             "abstain_label": disc["abstain_label"] if abstain_any else None,
             "abstain_plain": disc["abstain_plain"] if abstain_any else None, "abstain_any": abstain_any}
 
@@ -242,7 +244,7 @@ def summary_line(out: dict) -> str:
 
 
 def result_block_lines(out: dict) -> list[str]:
-    lines = [out["testing_banner"], *out["disclosures_plain"]]
+    lines = [out["testing_banner"], out["patient_fit_note"], *out["disclosures_plain"]]
     if out.get("abstain_any"):
         lines.extend([out["abstain_label"], out["abstain_plain"]])
     lines.append(summary_line(out))

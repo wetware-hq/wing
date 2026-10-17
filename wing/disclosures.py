@@ -40,8 +40,11 @@ def resolve_disclosures(profile=None, v2_path=None):
                 plain.append(wing_lines.line(lid, path=path, profile=profile))
             except CheckFail as e:
                 raise CheckFail("WG-CASE-DISCLOSURE-MISSING", f"{lid}: {e}") from e
+    if "patient_fit_note" not in d or not str(d["patient_fit_note"]).strip():
+        raise CheckFail("WG-CASE-DISCLOSURE-MISSING", "patient_fit_note missing in case_disclosures.toml")
     return {
         "testing_banner": d["testing_banner"],
+        "patient_fit_note": d["patient_fit_note"],
         "abstain_label": d["abstain_label"],
         "abstain_plain": d["abstain_plain"],
         "line_ids": ids,
