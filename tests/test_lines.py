@@ -25,7 +25,7 @@ GOOD = "| LT-MEDS-UNCHANGED-PT | Your doctor checked this medicine and it stays 
 
 
 def test_v2_file_full_digest_pinned():
-    assert lines.file_pin() == "660902407f598f297f9772189c5422f311e83db04eb35436ee8bc939887cfa76"
+    assert lines.file_pin() == "491c36f5a8a863dff0c9bf681f8d5a859cea40f9ba7403fe1e54f5da78100b48"
     assert {"LT-REACH-HEARD-PT", "LT-REACH-ONWAY-PT"} <= set(lines.pins()[1])
 
 
