@@ -22,6 +22,11 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 CASE = ROOT / "scenarios" / "IMM01.toml"
 FLEET = ROOT / "fleets" / "immunology_mvp.toml"
 APPROVED_FORMS = frozenset({"FORM-SYNTH-PERSONAL-MED-PLAN-01"})
+# Ward TEST_PATIENTS id for IMM01 (S14 oncology-results): lab panels + held results, not the easy S05 path.
+IMM01_PATIENT_ID = "SYNTH-P1401"
+PATIENT_CHOICE_NOTE = (
+    "Chosen from the signed S01–S15 set to satisfy live-run conditions; the swap is not a result."
+)
 
 
 def load_fleet(path=FLEET):
@@ -50,10 +55,28 @@ def emit(trace: list, model: str, **fields):
     trace.append({"kind": "step", "model": model, **fields})
 
 
-def meta_header(run_kind: str, evidence: str, model: str, fleet: str, seed: int, disc: dict) -> dict:
-    return {"kind": "meta", "run_kind": run_kind, "evidence": evidence, "model": model, "fleet": fleet, "seed": seed,
-            "testing_banner": disc["testing_banner"], "disclosures_plain": list(disc["disclosures_plain"]),
-            "disclosure_line_ids": list(disc["line_ids"])}
+def meta_header(
+    run_kind: str,
+    evidence: str,
+    model: str,
+    fleet: str,
+    seed: int,
+    disc: dict,
+    patient_id: str,
+) -> dict:
+    return {
+        "kind": "meta",
+        "run_kind": run_kind,
+        "evidence": evidence,
+        "model": model,
+        "fleet": fleet,
+        "seed": seed,
+        "patient_id": patient_id,
+        "patient_choice_note": PATIENT_CHOICE_NOTE,
+        "testing_banner": disc["testing_banner"],
+        "disclosures_plain": list(disc["disclosures_plain"]),
+        "disclosure_line_ids": list(disc["line_ids"]),
+    }
 
 
 def script_from_cfg(cfg: dict) -> dict:
@@ -92,12 +115,14 @@ async def _run_async(
         evidence = "fleet-evidence-candidate"
     wing = Wing(case_path, seed=seed)
     disc = resolve_disclosures(profile=wing.profile)
-    trace: list[dict] = [meta_header(run_kind, evidence, model, cfg["name"], seed, disc)]
+    patient_id = wing.record.get("id")
+    if patient_id != IMM01_PATIENT_ID:
+        raise CheckFail("WG-CASE-PATIENT-ID", f"expected {IMM01_PATIENT_ID}, got {patient_id}")
+    trace: list[dict] = [meta_header(run_kind, evidence, model, cfg["name"], seed, disc, patient_id)]
     abstain_any = False
 
     imm = wing.record.scenario.get("immunology") or {}
     backend = LocalStubBackend()
-    patient_id = wing.record.get("id")
     case_date = wing.now()
 
     if dry_run:

@@ -37,9 +37,6 @@ def live_env(monkeypatch):
     monkeypatch.setenv(FIXTURE_ENV, "1")
     monkeypatch.setenv(live.KEY_ENV, KEY)
     monkeypatch.setenv(live.CLOCK_ENV, "test")
-    import ward.live as wl
-
-    monkeypatch.setattr(wl, "FLEET_PATIENTS", wl.FLEET_PATIENTS | frozenset({"SYNTH-IM3701"}))
 
 
 def test_resolve_model_pin_requires_dated_snapshot():
@@ -54,11 +51,14 @@ def test_live_run_mock_http_passes():
     out = fleet_case.run(dry_run=False, model_pin=PIN, post=_post(decisions))
     assert out["run_kind"] == "live" and out["evidence"] == "fleet-evidence-candidate"
     assert out["pass"] and out["model"] == PIN
+    assert out["patient"] == fleet_case.IMM01_PATIENT_ID
     assert out["model_calls"] == 4
     blob = json.dumps(out, default=str)
     assert KEY not in blob and "Bearer" not in blob
     meta = out["trace"][0]
     assert meta["run_kind"] == "live" and meta["evidence"] == "fleet-evidence-candidate"
+    assert meta["patient_id"] == fleet_case.IMM01_PATIENT_ID
+    assert meta["patient_choice_note"] == fleet_case.PATIENT_CHOICE_NOTE
 
 
 def test_live_model_mismatch_fails():

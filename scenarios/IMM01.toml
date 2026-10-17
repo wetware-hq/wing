@@ -1,22 +1,23 @@
 # Synthetic immunology case: paperwork-only personalised-medicine planning. No sequences or protocols.
+# Patient id is ward S14 (SYNTH-P1401): serial lab tumour markers + held result review (see PR patient choice note).
 scenario = "IMM01-immunology-pm-plan"
-ward_scenario = "S05-mh-screen-by-patient-agent"
+ward_scenario = "S14-oncology-results-au"
 start = "1936-06-15T09:00"
 
 [patient]
-id = "SYNTH-IM3701"
-name = "Synth I. Mmunology"
-dob = "1932-11-03"
-band = "SYNTH-BAND-IM37"
+id = "SYNTH-P1401"
+name = "Synth O. Ncology-results"
+dob = "1934-08-19"
+band = "SYNTH-BAND-1401"
 allergies = []
-meds = [{name = "SYNTH-antihistamine-placebo", change = "none", reason = "", reviewed = "reviewed, no change"}]
+meds = [{name = "SYNTH-supportive-care-placebo", change = "none", reason = "", reviewed = "reviewed, no change"}]
 resuscitation = "for full resuscitation"
 limits_of_care = "none"
 patient_wishes = "recorded 1936-06-15"
 declined = []
 grant = {holder = "none", expiry = "1936-06-22"}
-tasks = ["immunology review paperwork"]
-contact = "SYNTH-carer-IM37"
+tasks = ["lab panel paperwork", "personalised medicine planning (synthetic)"]
+contact = "SYNTH-carer-1401"
 interpreter = false
 
 [immunology]
