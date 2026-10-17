@@ -13,6 +13,7 @@ from .trace_format import PARAM_KEYS
 
 from . import CheckFail
 from .core import Wing
+from .disclosures import resolve_disclosures
 from .fake_model import DRY_MODEL, ScriptedModel
 from .tools_iface import LocalStubBackend, gather_tools
 
@@ -48,8 +49,26 @@ def emit(trace: list, model: str, **fields):
     trace.append({"kind": "step", "model": model, **fields})
 
 
-def meta_header(run_kind: str, evidence: str, model: str, fleet: str, seed: int) -> dict:
-    return {"kind": "meta", "run_kind": run_kind, "evidence": evidence, "model": model, "fleet": fleet, "seed": seed}
+def meta_header(run_kind: str, evidence: str, model: str, fleet: str, seed: int, disc: dict) -> dict:
+    return {"kind": "meta", "run_kind": run_kind, "evidence": evidence, "model": model, "fleet": fleet, "seed": seed,
+            "testing_banner": disc["testing_banner"], "disclosures_plain": list(disc["disclosures_plain"]),
+            "disclosure_line_ids": list(disc["line_ids"])}
+
+
+def script_from_cfg(cfg: dict) -> dict:
+    sc = cfg.get("script", {})
+    return {
+        ("intake", "proceed_immunology_workup"): sc.get("intake_proceed_immunology_workup", "yes"),
+        ("lab_gate", "ack_panel"): sc.get("lab_gate_ack_panel", "yes"),
+        ("pm_planner", "raise_pm_plan"): sc.get("pm_planner_raise_pm_plan", "yes"),
+        ("pm_planner", "trap_unapproved"): sc.get("pm_planner_trap_unapproved", "yes"),
+    }
+
+
+def apply_manifest_abstain(meta: dict, disc: dict, abstain_any: bool) -> None:
+    if abstain_any:
+        meta["compliance_abstain"] = disc["abstain_label"]
+        meta["abstain_plain"] = disc["abstain_plain"]
 
 
 async def _run_async(cfg: dict, dry_run: bool, case_path: pathlib.Path) -> dict:
@@ -57,25 +76,21 @@ async def _run_async(cfg: dict, dry_run: bool, case_path: pathlib.Path) -> dict:
     model = DRY_MODEL if dry_run else cfg.get("model", DRY_MODEL)
     run_kind = "dry-run" if dry_run else "live"
     evidence = "not-fleet-evidence" if dry_run else "fleet-evidence"
-    trace: list[dict] = [meta_header(run_kind, evidence, model, cfg["name"], seed)]
-
     wing = Wing(case_path, seed=seed)
+    disc = resolve_disclosures(profile=wing.profile)
+    trace: list[dict] = [meta_header(run_kind, evidence, model, cfg["name"], seed, disc)]
+    abstain_any = False
+
     imm = wing.record.scenario.get("immunology") or {}
-    agents = cfg["agents"]
     backend = LocalStubBackend()
 
-    script = {
-        ("intake", "proceed_immunology_workup"): "yes",
-        ("lab_gate", "ack_panel"): "yes",
-        ("pm_planner", "raise_pm_plan"): "yes",
-        ("pm_planner", "trap_unapproved"): "yes",
-    }
-    llm = ScriptedModel(model, seed, script, trace)
+    llm = ScriptedModel(model, seed, script_from_cfg(cfg), trace)
 
     emit(trace, model, op="admit", patient=wing.record.get("id"), at=wing.now())
 
     state = llm.triage("intake", "proceed_immunology_workup", {"ige_band": imm.get("ige_band")})
     if state == "abstain":
+        abstain_any = True
         emit(trace, model, op="human_route", reason="intake_abstain", agent="intake")
         wing.trace("human_route", agent="intake")
     elif state == "no":
@@ -88,6 +103,7 @@ async def _run_async(cfg: dict, dry_run: bool, case_path: pathlib.Path) -> dict:
 
     ack = llm.triage("lab_gate", "ack_panel", {"order_id": lab_order})
     if ack == "abstain":
+        abstain_any = True
         emit(trace, model, op="human_route", reason="lab_gate_abstain", agent="lab_gate")
         wing.trace("human_route", agent="lab_gate")
     elif ack != "yes":
@@ -103,6 +119,7 @@ async def _run_async(cfg: dict, dry_run: bool, case_path: pathlib.Path) -> dict:
     approved = imm.get("approved_pm_form")
     pm_ok = llm.triage("pm_planner", "raise_pm_plan", {"approved_form": approved})
     if pm_ok == "abstain":
+        abstain_any = True
         emit(trace, model, op="human_route", reason="pm_abstain", agent="pm_planner")
     elif pm_ok == "yes":
         form_id = approve_pm_form(approved, approved)
@@ -137,10 +154,14 @@ async def _run_async(cfg: dict, dry_run: bool, case_path: pathlib.Path) -> dict:
             for k in PARAM_KEYS:
                 line.setdefault("params", {}).setdefault(k, None)
 
+    apply_manifest_abstain(trace[0], disc, abstain_any)
     ok = plant_caught and all(r.get("status") == "completed" for r in tool_results)
     return {"fleet": cfg["name"], "seed": seed, "run_kind": run_kind, "evidence": evidence, "model": model,
             "patient": wing.record.get("id"), "plant_caught": plant_caught, "tool_calls": len(backend.calls),
-            "model_calls": sum(1 for x in trace if x.get("kind") == "model_call"), "pass": ok, "trace": trace}
+            "model_calls": sum(1 for x in trace if x.get("kind") == "model_call"), "pass": ok, "trace": trace,
+            "testing_banner": disc["testing_banner"], "disclosures_plain": disc["disclosures_plain"],
+            "abstain_label": disc["abstain_label"] if abstain_any else None,
+            "abstain_plain": disc["abstain_plain"] if abstain_any else None, "abstain_any": abstain_any}
 
 
 def run(dry_run: bool = True, case_path: pathlib.Path = CASE, fleet_path: pathlib.Path = FLEET) -> dict:
@@ -158,6 +179,22 @@ def summary_line(out: dict) -> str:
             f"tool_calls={out['tool_calls']} model_calls={out['model_calls']}")
 
 
+def result_block_lines(out: dict) -> list[str]:
+    lines = [out["testing_banner"], *out["disclosures_plain"]]
+    if out.get("abstain_any"):
+        lines.extend([out["abstain_label"], out["abstain_plain"]])
+    lines.append(summary_line(out))
+    lines.append(f"trace={out.get('trace_path', '')}")
+    return lines
+
+
+def print_result_block(out: dict) -> None:
+    for line in result_block_lines(out):
+        if line.startswith("trace=") and not out.get("trace_path"):
+            continue
+        print(line)
+
+
 def main(argv=None):
     import os
     os.environ.setdefault("WING_PROFILE", str(ROOT / "profiles" / "test.toml"))
@@ -168,15 +205,15 @@ def main(argv=None):
     p.add_argument("--live", action="store_true", help="Non-dry-run label (still uses scripted stub here).")
     p.add_argument("-o", "--output", type=pathlib.Path, default=pathlib.Path("immunology_trace.jsonl"))
     p.add_argument("--case", type=pathlib.Path, default=CASE)
-    p.add_argument("--fleet", type=pathlib.Path, default=FLEET)
+    p.add_argument("--fleet", type=pathlib.Path, default=FLEET, help="Fleet toml (e.g. fleets/immunology_abstain.toml).")
     args = p.parse_args(argv)
     dry = not args.live
     out = run(dry_run=dry, case_path=args.case, fleet_path=args.fleet)
     if not out["pass"]:
         raise CheckFail("WG-CASE-RUN-FAILED", summary_line(out))
     write_trace(out, args.output)
-    print(summary_line(out))
-    print(f"trace={args.output.resolve()}")
+    out["trace_path"] = str(args.output.resolve())
+    print_result_block(out)
     return 0
 
 

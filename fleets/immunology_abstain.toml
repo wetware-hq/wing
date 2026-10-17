@@ -1,0 +1,15 @@
+name = "immunology_abstain"
+seed = 19362
+shift_start = "1936-06-15T09:00"
+model = "DRYRUN-scripted-v1"
+
+[agents]
+intake = "immunology intake clerk"
+lab_gate = "lab routing clerk"
+pm_planner = "personalised medicine coordinator"
+
+[script]
+intake_proceed_immunology_workup = "yes"
+lab_gate_ack_panel = "abstain"
+pm_planner_raise_pm_plan = "yes"
+pm_planner_trap_unapproved = "yes"
