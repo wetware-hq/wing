@@ -1,7 +1,8 @@
 """One traced fleet run through a synthetic immunology case (paperwork-only PM planning).
 
 Dry-run (`--dry-run`) is a plumbing test only: the trace and summary carry run_kind and evidence labels;
-packing as fleet evidence is refused. Live fleet evidence is not implemented here."""
+packing as fleet evidence is refused. Live (`--live`) sends triage calls through ward's live guard and OpenRouter
+(ward's model key env); traces are labelled fleet-evidence-candidate and may be packed with ward-evidence."""
 import argparse
 import asyncio
 import json
@@ -71,11 +72,24 @@ def apply_manifest_abstain(meta: dict, disc: dict, abstain_any: bool) -> None:
         meta["abstain_plain"] = disc["abstain_plain"]
 
 
-async def _run_async(cfg: dict, dry_run: bool, case_path: pathlib.Path) -> dict:
+async def _run_async(
+    cfg: dict,
+    dry_run: bool,
+    case_path: pathlib.Path,
+    model_pin: str | None = None,
+    post=None,
+) -> dict:
     seed = int(cfg["seed"])
-    model = DRY_MODEL if dry_run else cfg.get("model", DRY_MODEL)
-    run_kind = "dry-run" if dry_run else "live"
-    evidence = "not-fleet-evidence" if dry_run else "fleet-evidence"
+    if dry_run:
+        model = DRY_MODEL
+        run_kind = "dry-run"
+        evidence = "not-fleet-evidence"
+    else:
+        from .case_live import LiveTriageModel, assert_no_key_leak, resolve_model_pin
+
+        model = resolve_model_pin(cfg, model_pin)
+        run_kind = "live"
+        evidence = "fleet-evidence-candidate"
     wing = Wing(case_path, seed=seed)
     disc = resolve_disclosures(profile=wing.profile)
     trace: list[dict] = [meta_header(run_kind, evidence, model, cfg["name"], seed, disc)]
@@ -83,12 +97,22 @@ async def _run_async(cfg: dict, dry_run: bool, case_path: pathlib.Path) -> dict:
 
     imm = wing.record.scenario.get("immunology") or {}
     backend = LocalStubBackend()
+    patient_id = wing.record.get("id")
+    case_date = wing.now()
 
-    llm = ScriptedModel(model, seed, script_from_cfg(cfg), trace)
+    if dry_run:
+        llm = ScriptedModel(model, seed, script_from_cfg(cfg), trace)
+    else:
+        llm = LiveTriageModel(model, seed, trace, post=post)
 
-    emit(trace, model, op="admit", patient=wing.record.get("id"), at=wing.now())
+    def triage(agent: str, question_id: str, context: dict) -> str:
+        if dry_run:
+            return llm.triage(agent, question_id, context)
+        return llm.triage(agent, question_id, context, patient_id, case_date[:10])
 
-    state = llm.triage("intake", "proceed_immunology_workup", {"ige_band": imm.get("ige_band")})
+    emit(trace, model, op="admit", patient=patient_id, at=case_date)
+
+    state = triage("intake", "proceed_immunology_workup", {"ige_band": imm.get("ige_band")})
     if state == "abstain":
         abstain_any = True
         emit(trace, model, op="human_route", reason="intake_abstain", agent="intake")
@@ -101,7 +125,7 @@ async def _run_async(cfg: dict, dry_run: bool, case_path: pathlib.Path) -> dict:
     lab_order = deterministic_lab_order(imm)
     emit(trace, model, op="lab_order_selected", order_id=lab_order, by="deterministic")
 
-    ack = llm.triage("lab_gate", "ack_panel", {"order_id": lab_order})
+    ack = triage("lab_gate", "ack_panel", {"order_id": lab_order})
     if ack == "abstain":
         abstain_any = True
         emit(trace, model, op="human_route", reason="lab_gate_abstain", agent="lab_gate")
@@ -117,7 +141,7 @@ async def _run_async(cfg: dict, dry_run: bool, case_path: pathlib.Path) -> dict:
             raise CheckFail("WG-CASE-TOOL-FAIL", tr.get("tool", "?"))
 
     approved = imm.get("approved_pm_form")
-    pm_ok = llm.triage("pm_planner", "raise_pm_plan", {"approved_form": approved})
+    pm_ok = triage("pm_planner", "raise_pm_plan", {"approved_form": approved})
     if pm_ok == "abstain":
         abstain_any = True
         emit(trace, model, op="human_route", reason="pm_abstain", agent="pm_planner")
@@ -133,7 +157,7 @@ async def _run_async(cfg: dict, dry_run: bool, case_path: pathlib.Path) -> dict:
     planted = imm.get("planted_trap_form")
     plant_caught = False
     try:
-        llm.triage("pm_planner", "trap_unapproved", {"form_id": planted})
+        triage("pm_planner", "trap_unapproved", {"form_id": planted})
         approve_pm_form(planted, approved)
     except CheckFail as e:
         if e.id == "WG-CASE-UNAPPROVED-FORM":
@@ -156,6 +180,13 @@ async def _run_async(cfg: dict, dry_run: bool, case_path: pathlib.Path) -> dict:
 
     apply_manifest_abstain(trace[0], disc, abstain_any)
     ok = plant_caught and all(r.get("status") == "completed" for r in tool_results)
+    if not dry_run:
+        import os
+        from ward import live
+        from .case_live import assert_no_key_leak
+
+        key = os.environ.get(live.KEY_ENV, "")
+        assert_no_key_leak(key, json.dumps(trace, sort_keys=True, default=str))
     return {"fleet": cfg["name"], "seed": seed, "run_kind": run_kind, "evidence": evidence, "model": model,
             "patient": wing.record.get("id"), "plant_caught": plant_caught, "tool_calls": len(backend.calls),
             "model_calls": sum(1 for x in trace if x.get("kind") == "model_call"), "pass": ok, "trace": trace,
@@ -164,9 +195,15 @@ async def _run_async(cfg: dict, dry_run: bool, case_path: pathlib.Path) -> dict:
             "abstain_plain": disc["abstain_plain"] if abstain_any else None, "abstain_any": abstain_any}
 
 
-def run(dry_run: bool = True, case_path: pathlib.Path = CASE, fleet_path: pathlib.Path = FLEET) -> dict:
+def run(
+    dry_run: bool = True,
+    case_path: pathlib.Path = CASE,
+    fleet_path: pathlib.Path = FLEET,
+    model_pin: str | None = None,
+    post=None,
+) -> dict:
     cfg = load_fleet(fleet_path)
-    return asyncio.run(_run_async(cfg, dry_run, case_path))
+    return asyncio.run(_run_async(cfg, dry_run, case_path, model_pin=model_pin, post=post))
 
 
 def write_trace(out: dict, path: pathlib.Path) -> None:
@@ -202,17 +239,36 @@ def main(argv=None):
     p = argparse.ArgumentParser(description="Run one synthetic immunology fleet case (traced).")
     p.add_argument("--dry-run", action="store_true", default=True,
                    help="Scripted model; trace is not fleet evidence (default).")
-    p.add_argument("--live", action="store_true", help="Non-dry-run label (still uses scripted stub here).")
+    p.add_argument("--live", action="store_true", help="OpenRouter live triage (requires ward model API key env).")
+    p.add_argument(
+        "--model",
+        metavar="PIN",
+        help="Dated model snapshot pin for --live (overrides fleet toml model when set).",
+    )
     p.add_argument("-o", "--output", type=pathlib.Path, default=pathlib.Path("immunology_trace.jsonl"))
     p.add_argument("--case", type=pathlib.Path, default=CASE)
     p.add_argument("--fleet", type=pathlib.Path, default=FLEET, help="Fleet toml (e.g. fleets/immunology_abstain.toml).")
     args = p.parse_args(argv)
     dry = not args.live
-    out = run(dry_run=dry, case_path=args.case, fleet_path=args.fleet)
+    out = run(dry_run=dry, case_path=args.case, fleet_path=args.fleet, model_pin=args.model)
     if not out["pass"]:
         raise CheckFail("WG-CASE-RUN-FAILED", summary_line(out))
     write_trace(out, args.output)
     out["trace_path"] = str(args.output.resolve())
+    trace_text = args.output.read_text()
+    if not dry:
+        import os
+
+        from ward import live
+
+        from .case_live import assert_no_key_leak
+        from .evidence import pack_and_verify_live_trace
+
+        key = os.environ.get(live.KEY_ENV, "")
+        assert_no_key_leak(key, trace_text, "\n".join(result_block_lines(out)))
+        merkle = pack_and_verify_live_trace(args.output)
+        if merkle:
+            print(f"merkle_root={merkle}")
     print_result_block(out)
     return 0
 
