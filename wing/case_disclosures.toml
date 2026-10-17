@@ -1,6 +1,10 @@
 # Fleet-case disclosures (review before merge). Plain sentences shown to clinicians travel with every run.
 # Production: each line_id is resolved through wing.lines from the signed v2 wording file (fail closed if missing).
-# Wording for LT-FLEET-DISC-* below is pending Educator sign-off; do not treat test_fixture text as signed site wording.
+# Wording for LT-FLEET-DISC-* is SIGNED 2026-10-18 in the v2 wording file under the two-of-three rule (any two of
+# Educator, Physician, Scientist; rule approved by the project owner 2026-10-18): Physician signed first, Scientist
+# second. The Educator wrote the wording and is not a signer of this version. Educator edits land later as a separate
+# change, re-signed, with a new wording_version; every run records the wording version it actually printed ([signoff]).
+# The test_fixture text below is a test copy only; production text always comes from the signed v2 file.
 # Tests only: set WING_CASE_DISCLOSURE_FIXTURE=1 to use [test_fixture.lines] below (not site wording).
 
 testing_banner = "TESTING ONLY - not for use with real patients."
@@ -17,6 +21,17 @@ line_ids = [
   "LT-FLEET-DISC-LIVE-PROVISIONAL",
   "LT-FLEET-DISC-DRYRUN-NOT-EVIDENCE",
 ]
+
+# Who stands behind the printed wording. wording_sha256 = sha256 of the seven printed sentences joined by "\n", in
+# line_ids order; a run whose printed sentences hash differently fails closed (WG-CASE-DISCLOSURE-VERSION).
+[signoff]
+signers = ["Physician", "Scientist"]
+signed_on = "2026-10-18"
+rule = "two-of-three (Educator, Physician, Scientist); rule approved by the project owner 2026-10-18"
+wording_author = "Educator"
+wording_author_signed = false
+wording_version = "FLEET-DISC-V1-7f2fa7f50879"
+wording_sha256 = "7f2fa7f508790ec75ba07407eb0bea0a960d094b3af5c933f8db2e64a26dc63d"
 
 # TEST FIXTURE — not signed site wording; pytest only when v2_lines_SIGNED.md is not mounted.
 [test_fixture.lines]

@@ -7,6 +7,7 @@ import argparse
 import asyncio
 import json
 import pathlib
+import subprocess
 import sys
 import tomllib
 
@@ -51,6 +52,23 @@ def approve_pm_form(form_id: str, approved: str) -> str:
     return form_id
 
 
+def repo_commit(path) -> dict:
+    """{"commit": full sha or None, "dirty": bool or None} for the git checkout at path."""
+    def git(*a):
+        r = subprocess.run(["git", "-C", str(path), *a], capture_output=True, text=True)
+        return r.stdout.strip() if r.returncode == 0 else None
+    sha = git("rev-parse", "HEAD")
+    status = git("status", "--porcelain", "--untracked-files=no")
+    return {"commit": sha or None, "dirty": None if status is None else bool(status)}
+
+
+def code_versions() -> dict:
+    from . import WARD_DIR
+    ward, wing = repo_commit(pathlib.Path(WARD_DIR).resolve()), repo_commit(ROOT)
+    return {"ward_commit": ward["commit"], "ward_dirty": ward["dirty"],
+            "wing_commit": wing["commit"], "wing_dirty": wing["dirty"]}
+
+
 def emit(trace: list, model: str, **fields):
     trace.append({"kind": "step", "model": model, **fields})
 
@@ -63,8 +81,17 @@ def meta_header(
     seed: int,
     disc: dict,
     patient_id: str,
+    versions: dict | None = None,
 ) -> dict:
+    so = disc["signoff"]
     return {
+        **(versions or {}),
+        "wording_version": so["wording_version"],
+        "wording_sha256": so["wording_sha256"],
+        "disclosure_signers": list(so["signers"]),
+        "wording_author": so["wording_author"],
+        "wording_author_signed": so["wording_author_signed"],
+        "disclosure_signoff": dict(so),
         "kind": "meta",
         "run_kind": run_kind,
         "evidence": evidence,
@@ -102,8 +129,9 @@ async def _run_async(
     case_path: pathlib.Path,
     model_pin: str | None = None,
     post=None,
+    seed: int | None = None,
 ) -> dict:
-    seed = int(cfg["seed"])
+    seed = int(cfg["seed"] if seed is None else seed)
     if dry_run:
         model = DRY_MODEL
         run_kind = "dry-run"
@@ -119,7 +147,10 @@ async def _run_async(
     patient_id = wing.record.get("id")
     if patient_id != IMM01_PATIENT_ID:
         raise CheckFail("WG-CASE-PATIENT-ID", f"expected {IMM01_PATIENT_ID}, got {patient_id}")
-    trace: list[dict] = [meta_header(run_kind, evidence, model, cfg["name"], seed, disc, patient_id)]
+    versions = code_versions()
+    if not dry_run and not versions["ward_commit"]:
+        raise CheckFail("WG-CASE-WARD-COMMIT", "live run needs the ward checkout's commit on the trace")
+    trace: list[dict] = [meta_header(run_kind, evidence, model, cfg["name"], seed, disc, patient_id, versions)]
     abstain_any = False
 
     imm = wing.record.scenario.get("immunology") or {}
@@ -217,7 +248,7 @@ async def _run_async(
             "patient": wing.record.get("id"), "plant_caught": plant_caught, "tool_calls": len(backend.calls),
             "model_calls": sum(1 for x in trace if x.get("kind") == "model_call"), "pass": ok, "trace": trace,
             "testing_banner": disc["testing_banner"], "patient_fit_note": disc["patient_fit_note"],
-            "disclosures_plain": disc["disclosures_plain"],
+            "disclosures_plain": disc["disclosures_plain"], "signoff": disc["signoff"], **versions,
             "abstain_label": disc["abstain_label"] if abstain_any else None,
             "abstain_plain": disc["abstain_plain"] if abstain_any else None, "abstain_any": abstain_any}
 
@@ -228,9 +259,10 @@ def run(
     fleet_path: pathlib.Path = FLEET,
     model_pin: str | None = None,
     post=None,
+    seed: int | None = None,
 ) -> dict:
     cfg = load_fleet(fleet_path)
-    return asyncio.run(_run_async(cfg, dry_run, case_path, model_pin=model_pin, post=post))
+    return asyncio.run(_run_async(cfg, dry_run, case_path, model_pin=model_pin, post=post, seed=seed))
 
 
 def write_trace(out: dict, path: pathlib.Path) -> None:
@@ -243,8 +275,15 @@ def summary_line(out: dict) -> str:
             f"tool_calls={out['tool_calls']} model_calls={out['model_calls']}")
 
 
+def signoff_line(out: dict) -> str:
+    so = out["signoff"]
+    author = f"{so['wording_author']} ({'signed' if so['wording_author_signed'] else 'not a signer'})"
+    return (f"wording_version={so['wording_version']} signers={','.join(so['signers']) or 'none'} "
+            f"wording_author={author} ward_commit={out.get('ward_commit')}")
+
+
 def result_block_lines(out: dict) -> list[str]:
-    lines = [out["testing_banner"], out["patient_fit_note"], *out["disclosures_plain"]]
+    lines = [out["testing_banner"], out["patient_fit_note"], *out["disclosures_plain"], signoff_line(out)]
     if out.get("abstain_any"):
         lines.extend([out["abstain_label"], out["abstain_plain"]])
     lines.append(summary_line(out))
@@ -272,12 +311,13 @@ def main(argv=None):
         metavar="PIN",
         help="Dated model snapshot pin for --live (overrides fleet toml model when set).",
     )
+    p.add_argument("--seed", type=int, default=None, help="Override the fleet toml seed for this run.")
     p.add_argument("-o", "--output", type=pathlib.Path, default=pathlib.Path("immunology_trace.jsonl"))
     p.add_argument("--case", type=pathlib.Path, default=CASE)
     p.add_argument("--fleet", type=pathlib.Path, default=FLEET, help="Fleet toml (e.g. fleets/immunology_abstain.toml).")
     args = p.parse_args(argv)
     dry = not args.live
-    out = run(dry_run=dry, case_path=args.case, fleet_path=args.fleet, model_pin=args.model)
+    out = run(dry_run=dry, case_path=args.case, fleet_path=args.fleet, model_pin=args.model, seed=args.seed)
     if not out["pass"]:
         raise CheckFail("WG-CASE-RUN-FAILED", summary_line(out))
     write_trace(out, args.output)
