@@ -13,6 +13,7 @@ EXCEPT_IDS = [re.compile(x) for x in CFG["exceptions"]["ids"]]
 TERM_EXC = [(re.compile(e["path"]), re.compile(r"(?<![\w-])" + re.escape(e["term"]) + r"(?![\w-])"), e)
             for e in CFG["exceptions"].get("term", [])]     # one entry per term: term, path, reason
 SELF = {"jurisdiction_scan.toml", pathlib.Path(__file__).name}
+TRAILERS = frozenset(CFG.get("commit_trailers", {}).get("allow", []))
 
 
 def strip_ids(text):
@@ -61,6 +62,15 @@ def test_core_has_no_jurisdiction_terms():
     assert hits == [], "jurisdiction terms in core (move to site profile): " + "; ".join(f"{k} {f}:{n}" for f, n, k in hits[:40])
 
 
+def drop_allowed_trailers(msg):
+    """Remove whole lines that exactly equal an allowed bot co-author trailer; nothing else is touched."""
+    return "\n".join(line for line in msg.splitlines() if line.strip() not in TRAILERS)
+
+
+def scan_commit_message(msg):
+    return scan_text(drop_allowed_trailers(msg))
+
+
 def test_new_commit_messages_have_no_jurisdiction_terms():
     base = CFG.get("commit_base", "")
     r = subprocess.run(["git", "log", "--format=%H%x00%B%x01", f"{base}..HEAD"], cwd=ROOT, capture_output=True, text=True)
@@ -70,7 +80,7 @@ def test_new_commit_messages_have_no_jurisdiction_terms():
     for rec in r.stdout.split("\x01"):
         if "\x00" in rec:
             sha, msg = rec.split("\x00", 1)
-            ids = scan_text(msg)
+            ids = scan_commit_message(msg)
             if ids:
                 bad.append((sha.strip()[:7], ids))
     assert bad == [], f"jurisdiction terms in commit messages: {bad}"
@@ -138,3 +148,19 @@ def test_untracked_live_json_is_scanned(tmp_path, monkeypatch):
 
 def test_english_reach_and_numbers_are_not_flagged():
     assert scan_text("within reach of the bed; 80,000 tokens; SYNTH-REC-0001; TEST-000") == []
+
+
+def test_allowed_bot_trailer_is_dropped_but_nothing_else():
+    assert TRAILERS, "allow list is configured"
+    for trailer in TRAILERS:
+        assert trailer.startswith("Co-authored-by: ") and trailer.endswith(">")
+        assert scan_commit_message(f"Fix a thing (#9)\n\n{trailer}\n") == []
+        email = trailer.split("<", 1)[1].rstrip(">")
+        # the same address in the body, or in a trailer with another name, still fails
+        assert scan_commit_message(f"mail {email} for access\n\n{trailer}") == ["SCAN-PROMPT-LEAK/email"]
+        assert scan_commit_message(f"x\n\nCo-authored-by: Someone Else <{email}>") == ["SCAN-PROMPT-LEAK/email"]
+        assert scan_commit_message(f"x\n\n{trailer} extra") == ["SCAN-PROMPT-LEAK/email"]
+
+
+def test_unknown_co_author_trailer_still_fails():
+    assert scan_commit_message("x\n\nCo-authored-by: Bot <someone@example.org>") == ["SCAN-PROMPT-LEAK/email"]
