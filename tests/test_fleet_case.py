@@ -49,6 +49,22 @@ def test_disclosures_in_stdout_and_manifest(tmp_path):
     assert meta["disclosures_plain"] == resolve_disclosures()["disclosures_plain"]
 
 
+def test_patient_fit_note_in_stdout_and_manifest(tmp_path):
+    out_path = tmp_path / "trace.jsonl"
+    note = DISC_DATA["patient_fit_note"]
+    r = subprocess.run(
+        [sys.executable, "-m", "wing.fleet_case", "--dry-run", "-o", str(out_path)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        env=_run_env(),
+    )
+    assert r.returncode == 0, r.stderr + r.stdout
+    assert note in r.stdout
+    meta = read_trace_jsonl(out_path.read_text())[0]
+    assert meta["patient_fit_note"] == note
+
+
 def test_abstain_disclosures_in_stdout_and_manifest(tmp_path, abstain_fleet):
     out_path = tmp_path / "trace.jsonl"
     r = subprocess.run(
@@ -89,6 +105,7 @@ def test_dry_run_command_passes(tmp_path):
     assert meta["run_kind"] == "dry-run" and meta["evidence"] == "not-fleet-evidence"
     assert meta["patient_id"] == fleet_case.IMM01_PATIENT_ID
     assert meta["patient_choice_note"] == fleet_case.PATIENT_CHOICE_NOTE
+    assert meta["patient_fit_note"] == DISC_DATA["patient_fit_note"]
     assert any(x.get("kind") == "model_call" for x in lines)
     assert all("model" in x for x in lines if x.get("kind") in ("step", "model_call", "meta"))
 

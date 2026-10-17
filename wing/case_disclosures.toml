@@ -3,6 +3,7 @@
 # Tests only: set WING_CASE_DISCLOSURE_FIXTURE=1 to use [test_fixture.lines] below (not site wording).
 
 testing_banner = "TESTING ONLY - not for use with real patients."
+patient_fit_note = "Stand-in patient: S14 is an oncology lab-results case used for the immunology lab-review flow because no signed immunology patient exists yet. This is not a clean clinical match."
 abstain_label = "COMPLIANCE-ABSTAIN: clinician review required"
 abstain_plain = "This decision needs a human to review it before anything happens."
 
