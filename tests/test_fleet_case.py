@@ -88,6 +88,8 @@ def test_dry_run_command_passes(tmp_path):
     lines = read_trace_jsonl(out_path.read_text())
     meta = lines[0]
     assert meta["run_kind"] == "dry-run" and meta["evidence"] == "not-fleet-evidence"
+    assert meta["patient_id"] == fleet_case.IMM01_PATIENT_ID
+    assert meta["patient_choice_note"] == fleet_case.PATIENT_CHOICE_NOTE
     assert any(x.get("kind") == "model_call" for x in lines)
     assert all("model" in x for x in lines if x.get("kind") in ("step", "model_call", "meta"))
 
@@ -117,6 +119,13 @@ def test_tampered_unapproved_form():
 
 def test_tampered_lab_not_eligible():
     caught("WG-CASE-LAB-NOT-ELIGIBLE", deterministic_lab_order, {"pm_eligible": False})
+
+
+def test_tampered_imm01_patient_id(tmp_path, monkeypatch):
+    bad = tmp_path / "bad_imm.toml"
+    text = (ROOT / "scenarios" / "IMM01.toml").read_text().replace(fleet_case.IMM01_PATIENT_ID, "SYNTH-P0501")
+    bad.write_text(text)
+    caught("WG-CASE-PATIENT-ID", fleet_case.run, dry_run=True, case_path=bad)
 
 
 def test_tampered_tool_timeout():

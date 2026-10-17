@@ -1,4 +1,4 @@
-commit_base = "230b398ed5b0d4e1cc849a7745b253739219a984"
+commit_base = "40317e21a101be0f650b127f356ef1da976de0e3"
 
 # Jurisdiction term scan (tests: test_jurisdiction_scan.py). Hand-written denylist; no external list imported.
 # Each category is its own check id. Local names and values go in site-profile data, never in the core.
