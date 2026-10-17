@@ -33,7 +33,8 @@ Normative rules for agents that operate or modify wing. Wording uses RFC 2119. N
 
 - `python3 -m pytest -q` **MUST** exit 0 before every commit (the DRAFT-line tests stay red until those lines are signed).
 - wing **MUST NOT** add its own clock or guards.
-- A new check **MUST** get a stable `WG-` id and a tampered run asserting that id.
+- A new check **MUST** get a stable `WG-` id and a tampered run asserting that id, and **MUST** be listed in [BAR.md](BAR.md); `tests/test_bar.py` fails on any `WG-`/`PM-` id that runs without a BAR.md entry.
+- Fleet runs are one model per fleet: a LIVE reply from a non-pinned model **MUST** fail (`WG-MODEL-NOT-PINNED`), and scoring **MUST** stay ward's `passmarks`, identical across arms, not varied with the fleet.
 - No remote is set; nothing is pushed until sign-off (target: wetware-hq/wing).
 
 ## Out of scope

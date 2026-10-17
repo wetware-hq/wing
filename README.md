@@ -26,6 +26,7 @@ What wing is not: it does not treat anyone, give clinical advice or run with rea
 - **Caution table + one checker**: `tighten-unsigned-ok` or `both-directions-need-signature`; unmarked fields need a signature both ways.
 - **Rule 6** escalation (overdue obs, zone crossing, help call) goes to ward and clinician, signal only. **Rule 7** agent med/allergy/resus changes are proposals until a clinician signs.
 - **Agent plug**: records in, one JSON action from a fixed list out, per-room pinned model; scripted agents only. Replay store keyed by hash(prompt+commit), labelled REPLAY, key-scanned. Budget precompute cuts seeds, never guards.
+- **Fleet** (`wing/fleet.py`, `wing/fleet_live.py`): one model per fleet. A LIVE reply record carries the model id that produced it and the run is clean only if every record is the pinned snapshot; a non-pinned model fails on `WG-MODEL-NOT-PINNED`. Scoring is ward's `passmarks`, the same ruler across arms, so columns compare. Cross-fleet comparison checks (FM-*) are specified but unbuilt (`FM_RULES` empty; report reads `fm_rules: not implemented yet`). Trace mode uses no model (`TRACE-scripted`) and is not counted; LIVE is provisional, not counted.
 - **Exit**: a stay closes only with a discharge, transfer, AMA or death record ("leave" keeps it open).
 - **Multi-patient, multi-ward** (`wing/multi.py`): one tick steps the whole wing; shared staff and beds; ward ids; a move is a checked handover; writes and views are scoped to the agent's own patient; escalations jump the queue, overflow to a finite last-tier team, and an unanswered one fails the run.
 - **Lines**: only signed lines from `wording/v2_lines_SIGNED.md`, each pinned by sha256 from `wing/line_pins.toml` (LT-REACH-HEARD-PT unpinned until re-signed). Other languages need a signed copy per language under the same id (`v2_lines_SIGNED.<lang>.md`); never machine-translated.
@@ -43,7 +44,7 @@ Every check has a stable id (`WG-...`); a tampered run counts as caught only whe
 
 ## Fresh-clone bar
 
-`python3 -m pytest -q` with ward at `../ward` (or `WING_WARD_DIR`) is wing's bar; `WING_PROFILE=profiles/test.toml python3 -m wing.lines` must pass before a site is called stable. ward's `scripts/bar.sh` covers the sibling repos.
+`python3 -m pytest -q` with ward at `../ward` (or `WING_WARD_DIR`) is wing's bar; `WING_PROFILE=profiles/test.toml python3 -m wing.lines` must pass before a site is called stable. ward's `scripts/bar.sh` covers the sibling repos. What a green covers and what it does not — so a green here is not read as a green elsewhere — is [BAR.md](BAR.md).
 
 ## Live-model status
 
