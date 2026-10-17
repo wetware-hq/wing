@@ -15,11 +15,11 @@ def _data():
 
 
 def resolve_disclosures(profile=None, v2_path=None):
-    """-> dict with testing_banner, abstain_label, abstain_plain, line_ids, disclosures_plain (five sentences)."""
+    """-> dict with testing_banner, abstain_label, abstain_plain, line_ids, disclosures_plain (seven sentences)."""
     d = _data()
     ids = list(d["line_ids"])
-    if len(ids) != 5:
-        raise CheckFail("WG-CASE-DISCLOSURE-MISSING", f"expected 5 line_ids, got {len(ids)}")
+    if len(ids) != 7:
+        raise CheckFail("WG-CASE-DISCLOSURE-MISSING", f"expected 7 line_ids, got {len(ids)}")
     use_fixture = os.environ.get(FIXTURE_ENV) == "1"
     plain = []
     if use_fixture:

@@ -42,12 +42,15 @@ def test_disclosures_in_stdout_and_manifest(tmp_path):
         env=_run_env(),
     )
     assert r.returncode == 0, r.stderr + r.stdout
+    disc = resolve_disclosures()
+    assert len(disc["line_ids"]) == 7 and len(disc["disclosures_plain"]) == 7
     assert DISC_DATA["testing_banner"] in r.stdout
-    for sentence in resolve_disclosures()["disclosures_plain"]:
+    for sentence in disc["disclosures_plain"]:
         assert sentence in r.stdout, sentence
     meta = read_trace_jsonl(out_path.read_text())[0]
     assert meta["testing_banner"] == DISC_DATA["testing_banner"]
-    assert meta["disclosures_plain"] == resolve_disclosures()["disclosures_plain"]
+    assert meta["disclosure_line_ids"] == disc["line_ids"]
+    assert meta["disclosures_plain"] == disc["disclosures_plain"]
 
 
 def test_patient_fit_note_in_stdout_and_manifest(tmp_path):
