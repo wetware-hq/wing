@@ -5,6 +5,9 @@ import pytest
 from conftest import caught
 from wing import CheckFail, lines
 
+if not lines.V2.is_file():
+    pytest.skip(f"v2 wording not mounted at {lines.V2}", allow_module_level=True)
+
 
 def _pins(tmp_path, text_by_id, status="confirmed"):
     p = tmp_path / "pins.toml"

@@ -1,0 +1,9 @@
+name = "immunology_mvp"
+seed = 19361
+shift_start = "1936-06-15T09:00"
+model = "DRYRUN-scripted-v1"
+
+[agents]
+intake = "immunology intake clerk"
+lab_gate = "lab routing clerk"
+pm_planner = "personalised medicine coordinator"

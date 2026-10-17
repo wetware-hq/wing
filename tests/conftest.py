@@ -3,7 +3,10 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 import pytest
 from wing import CheckFail
 
-os.environ.setdefault("WING_PROFILE", str(pathlib.Path(__file__).resolve().parent.parent / "profiles" / "test.toml"))
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+os.environ.setdefault("WING_PROFILE", str(ROOT / "profiles" / "test.toml"))
+os.environ.setdefault("WING_WARD_DIR", str(ROOT / "ward"))
+os.environ.setdefault("WARD_SIBLINGS_DIR", str(ROOT))
 ANS = pathlib.Path(__file__).resolve().parent.parent / "scenarios" / "W01.toml"
 
 
