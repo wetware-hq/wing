@@ -53,3 +53,15 @@ Live results: provisional, not counted.
 ## Status
 
 Jurisdiction status: purge partial. wing: 14 found, 0 removed, 14 excepted (the older profile scan's planted test terms and signed line ids). letters: 38 excepted, each listed per term with a reason.
+
+## References
+
+wing makes no biological or clinical claim. It orchestrates ward on invented patients and checks that escalations, handovers and signatures behave as specified, so nothing it does rests on a measured result in the literature. Entries are tied to the one claim that rests on them; anything merely adjacent is left out, and anything listed carries a DOI, PMID or arXiv id so it can be checked rather than trusted.
+
+### Peer-reviewed
+
+- None. wing asserts things about the orchestration and the guards, not about any patient's biology, so there is no measured finding it depends on. A paper here would be adjacent reading dressed up as evidence, so it is left out on purpose rather than to hide a gap.
+
+### Unsupported claims (no peer-reviewed support)
+
+- Every claim wing makes — that the checks catch an overdue escalation, a mismatched handover or an unconfirmed change to medicines, allergies or resuscitation status — is shown by its own scenario answer files on invented patients, not by peer-reviewed research. A green is the checks behaving as specified on synthetic data, nothing about real care.
