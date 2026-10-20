@@ -5,7 +5,7 @@
     "fleet_spec": "FLEET.toml",
     "fleet_spec_sha256_prefix": "ffb63dcf5af3",
     "generated": "2026-10-20T19:41+11:00",
-    "generated_by": "BIO Engineer (converged with BIO Scientist's provenance scheme)",
+    "generated_by": "BIO Engineer (converged with BIO Scientist's provenance scheme); ghcr fleet-env digest wired 2026-10-20T20:08+11:00",
     "governance": "No merge to main without green CI AND Mathew per-SHA sign-off (bindi#9). Nothing submitted to Boltz and nothing spent until the APPR human_gate approves.",
     "status": "spec-level map; nothing submitted, nothing spent (submitted_to_date=false, spent_to_date_usd=0.00)",
     "verified": "on_box"
@@ -94,10 +94,11 @@
         "api_version",
         "config_hash",
         "target_hash",
-        "seed"
+        "seed",
+        "image_digest"
       ],
       "cost_usd": 0.0,
-      "verified": "on_box (spec); immediate off-API mirroring planned"
+      "verified": "on_box (spec); image digest now realised (ghcr bindi-fleet-env@sha256:7e8762aebc33...); off-API mirroring planned"
     },
     {
       "node": "L2",
@@ -184,21 +185,21 @@
           {
             "package": "gemmi",
             "needed_for": "real mmCIF parse in the ipSAE worker (label_asym_id, B-factor pLDDT)",
-            "found": "nowhere on this box, including /workspace/tmp/bindi-venv"
+            "found": "now pinned EXACTLY in the ghcr fleet-env image (gemmi==0.7.5); still not in the bare box main checkout"
           },
           {
             "package": "shape_complementarity",
             "needed_for": "the best single descriptor (AUC 0.688)",
-            "found": "not installed"
+            "found": "now pinned EXACTLY in the ghcr fleet-env image (shape-complementarity==0.2.0, MIT, abi3 wheels); producer module in the worker still to be written"
           },
           {
             "package": "freesasa or equivalent",
             "needed_for": "buried-surface / SASA terms if added",
-            "found": "not installed"
+            "found": "still not installed (not needed unless SASA terms are added)"
           }
         ],
-        "dependency_declaration_gap": "/workspace/wetware/bindi/pyproject.toml declares dependencies = [], so no descriptor dependency is pinned anywhere in the checked-out tree. The worker's gemmi requirement is satisfied only in the PR #14 validation env, NOT from this box's main checkout. Live instance of the FLEET.toml provenance weakness: the content address does not cover the environment.",
-        "fix_owned_by_engineer": "pin real deps into bindi/pyproject.toml, build the ghcr image so the env is resolvable, and widen the content address to the image digest",
+        "dependency_declaration_gap": "RESOLVED for gemmi/biopython/numpy: bindi/pyproject.toml now declares them as floors and deploy/requirements-fleet-env.txt pins them EXACTLY (bindi PR #15); the reproducible env is the ghcr image ghcr.io/wetware-hq/bindi-fleet-env:2026-10-20@sha256:7e8762aebc33... The bare box main checkout still needs `pip install` or the image to run the worker.",
+        "fix_owned_by_engineer": "DONE: deps pinned in bindi/pyproject.toml + deploy/requirements-fleet-env.txt, ghcr image built+pushed, content address widened to the image digest (bindi PR #15)",
         "verified": "on_box"
       },
       "verified": "on_box (module + absence of deps); end-to-end validation reported"
@@ -219,24 +220,36 @@
         "api_version",
         "config_hash",
         "target_hash",
-        "seed"
+        "seed",
+        "ghcr image digest (bindi-fleet-env@sha256:7e8762aebc33...)"
       ],
       "content_address_planned": [
-        "+ ghcr image digest",
-        "+ code/script hash"
+        "+ code/script hash (OD-8 remaining half)"
       ],
       "fleet_traces_format": "merkle-jsonl (append-only JSONL, each line hash-links to the previous)",
       "module": "bindi src/bindi/provenance.py, trace_validate.py",
-      "status": "trace-record validation present; merkle hash-chaining to wire before campaign one",
-      "known_weakness": "four-tuple is a strict subset of what Nextflow/RO-Crate hash (omits container image, environment, script text); see required_but_NOT_installed for a live example",
+      "status": "image digest now part of the content address (OD-8 first half done); code/script hash + merkle hash-chaining still to wire before campaign one",
+      "known_weakness": "four-tuple was a strict subset of what Nextflow/RO-Crate hash; the container image is now covered via the ghcr digest, code/script text still not",
       "verified": "on_box"
     },
     "containers": {
-      "role": "environment snapshot / backup of fleet environments",
+      "role": "environment snapshot / backup of fleet environments; the layer-2 descriptor environment",
       "registry": "ghcr.io (GitHub Container Registry)",
       "auth": "GITHUB_PAT (classic, repo + packages scope; value not stored here)",
-      "planned_use": "pin ghcr image digest into the content address to close the provenance gap",
-      "verified": "unverified (image not built yet)"
+      "image": "ghcr.io/wetware-hq/bindi-fleet-env:2026-10-20",
+      "digest": "sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+      "built_from": "wetware-hq/bindi deploy/fleet-env.Dockerfile (bindi PR #15, draft)",
+      "exact_pins": [
+        "gemmi==0.7.5",
+        "biopython==1.88",
+        "numpy==2.4.6",
+        "shape-complementarity==0.2.0",
+        "pandas==3.0.6",
+        "python-dateutil==2.9.0.post0",
+        "six==1.17.0"
+      ],
+      "pin_rationale": "EXACT ==, not floors: the image digest IS the content address for descriptor numbers, so a >= would mean the address no longer determines the numbers (BIO Scientist).",
+      "verified": "on_box (built under podman 5.4.2, import-checked, pushed to ghcr)"
     },
     "version_control": {
       "github": {
@@ -245,7 +258,7 @@
           "bindi (code, MIT, v0.1.0)",
           "wing (fleet backup, fleets/)"
         ],
-        "backup_pr": "wing#6 (draft, head 993b2f1, FLEET.toml sha256 ffb63dcf5af3)"
+        "backup_pr": "wing#6 (draft) - refreshed this pass to carry the ODC-BY string, per-token PAE caveat, and the ghcr digest"
       },
       "open_prs": [
         {
@@ -254,9 +267,14 @@
           "state": "draft, unmerged"
         },
         {
-          "id": "PR #6",
+          "id": "PR #15",
+          "subject": "fleet-env: exact descriptor dep pins + ghcr image",
+          "state": "draft, unmerged, head b53c9af"
+        },
+        {
+          "id": "PR #6 (wing)",
           "subject": "fleets/ backup bundle",
-          "state": "draft, head 993b2f1"
+          "state": "draft"
         }
       ],
       "closed_prs": [
@@ -322,14 +340,16 @@
         "verified": "docs"
       },
       "shape_complementarity": {
-        "producer": "box implementation PENDING; needs a geometry/SASA tool NOT installed (see required_but_NOT_installed)",
-        "verified": "on_box (absence)"
+        "producer": "box implementation PENDING (worker module not yet written); the descriptor dependency is now pinned in the fleet-env image (shape-complementarity==0.2.0)",
+        "verified": "on_box (dep pinned in image; producer module pending)"
       }
     },
     "excluded": {
       "pdockq": "returned exactly 0.500 (constant/broken column)",
       "pdockq2": "returned exactly 0.500 (constant/broken column)"
-    }
+    },
+    "attribution_required": "This work used Proteinbase by Adaptyv Bio under ODC-BY license",
+    "pae_npz_token_caveat": "pae.npz from Boltz is per-TOKEN, not per-residue (ligands are tokenized per-atom; fixtures show a 256x256 PAE against 169 residues + a 1-residue ligand). The descriptor worker MUST build an explicit token->residue map from the CIF and fail loudly if it cannot, even where tokens should equal residues. verified: on_box (fixture shapes)"
   },
   "excluded_tools": [
     {
@@ -376,8 +396,8 @@
     "MODAL_TOKEN_SECRET (inert)"
   ],
   "open_decisions_touching_infra": [
-    "OD-8: widen content address to ghcr image digest + code/script hash (adopt Workflow RO-Crate eventually)",
-    "Pin bindi deps (gemmi, biopython, numpy) + install/build env so the worker is reproducible from main, not just PR #14 - BIO Engineer owns",
+    "OD-8: content address now includes the ghcr image digest (done); remaining half is code/script hash (adopt Workflow RO-Crate eventually)",
+    "DONE: pinned bindi deps (gemmi/biopython/numpy floors + exact pins) and built the ghcr fleet-env image so the worker is reproducible from an image, not just PR #14 - BIO Engineer",
     "Origin durability: mirror wing into Origin (recommended) vs create a deliberate Origin wing - Mathew's call",
     "thresholds: Boltz-native recalibration vs reinstating AF2 initial-guess (re-adds a GPU layer)"
   ]
