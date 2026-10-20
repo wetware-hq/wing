@@ -325,7 +325,7 @@ question = "re-express this spec as a Workflow RO-Crate over CWL/Nextflow with a
 
 [[risks]]
 id       = "ipsae_worker_unvalidated_end_to_end"
-severity = "open, recorded 2026-10-20"
+severity = "wiring-validated 2026-10-20, end-to-end pending"
 statement = "No fixture on the box carries real PAE and real pLDDT together, so the ipSAE/min_ipSAE worker cannot be validated end-to-end before campaign one. The boltz_des_* runs have pae.npz but a flat 100.0 B-factor placeholder and a protein+ligand complex whose PAE is (256,256) against 170 residues because Boltz tokenizes ligands PER-ATOM, i.e. PAE is per-TOKEN not per-residue. The boltz_run_* runs have real varying pLDDT but no pae.npz. Reported by BIO Engineer."
 mitigation = "worker must build an explicit token->residue map from the CIF and FAIL LOUDLY on mismatch rather than trust a length vector; a zero-variance pLDDT column is treated as ABSENT, not as a value. Campaign one's first batch is the first true end-to-end validation of this descriptor."
 
@@ -350,3 +350,11 @@ rules = [
   "4 artifacts mirrored off-API before transport (7-day retention clock)",
   "5 return-path decisions re-enter ONLY via the manifest and the approval gate",
 ]
+validation_2026_10_20 = "BIO Engineer validated the worker against the box fixtures (PR #14, draft, unmerged): pLDDT read on the 0-100 scale with a flat placeholder flagged absent via std<1e-6 (scale-independent, real boltz_run pLDDT read as 90.16); label_asym_id parsed as real chain ids with no silent re-lettering, and a token/residue mismatch RAISES TokenAlignmentError (256 PAE tokens vs 169 residues) under two independent guards; per-direction ipsae_d0res agrees with DunbrackLab/IPSAE at SHA 6174cf9 to ~3e-7 on a real-PAE protein slice, with our min_ipSAE=min vs their aggregate max confirmed as an intentional difference on identical d0 math. This establishes the worker is wired correctly, NOT that the descriptor is validated on campaign-one geometry."
+residual   = "No fixture carries real PAE and real pLDDT together and none has campaign-one geometry, so campaign one's first batch remains the first true end-to-end test of this descriptor."
+
+[[risks]]
+id       = "plddt_scale_assumption"
+severity = "advisory, recorded 2026-10-20"
+statement = "The ipSAE worker performs NO 0-1 to 0-100 pLDDT rescale (the DunbrackLab reference multiplies by 100 iff max <= 1). This is safe for Boltz mmCIF, which is always 0-100, but a future 0-1 pLDDT source would read as ~0.5 and be mis-flagged as PRESENT rather than caught by the zero-variance absence test. Reported by BIO Engineer."
+mitigation = "if a non-Boltz pLDDT source is ever added, the worker must assert the scale explicitly rather than infer it."
