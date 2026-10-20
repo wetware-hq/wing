@@ -29,7 +29,7 @@ def resolve_disclosures(profile=None, v2_path=None):
                 raise CheckFail("WG-CASE-DISCLOSURE-MISSING", f"test fixture missing {lid}")
             plain.append(fix[lid])
     else:
-        path = pathlib.Path(v2_path or wing_lines.V2)
+        path = pathlib.Path(v2_path) if v2_path else wing_lines.v2_path()
         if not path.is_file():
             raise CheckFail(
                 "WG-CASE-DISCLOSURE-MISSING",

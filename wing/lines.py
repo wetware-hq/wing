@@ -5,7 +5,15 @@ import hashlib, os, pathlib, re, sys, tomllib
 from . import CheckFail
 from .profile import SLOTS, load as load_profile
 
-V2 = pathlib.Path(os.environ.get("WING_V2_LINES", "/workspace/wording/v2_lines_SIGNED.md"))
+DEFAULT_V2 = "/workspace/wording/v2_lines_SIGNED.md"
+
+
+def v2_path():
+    """Resolved at call time: WING_V2_LINES must be honourable after import, or a missing mount reads the real file."""
+    return pathlib.Path(os.environ.get("WING_V2_LINES", DEFAULT_V2))
+
+
+V2 = v2_path()   # import-time snapshot, kept for callers that want the default path
 PIN_FILE = pathlib.Path(__file__).parent / "line_pins.toml"
 UNSIGNED_MARKS = ("DRAFT", "RE-SIGN")
 ROW = re.compile(r"^\| ([A-Z]{2,}-[A-Z0-9-]+) \| (.*?) \| (.*?) \|$", re.M)
@@ -17,7 +25,8 @@ def used(profile=None):
     return (profile or load_profile()).get("lines")
 
 
-def rows(path=V2):
+def rows(path=None):
+    path = pathlib.Path(path) if path else v2_path()
     return {i: (t, note) for i, t, note in ROW.findall(pathlib.Path(path).read_text(encoding="utf-8"))}
 
 
@@ -35,7 +44,10 @@ def lang_path(path, lang):
     return p if lang == "en" else p.with_name(p.name.replace(".md", f".{lang}.md"))
 
 
-def line(lid, path=V2, pin_file=PIN_FILE, profile=None, **slots):
+def line(lid, path=None, pin_file=PIN_FILE, profile=None, **slots):
+    path = pathlib.Path(path) if path else v2_path()
+    if not path.is_file():
+        raise CheckFail("WG-LINE-FILE-MISSING", str(path))   # fail closed: never fall back to another file
     prof = profile or load_profile()
     lang = prof.get("language")
     src = lang_path(path, lang)
@@ -85,8 +97,9 @@ def help_heard(assignment, profile=None, **kw):
     return render(ids["help_on_way"], profile=profile, Role=assignment["role"], **kw)   # no time on record
 
 
-def stability(path=V2, profile=None, pin_file=PIN_FILE):
+def stability(path=None, profile=None, pin_file=PIN_FILE):
     """-> list of (item, check id) blocking stability: pending profile values, then undisplayable used lines."""
+    path = pathlib.Path(path) if path else v2_path()
     prof = profile or load_profile()
     out = [(f, "WG-PROFILE-PENDING") for f in prof.pending]
     for lid in (used(prof).values() if "lines" not in prof.pending else ()):
