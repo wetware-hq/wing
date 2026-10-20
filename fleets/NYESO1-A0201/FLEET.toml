@@ -1,0 +1,352 @@
+# FLEET.toml - agentic execution graph for target NYESO1-A0201
+# Clinical case, mechanism and in-vitro hand-off: see CASE.md in this directory.
+# Rendered architecture diagram: ../architecture-2layer-fleet-2026-10-20.mermaid
+# Nothing in this file has been submitted. No money has been spent.
+
+[fleet]
+target_id        = "NYESO1-A0201"
+version          = "1.0"
+date             = "2026-10-20"
+status           = "staged, not submitted"
+case_file        = "CASE.md"
+diagram          = "../architecture-2layer-fleet-2026-10-20.mermaid"
+layers           = ["boltz", "interface"]          # per KEEP LAYERS ( Boltz, interface )
+primary_endpoint = "specificity_margin"            # on-target rank minus best-decoy rank
+scope            = "in_silico_design_and_screen"   # in vitro proof is downstream, see CASE.md
+
+# ---------------------------------------------------------------- agents
+
+[[agents]]
+name     = "BIO Scientist"
+role     = "owns the graph, the descriptors and the calibration argument"
+decides  = ["descriptor stack", "combination rule", "keep fraction", "panel construction"]
+
+[[agents]]
+name     = "BIO Physician"
+role     = "owns target biology and the in-vitro bar"
+decides  = ["decoy peptide panel", "self-peptide panel", "in-vitro reproduction bar", "residue-level sign-off on negative design"]
+
+[[agents]]
+name     = "BIO Engineer"
+role     = "owns parallelism and provenance, engaged only if n outgrows the hosted API"
+decides  = ["execution substrate above hosted-API scale"]
+
+[[agents]]
+name     = "Mathew"
+role     = "principal; sole authority for spend and submission"
+decides  = ["approval", "spend cap", "threshold policy", "which negative-design panel"]
+
+# ---------------------------------------------------------------- graph
+
+[[nodes]]
+id    = "CFG"
+kind  = "manifest"
+label = "campaign manifest - the only human-authored artifact"
+owner = "BIO Scientist"
+
+[[nodes]]
+id            = "APPR"
+kind          = "human_gate"
+label         = "approval + spend cap, inside the graph"
+approver      = "Mathew"
+human_input   = true
+spend_cap_usd = 15.00
+on_deny       = "HALT"
+note = "No prior art found for a declarative in-graph approval+budget node; CWL puts pause/resume out of scope. This is the novel part of the spec."
+
+[[nodes]]
+id    = "HALT"
+kind  = "terminal"
+label = "halt at zero cost"
+
+[[nodes]]
+id        = "L1A"
+kind      = "generate"
+layer     = "boltz"
+label     = "on-target design, 300 binders vs the real epitope"
+provider  = "boltz_hosted_design_api"
+conditioning = ["epitope_residues", "non_binding_residues"]
+cost_usd  = 15.00
+
+[[nodes]]
+id       = "L1B"
+kind     = "predict"
+layer    = "boltz"
+label    = "decoy refold - survivors x decoy panel, same HLA"
+provider = "boltz_hosted_design_api"
+note = "Prediction, not design, through the same API. Keeping it in layer 1 is the only reason a specificity screen survives the two-layer constraint."
+
+[[nodes]]
+id    = "ART"
+kind  = "artifact_store"
+label = "content-addressed artifacts, mirrored off-API immediately"
+files = ["_predicted.cif", "metrics.json", "pae.npz"]
+
+[[nodes]]
+id    = "L2"
+kind  = "score"
+layer = "interface"
+label = "interface descriptors, pure CPU on this box, zero GPU, zero rent"
+
+[[nodes]]
+id    = "DIV"
+kind  = "filter"
+label = "diversity / novelty - cluster and cap per scaffold family"
+
+[[nodes]]
+id    = "PANEL"
+kind  = "terminal"
+label = "ranked panel with per-design provenance, every row replayable from the manifest hash"
+
+[graph]
+edges = [
+  ["CFG",   "APPR"],
+  ["APPR",  "HALT",  "deny"],
+  ["APPR",  "L1A",   "approve"],
+  ["L1A",   "L1B"],
+  ["L1B",   "ART"],
+  ["ART",   "L2"],
+  ["L2",    "DIV"],
+  ["DIV",   "PANEL"],
+  ["PANEL", "handoff:BIO Physician"],
+  ["PANEL", "handoff:BIO Engineer"],
+]
+
+# ---------------------------------------------------------------- target
+
+[target]
+complex = "class I pMHC, 3 chains"
+chains  = ["A", "B", "C"]
+
+[target.chain_A]
+molecule = "HLA-A*02:01 heavy chain"
+length   = 275
+starts   = "GSHSMRYFFTSVSRPGRGEPRFIAVGYVDDTQFVRF"
+numbering_note = "mature chain from Gly1, no expression tag, so 0-based index = mature author number - 1 exactly"
+domains = { alpha_1 = "1-90", alpha_2 = "91-182", alpha_3 = "183-274" }
+
+[target.chain_B]
+molecule = "beta-2-microglobulin"
+length   = 99
+
+[target.chain_C]
+molecule         = "peptide"
+sequence         = "SLLMWITQC"
+epitope_residues = [0, 1, 2, 3, 4, 5, 6, 7, 8]   # 0-based, per-chain, verified live
+
+[binder]
+modality     = "custom_protein"
+chain_ids    = ["D"]
+length_range = "60..100"
+num_proteins = 300
+
+# ---------------------------------------------------------- negative design
+
+# Three panels built and staged 2026-10-20 after finding the request carried none.
+# All three mark chain B (0-98) entirely. Awaiting Mathew + BIO Physician sign-off.
+
+[[negative_design_panels]]
+name            = "conservative"
+chain_A_marked  = ["180-274"]
+residues_marked = 95
+chain_A_free    = 180
+triad_marked    = false
+rationale       = "alpha-3 plus b2m only; membrane-proximal regions that should never be in any interface. Barely steers the design."
+
+[[negative_design_panels]]
+name            = "targeted"
+chain_A_marked  = ["180-274", "56-61", "76-83", "137-148", "166-179"]
+residues_marked = 135
+chain_A_free    = 140
+triad_marked    = false
+recommended     = true
+rationale       = "marks helix segments distal to the peptide centre, leaves the restriction-triad region contactable"
+
+[[negative_design_panels]]
+name            = "aggressive"
+chain_A_marked  = ["180-274", "56-83", "137-179"]
+residues_marked = 166
+chain_A_free    = 109
+triad_marked    = true
+rationale       = "pushes the binder onto the peptide and essentially nothing else; highest specificity, highest failure risk - a 9-residue epitope may be geometrically unsatisfiable for a 60-100 aa binder, and published de novo pMHC binders do contact helix"
+
+[negative_design.evidence]
+domain_boundaries = "https://www.imgt.org/IMGTrepertoireMH/2D-3Dstruct/SLlength/human/Hu_MHCtab1.html"
+a6_tcr_footprint  = "https://rupress.org/jem/article/193/5/551/25976/Identification-of-a-Crucial-Energetic-Footprint-on"
+restriction_triad = "https://doi.org/10.4049/jimmunol.169.6.3146"
+a6_contacts       = "15 HLA-A2 residues: alpha-1 E58, R65, K66, K68, A69, Q72 plus nine on alpha-2"
+triad             = ["R65", "A69", "Q155"]
+unverified        = "helix spans used (alpha-1 57-84, alpha-2 138-180, author numbering) bracket every listed contact residue but were NOT checked residue-by-residue against a crystal structure; endpoints are approximate"
+
+# ------------------------------------------------------------- descriptors
+
+# ROC-AUC measured in our own Adaptyv Proteinbase / Nipah glycoprotein G experiment
+# (n ~ 1,028-1,030 designs; 85.8% expressed; 9.96% bound). Not borrowed assumptions.
+
+[descriptors]
+stack    = ["complex_iplddt", "shape_complementarity", "plddt", "min_ipsae", "ipsae", "iptm", "pae_interaction"]
+excluded = ["pdockq", "pdockq2"]
+excluded_reason = "returned exactly 0.500 with no p-value - constant or broken columns"
+
+[descriptors.roc_auc]
+complex_iplddt        = 0.698
+shape_complementarity = 0.688
+plddt                 = 0.646
+min_ipsae             = 0.642
+ipsae                 = 0.633
+iptm                  = 0.607
+esmfold_plddt         = 0.603
+pdockq                = 0.500
+pdockq2               = 0.500
+
+[descriptors.combination]
+rule          = "rank_average"
+evidence      = "rank-average beat the best single metric 39/45; AND-gating won 14/45"
+keep_fraction = "top 1-2%"
+hit_rate_note = "top-1% keep-fraction gave a 70% hit rate"
+
+[calibration]
+source      = "Adaptyv Proteinbase"
+licence     = "ODC-BY"
+size        = "4,273 protein-protein interactions across 17 targets, with negatives"
+gap         = "contains NO pMHC complexes - every threshold here is TRANSFERRED, NOT CALIBRATED"
+resolution  = "campaign one is itself the calibration experiment"
+attribution = "This work used Proteinbase by Adaptyv Bio under ODC-BY license"
+
+[reproduction]
+paper     = "10.1101/2024.11.27.624796"
+companion = "10.1101/2024.11.28.625793"
+decoy_set = "ten peptide mutants of SLLMWITQC (nine single/double, one quadruple) - exact sequences OUTSTANDING from BIO Physician"
+published_gates = "first pass ipAE <= 12 / pLDDT >= 88; after partial diffusion <= 7 / >= 92; cross-panel on-target ipAE < 10 vs off-target > 10; 44 binders selected"
+problem   = "those gates live on AF2 initial guess, which this two-layer stack does not contain; Boltz pae_interaction is not the same quantity"
+position  = "reproduce the paper's LOGIC, not its NUMBERS, with Boltz-native thresholds recalibrated on campaign one"
+honesty_condition = "legitimate only if the run trace records which threshold produced which pass set"
+
+# --------------------------------------------------------- platform contract
+
+[platform]
+endpoint  = "POST https://api.boltz.bio/compute/v1/protein/design"
+auth      = "x-api-key header"
+request_shape = "type-discriminated: {\"type\":\"binder\", target:{entities}, binder:{modality, entities}} - migration already done"
+model_selector = "NONE on the design endpoint; versioning is by request shape"
+prediction_model = "boltz-2.1 (only documented value)"
+api_contract_version = "v2026-03-01"
+retention_days = 7
+
+[platform.verified_2026_10_20]
+three_chain_pmhc_target = "accepted"
+nine_residue_peptide    = "accepted"
+epitope_indexing        = "0-based, per-chain, on the sequence path"
+non_binding_residues    = "accepted at no surcharge"
+excluded_amino_acids    = "default [\"C\"] applies to the DESIGNED BINDER only; the target peptide's terminal cysteine is untouched"
+
+[[risks]]
+id       = "boltzgen_backend_version"
+severity = "open, unresolved"
+statement = "Nothing the API returns identifies which BoltzGen version backs the design pipeline; run objects report only pipeline boltzprot, pipeline_version 1.0, api version v2026-03-01. BoltzGen v0.3.2's entire changelog is a fix for binding_types dropping 'binding' when combined with 'not_binding' - exactly the combination this campaign depends on. A pre-0.3.2 backend could SILENTLY DROP the negative design."
+action   = "emailed support@boltz.bio 2026-10-20 from mchu001.bio@gmail.com; no answer yet"
+
+[[risks]]
+id       = "no_independent_model"
+severity = "accepted by design"
+statement = "The two-layer cut removes the orthogonal re-predictor, so nothing independently confirms any design. A systematic Boltz error passes undetected. Partially mitigated because the specificity margin is a differential under one model - a shared bias cancels to first order - but a peptide-dependent bias does not cancel."
+
+[[risks]]
+id       = "estimate_cost_schema_gap"
+severity = "minor, blocking read-only pricing"
+statement = "estimate-cost rejects the type-discriminated body (verbatim: binder_specification is required), so the migrated shape cannot be priced read-only. Legacy-shaped control returns $15.0000 at $0.0500/design for 300 designs."
+
+[[risks]]
+id       = "no_test_key"
+severity = "minor"
+statement = "The account holds a workspace LIVE key, so the free test environment is unavailable and the migrated body remains unproven against the API."
+
+# ----------------------------------------------------------------- costs
+
+[costs]
+campaign_one_usd        = 15.00
+per_design_usd          = 0.05
+tier_note               = "500 aa target + 100-250 aa binder lands in the 513-1024 residue tier at $0.10/design ($30 per 300, $100 per 1000); cropping the target below 512 total residues halves it back"
+wet_lab_from_usd        = 99.00
+spent_to_date_usd       = 0.00
+submitted_to_date       = false
+
+# ------------------------------------------------------------- provenance
+
+[provenance]
+content_address = ["api_version", "config_hash", "target_hash", "seed"]
+mirroring       = "artifacts mirrored off-API immediately; 7-day retention clock"
+fan_out_shape   = "the decoy set is ten peptide mutants, so the target hash moves in nine residues only - the cheapest possible fan-out and cache shape"
+known_weakness  = "Nextflow content-addresses a strict SUPERSET of our four-tuple: it also hashes the container image, the conda/spack environment, the script text and bundled scripts. We hash none of those, and all of them can silently change results. Adopting the Nextflow input list is open decision OD-8."
+
+[prior_art]
+survey = "../fleet-spec-prior-art-2026-10-20.md"
+verdict = "the graph, typed IO, content-addressing and provenance are CWL + Workflow Run RO-Crate; the agent/owner half is an A2A Agent Card; the prose structure is a model card. The in-graph approval + spend-cap node is the one piece with no clean prior art."
+adopt = ["Workflow Run RO-Crate + RO-Crate 1.2", "Nextflow task-hash input list", "CWL requirements-vs-hints semantics", "A2A Agent Card schema", "Hugging Face model-card file shape"]
+do_not_build_on = "IBM/BeeAI ACP - folded into A2A under the Linux Foundation, repo archived"
+
+# -------------------------------------------------------- open decisions
+
+[[open_decisions]]
+id = "OD-1"
+owner = "Mathew"
+question = "thresholds: Boltz-native recalibration, or reinstate AF2 initial guess (which puts the GPU layer back)"
+recommendation = "Boltz-native recalibration"
+[[open_decisions]]
+id = "OD-2"
+owner = "Mathew with BIO Physician"
+question = "which negative-design panel"
+recommendation = "targeted"
+[[open_decisions]]
+id = "OD-3"
+owner = "BIO Physician"
+question = "the ten exact SLLMWITQC mutant decoy sequences from the paper's supplement"
+note = "highest-value missing input"
+[[open_decisions]]
+id = "OD-4"
+owner = "BIO Physician"
+question = "clinical proteome-near-neighbour and self-peptide panel"
+[[open_decisions]]
+id = "OD-5"
+owner = "BIO Physician"
+question = "in-vitro reproduction bar: multimer + Jurkat-NFAT, or also co-culture cytotoxicity"
+[[open_decisions]]
+id = "OD-6"
+owner = "Mathew"
+question = "submit the $15 / 300-design campaign"
+[[open_decisions]]
+id = "OD-7"
+owner = "Boltz support"
+question = "which BoltzGen version backs the hosted design pipeline, and is PR #218 in"
+[[open_decisions]]
+id = "OD-8"
+owner = "BIO Scientist with BIO Engineer"
+question = "re-express this spec as a Workflow RO-Crate over CWL/Nextflow with an approval profile, instead of a bespoke format"
+
+[[risks]]
+id       = "ipsae_worker_unvalidated_end_to_end"
+severity = "open, recorded 2026-10-20"
+statement = "No fixture on the box carries real PAE and real pLDDT together, so the ipSAE/min_ipSAE worker cannot be validated end-to-end before campaign one. The boltz_des_* runs have pae.npz but a flat 100.0 B-factor placeholder and a protein+ligand complex whose PAE is (256,256) against 170 residues because Boltz tokenizes ligands PER-ATOM, i.e. PAE is per-TOKEN not per-residue. The boltz_run_* runs have real varying pLDDT but no pae.npz. Reported by BIO Engineer."
+mitigation = "worker must build an explicit token->residue map from the CIF and FAIL LOUDLY on mismatch rather than trust a length vector; a zero-variance pLDDT column is treated as ABSENT, not as a value. Campaign one's first batch is the first true end-to-end validation of this descriptor."
+
+# Transport contract (fleet >> case). The diagram arch.mermaid draws the topology;
+# these are the rules that govern what is allowed to cross it. Recorded here because
+# arch.mermaid was written twice on 2026-10-20 and the earlier draft's rule block
+# was overwritten; the topology survives in the diagram, the rules survive here.
+
+[transport]
+direction = "one-way for evidence; the return path carries DECISIONS, never re-fitted numbers"
+payloads = [
+  "T1 ranked panel - design id, sequence, specificity_margin, provenance hash",
+  "T2 calibration statement - which thresholds, measured on what, transferred or calibrated",
+  "T3 negative-design record - which panel ran, which residues marked",
+  "T4 platform and version record - api contract, request shape, BoltzGen version if answered",
+  "T5 failure record - what was screened out and why",
+]
+rules = [
+  "1 nothing crosses without its provenance hash",
+  "2 a transferred threshold crosses LABELLED transferred",
+  "3 no clinical claim may be stronger than its transport record",
+  "4 artifacts mirrored off-API before transport (7-day retention clock)",
+  "5 return-path decisions re-enter ONLY via the manifest and the approval gate",
+]
