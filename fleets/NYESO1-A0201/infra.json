@@ -228,7 +228,7 @@
       ],
       "fleet_traces_format": "merkle-jsonl (append-only JSONL, each line hash-links to the previous)",
       "module": "bindi src/bindi/provenance.py, trace_validate.py",
-      "status": "image digest now part of the content address (OD-8 first half done); code/script hash + merkle hash-chaining still to wire before campaign one",
+      "status": "image digest is now a VERIFIED part of the content address (OD-8 first half closed: registry digest 7e8762ae authoritative, local reconciled by repull); code/script hash + merkle hash-chaining still to wire before campaign one",
       "known_weakness": "four-tuple was a strict subset of what Nextflow/RO-Crate hash; the container image is now covered via the ghcr digest, code/script text still not",
       "verified": "on_box"
     },
@@ -249,7 +249,10 @@
         "six==1.17.0"
       ],
       "pin_rationale": "EXACT ==, not floors: the image digest IS the content address for descriptor numbers, so a >= would mean the address no longer determines the numbers (BIO Scientist).",
-      "verified": "on_box (built under podman 5.4.2, import-checked, pushed to ghcr)"
+      "verified": "on_box (built under podman 5.4.2, import-checked, pushed, and re-pulled by digest; registry digest confirmed authoritative)",
+      "digest_authoritative": "sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6 (registry/ghcr; resolves on pull)",
+      "config_digest": "sha256:cf153c6899717e4d38f6a855ae40bfd2a4abec0c30d5a1e1f982698023adfdbb (= image id; identical across both manifest encodings, so content is bit-identical)",
+      "local_manifest_digest_note": "podman images --digests initially showed sha256:d1b271bb... for the local build; that string returns 'manifest unknown' from ghcr -> it is a podman LOCAL manifest-encoding artifact, NOT a registry content address. The registry stores 7e8762ae (confirmed: requesting @sha256:7e8762ae returns the manifest; config cf153c6 matches). Reconciled 2026-10-20 by removing the local image and re-pulling by digest, so podman images --digests now shows 7e8762ae. The SC recompute ran on config cf153c6, i.e. content bit-identical to the registry image."
     },
     "version_control": {
       "github": {
@@ -358,12 +361,26 @@
       "iptm": "Adaptyv Proteinbase column (ODC-BY); AUC TRANSFERRED, not recomputed under our implementation",
       "esmfold_plddt": "Adaptyv Proteinbase column (ODC-BY); AUC TRANSFERRED, not recomputed under our implementation",
       "pae_interaction": "Adaptyv Proteinbase column (ODC-BY); AUC TRANSFERRED, not recomputed under our implementation",
-      "shape_complementarity": "Adaptyv Proteinbase shape_complementarity column (ODC-BY). The 0.688 AUC was NOT produced by shape-complementarity==0.2.0 (the package we pinned). Pinning makes the number REPRODUCIBLE, not CALIBRATED: two Lawrence-Colman implementations differ on probe radius, dot density, and interface-atom selection. PENDING (BIO Scientist): recompute SC with 0.2.0 on the Proteinbase structures, correlate design-by-design vs their column, re-derive AUC under our implementation. If it agrees, transfer stands with a stated number; if it diverges, SC's rank_average weight comes from our own curve or SC is dropped.",
+      "shape_complementarity": "VALIDATED for implementation (BIO Scientist, 2026-10-20, in-image, $0.00, nothing submitted). Recomputed under shape-complementarity==0.2.0 / sc-rs befcc6c on n=1,028 Nipah glycoprotein-G complexes: Pearson r=0.999959, Spearman rho=0.999945, mean |delta| 2.9e-4 SC units, 100% within +/-0.01, no signed offset. ROC-AUC vs measured BLI binding (100 binders/928 non-binders): ours 0.6873 [95% boot CI 0.6224,0.7480] vs Adaptyv column 0.6878 [0.6229,0.7479]; paired dAUC -0.00044 [-0.00109,+0.00016] (straddles zero, 4 orders narrower than the AUC CI). So shape-complementarity==0.2.0 REPRODUCES Adaptyv's quantity to float noise -> the 0.688 transfer STANDS and SC keeps its rank_average weight unchanged. STILL transferred ACROSS TARGET CLASS: Proteinbase has no pMHC, so the threshold is validated for implementation only, not for pMHC; campaign one remains its own calibration experiment. Caveat: Adaptyv's own SC parameters are an INFERENCE (proteinbase_README.md defines no params for the shape_complimentarity column); 'sc-rs at defaults' is read off 1,028 complexes agreeing to 2.9e-4, not off a spec, and only on the Nipah subset (1,028 of 4,273 PPIs). Report: /workspace/wetware/binder-design/v3/sc-recompute-2026-10-20.md (sha256 3ed7ea12f000...90c8cdf0).",
       "pdockq": "excluded (AUC 0.500, constant column)",
       "pdockq2": "excluded (AUC 0.500, constant column)"
     },
     "calibration_note": "Every roc_auc above is a threshold TRANSFERRED from Adaptyv's own columns, not computed under our stack. calibrated_with names the producing implementation per descriptor so a reproducible pin is never mistaken for a calibrated number. Campaign one is itself the calibration experiment.",
-    "recompute_environment": "Any descriptor recompute/recalibration MUST run inside the ghcr image ghcr.io/wetware-hq/bindi-fleet-env:2026-10-20 (numpy==2.4.6), NOT on the bare box (numpy 2.5.4). The box is now the divergent env; every descriptor number quoted before 2026-10-20 night was computed under 2.5.4, so an on-box recompute would inherit the flaw it is meant to settle."
+    "recompute_environment": "Any descriptor recompute/recalibration MUST run inside the ghcr image ghcr.io/wetware-hq/bindi-fleet-env:2026-10-20 (numpy==2.4.6), NOT on the bare box (numpy 2.5.4). The box is now the divergent env; every descriptor number quoted before 2026-10-20 night was computed under 2.5.4, so an on-box recompute would inherit the flaw it is meant to settle.",
+    "shape_complementarity_parameters": {
+      "source": "read from sc-rs settings.rs at embedded checkout befcc6c (0.2.0 exposes no settings argument), not chosen by us",
+      "probe_radius_A": 1.7,
+      "dot_density_per_A2": 15,
+      "peripheral_band_A": 1.5,
+      "weight_w_per_A2": 0.5,
+      "separation_cutoff_A": 8.0,
+      "use_atom_type_radius": false,
+      "statistic": "mean of medians of S(A->B)/S(B->A)",
+      "chains": "B binder / A target, heavy atoms only, no HETATM, model 0",
+      "scale": "Adaptyv publishes 0-100 (observed 30.94-69.15); sc-rs returns native 0-1; theirs is /100 (monotone unit convention, cannot affect Spearman or AUC)"
+    },
+    "interface_definition_note": "SC's interface is NOT our interface: sc-rs uses a native Connolly surface with nearest-neighbour dot pairing, while our ifd_* descriptors use a 5.0 A residue contact cutoff and a 1.4 A SASA probe. SC and the other rank-average descriptors are scoring interfaces defined two different ways. Defensible, but recorded so it is not discovered later.",
+    "data_join_caveat": "id is NOT unique in tidy.parquet (204 dupes: same designs counter-screened vs human serum albumin). A naive merge on id gives ~1,129 rows and silently mixes an off-target row into the on-target cohort. Filter target=='nipah-glycoprotein-g' first and assert one-to-one."
   },
   "excluded_tools": [
     {
@@ -410,7 +427,7 @@
     "MODAL_TOKEN_SECRET (inert)"
   ],
   "open_decisions_touching_infra": [
-    "OD-8: content address now includes the ghcr image digest (done); remaining half is code/script hash (adopt Workflow RO-Crate eventually)",
+    "OD-8: content address includes the ghcr image digest, reconciled to the registry digest 7e8762ae (first half closed); remaining half is code/script hash (adopt Workflow RO-Crate eventually)",
     "DONE: pinned bindi deps (gemmi/biopython/numpy floors + exact pins) and built the ghcr fleet-env image so the worker is reproducible from an image, not just PR #14 - BIO Engineer",
     "Origin durability: mirror wing into Origin (recommended) vs create a deliberate Origin wing - Mathew's call",
     "thresholds: Boltz-native recalibration vs reinstating AF2 initial-guess (re-adds a GPU layer)"
