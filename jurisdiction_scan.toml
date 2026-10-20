@@ -44,6 +44,11 @@ J-JOBTITLE = "VMO"
 "SCAN-PROMPT-LEAK/email"     = "someone@example.org"
 "SCAN-PROMPT-LEAK/directive" = "%PURGE"
 
+[commit_trailers]
+# Known bot co-author trailers that GitHub squash merges add to commit messages. Only a whole line that equals one of
+# these exactly is dropped before the commit-message scan; the same address anywhere else in a message still fails.
+allow = ["Co-authored-by: Cursor Agent <cursoragent@cursor.com>"]
+
 [exceptions]
 # ids only: signed/pinned line ids that keep a local word until the next version (renaming re-pins the hash)
 ids = ['\bLT-REACH-[A-Z]+-PT\b', '\bLT-OWNWORDS-ASK-GP-PT\b']
