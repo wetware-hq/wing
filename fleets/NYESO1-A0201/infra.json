@@ -1,0 +1,435 @@
+{
+  "_comment": "infra.json - CONVERGED tool->stack map for NYESO1-A0201. Supersedes the two same-path drafts of 2026-10-20 (BIO Engineer's producer_map version and BIO Scientist's verified-field version); both kept beside this as infra.engineer-993b2f1.json and infra.scientist.json. Companion to FLEET.toml (graph), arch.mermaid (transport), CASE.md (clinical). Every entry carries 'verified' stating HOW it is known: on_box = observed on this machine today; docs = vendor documentation; reported = stated by another agent, not re-checked here; unverified = assumed/planned.",
+  "meta": {
+    "campaign": "NYESO1-A0201",
+    "fleet_spec": "FLEET.toml",
+    "fleet_spec_sha256_prefix": "ffb63dcf5af3",
+    "generated": "2026-10-20T19:41+11:00",
+    "generated_by": "BIO Engineer (converged with BIO Scientist's provenance scheme); ghcr fleet-env digest wired 2026-10-20T20:08+11:00",
+    "governance": "No merge to main without green CI AND Mathew per-SHA sign-off (bindi#9). Nothing submitted to Boltz and nothing spent until the APPR human_gate approves.",
+    "status": "spec-level map; nothing submitted, nothing spent (submitted_to_date=false, spent_to_date_usd=0.00)",
+    "verified": "on_box"
+  },
+  "execution_host": {
+    "role": "layer 2 (interface descriptors) runs entirely here; layer 1 runs off-box",
+    "cpu_cores": 8,
+    "ram_gb_total": 15,
+    "gpu": "none",
+    "gpu_probe": "nvidia-smi: command not found",
+    "python": "3.13.5",
+    "verified": "on_box"
+  },
+  "stack": [
+    {
+      "node": "CFG",
+      "kind": "manifest",
+      "tool": "campaign manifest (FLEET.toml + CASE.md)",
+      "runtime": "human-authored, version-controlled",
+      "location": "git wetware-hq/bindi, mirrored to wetware-hq/wing fleets/",
+      "cost_usd": 0.0,
+      "owner": "BIO Scientist",
+      "verified": "on_box"
+    },
+    {
+      "node": "APPR",
+      "kind": "human_gate",
+      "tool": "in-graph approval + spend cap",
+      "runtime": "human decision (Mathew)",
+      "controls": {
+        "approver": "Mathew",
+        "spend_cap_usd": 15.0,
+        "on_deny": "HALT"
+      },
+      "cost_usd": 0.0,
+      "note": "no prior art found for a declarative in-graph approval+budget node",
+      "verified": "on_box (spec); no-prior-art claim reported"
+    },
+    {
+      "node": "HALT",
+      "kind": "terminal",
+      "tool": "none",
+      "cost_usd": 0.0,
+      "note": "halt at zero cost on deny",
+      "verified": "on_box"
+    },
+    {
+      "node": "L1A",
+      "kind": "generate",
+      "layer": "boltz",
+      "tool": "boltz_hosted_design_api",
+      "runtime": "hosted GPU (Boltz cloud)",
+      "location": "POST https://api.boltz.bio/compute/v1/protein/design",
+      "cost_usd": 15.0,
+      "produces": "300 on-target binders vs the real epitope",
+      "conditioning": [
+        "epitope_residues",
+        "non_binding_residues"
+      ],
+      "verified": "on_box"
+    },
+    {
+      "node": "L1B",
+      "kind": "predict",
+      "layer": "boltz",
+      "tool": "boltz_hosted_design_api",
+      "runtime": "hosted GPU (Boltz cloud)",
+      "location": "same endpoint, prediction not design",
+      "cost_usd": 0.0,
+      "note": "decoy refold, survivors x decoy panel, same HLA; keeps the specificity screen inside two layers",
+      "verified": "on_box"
+    },
+    {
+      "node": "ART",
+      "kind": "artifact_store",
+      "tool": "content-addressed artifact store",
+      "runtime": "box filesystem + off-API mirror",
+      "location": "box /workspace",
+      "files": [
+        "_predicted.cif",
+        "metrics.json",
+        "pae.npz"
+      ],
+      "retention_days": 7,
+      "content_address": [
+        "api_version",
+        "config_hash",
+        "target_hash",
+        "seed",
+        "image_digest"
+      ],
+      "cost_usd": 0.0,
+      "verified": "on_box (spec); image digest now realised (ghcr bindi-fleet-env@sha256:7e8762aebc33...); off-API mirroring planned"
+    },
+    {
+      "node": "L2",
+      "kind": "score",
+      "layer": "interface",
+      "tool": "interface_descriptor_worker",
+      "runtime": "pure CPU on box, zero GPU, zero rent",
+      "location": "bindi src/bindi/ipsae.py (PR #14, draft)",
+      "entrypoint": "python -m bindi.ipsae <pae.npz> <_predicted.cif> [--chains A:275,B:99]",
+      "cost_usd": 0.0,
+      "verified": "reported (validated on box fixtures in the PR #14 env 2026-10-20; deps NOT installed in the main checkout - see tools.interface_descriptor_worker.python_environment)"
+    },
+    {
+      "node": "DIV",
+      "kind": "filter",
+      "tool": "diversity / novelty filter (cluster + cap per scaffold family)",
+      "runtime": "CPU on box",
+      "location": "bindi (curate/ensemble)",
+      "cost_usd": 0.0,
+      "verified": "on_box (module present)"
+    },
+    {
+      "node": "PANEL",
+      "kind": "terminal",
+      "tool": "ranked panel with per-design provenance",
+      "runtime": "CPU on box",
+      "location": "bindi",
+      "cost_usd": 0.0,
+      "note": "every row replayable from the manifest hash; hands off to BIO Physician and BIO Engineer",
+      "verified": "on_box (module present)"
+    }
+  ],
+  "tools": {
+    "boltz_hosted_design_api": {
+      "role": "generator (L1A) + decoy predictor (L1B)",
+      "endpoint": "POST https://api.boltz.bio/compute/v1/protein/design",
+      "auth": "x-api-key header (secret BOLTZ_API_KEY, workspace LIVE key; value not stored here)",
+      "prediction_model": "boltz-2.1",
+      "api_contract_version": "v2026-03-01",
+      "request_shape": "type-discriminated {\"type\":\"binder\", target:{entities}, binder:{modality, entities}}",
+      "model_selector": "NONE on design endpoint; versioning is by request shape",
+      "pricing": {
+        "per_design_usd": 0.05,
+        "campaign_one_usd": 15.0,
+        "tier_note": "513-1024 residue tier is $0.10/design; cropping target below 512 total residues halves it"
+      },
+      "retention_days": 7,
+      "backend": {
+        "name": "BoltzGen",
+        "version": "UNKNOWN - API reports only pipeline 'boltzprot', pipeline_version '1.0'",
+        "risk": "v0.3.2 fixes binding_types dropping 'binding' when combined with 'not_binding' - the exact combination this campaign uses; a pre-0.3.2 backend could silently drop negative design",
+        "verified": "on_box (that version is NOT reported); version itself unverified"
+      },
+      "open_risks": [
+        "boltzgen_backend_version",
+        "estimate-cost rejects the type-discriminated body (read-only pricing blocked)",
+        "account holds a LIVE key only, no test env"
+      ],
+      "verified": "on_box"
+    },
+    "interface_descriptor_worker": {
+      "role": "L2 scoring (interface descriptors)",
+      "package": "bindi",
+      "module": "src/bindi/ipsae.py",
+      "declared_python": ">=3.11 (box runs 3.13.5)",
+      "declared_deps": [
+        "gemmi>=0.6.5",
+        "biopython>=1.83",
+        "numpy>=1.26"
+      ],
+      "guards": "TokenAlignmentError on ligand/token vs polymer-residue mismatch; mismatched --chains fails loudly; no silent chain re-lettering",
+      "state": "bindi PR #14, draft, validated-not-merged",
+      "python_environment": {
+        "observed_on_box": {
+          "numpy": "2.5.4",
+          "scipy": "1.18.1",
+          "pandas": "3.0.6",
+          "pyarrow": "26.0.0",
+          "biopython": "1.88",
+          "biotite": "2.0.0",
+          "requests": "2.34.2"
+        },
+        "required_but_NOT_installed": [
+          {
+            "package": "gemmi",
+            "needed_for": "real mmCIF parse in the ipSAE worker (label_asym_id, B-factor pLDDT)",
+            "found": "now pinned EXACTLY in the ghcr fleet-env image (gemmi==0.7.5); still not in the bare box main checkout"
+          },
+          {
+            "package": "shape_complementarity",
+            "needed_for": "the best single descriptor (AUC 0.688)",
+            "found": "now pinned EXACTLY in the ghcr fleet-env image (shape-complementarity==0.2.0, MIT, abi3 wheels); producer module in the worker still to be written"
+          },
+          {
+            "package": "freesasa or equivalent",
+            "needed_for": "buried-surface / SASA terms if added",
+            "found": "still not installed (not needed unless SASA terms are added)"
+          }
+        ],
+        "dependency_declaration_gap": "RESOLVED for gemmi/biopython/numpy: bindi/pyproject.toml now declares them as floors and deploy/requirements-fleet-env.txt pins them EXACTLY (bindi PR #15); the reproducible env is the ghcr image ghcr.io/wetware-hq/bindi-fleet-env:2026-10-20@sha256:7e8762aebc33... The bare box main checkout still needs `pip install` or the image to run the worker.",
+        "fix_owned_by_engineer": "DONE: deps pinned in bindi/pyproject.toml + deploy/requirements-fleet-env.txt, ghcr image built+pushed, content address widened to the image digest (bindi PR #15)",
+        "verified": "on_box"
+      },
+      "verified": "on_box (module + absence of deps); end-to-end validation reported"
+    },
+    "artifact_store": {
+      "role": "ART node",
+      "type": "content-addressed, off-API mirror",
+      "files": [
+        "_predicted.cif",
+        "metrics.json",
+        "pae.npz"
+      ],
+      "retention_days": 7,
+      "verified": "on_box (spec)"
+    },
+    "provenance": {
+      "content_address_current": [
+        "api_version",
+        "config_hash",
+        "target_hash",
+        "seed",
+        "ghcr image digest (bindi-fleet-env@sha256:7e8762aebc33...)"
+      ],
+      "content_address_planned": [
+        "+ code/script hash (OD-8 remaining half)"
+      ],
+      "fleet_traces_format": "merkle-jsonl (append-only JSONL, each line hash-links to the previous)",
+      "module": "bindi src/bindi/provenance.py, trace_validate.py",
+      "status": "image digest is now a VERIFIED part of the content address (OD-8 first half closed: registry digest 7e8762ae authoritative, local reconciled by repull); code/script hash + merkle hash-chaining still to wire before campaign one",
+      "known_weakness": "four-tuple was a strict subset of what Nextflow/RO-Crate hash; the container image is now covered via the ghcr digest, code/script text still not",
+      "verified": "on_box"
+    },
+    "containers": {
+      "role": "environment snapshot / backup of fleet environments; the layer-2 descriptor environment",
+      "registry": "ghcr.io (GitHub Container Registry)",
+      "auth": "GITHUB_PAT (classic, repo + packages scope; value not stored here)",
+      "image": "ghcr.io/wetware-hq/bindi-fleet-env:2026-10-20",
+      "digest": "sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+      "built_from": "wetware-hq/bindi deploy/fleet-env.Dockerfile (bindi PR #15, draft)",
+      "exact_pins": [
+        "gemmi==0.7.5",
+        "biopython==1.88",
+        "numpy==2.4.6",
+        "shape-complementarity==0.2.0",
+        "pandas==3.0.6",
+        "python-dateutil==2.9.0.post0",
+        "six==1.17.0"
+      ],
+      "pin_rationale": "EXACT ==, not floors: the image digest IS the content address for descriptor numbers, so a >= would mean the address no longer determines the numbers (BIO Scientist).",
+      "verified": "on_box (built under podman 5.4.2, import-checked, pushed, and re-pulled by digest; registry digest confirmed authoritative)",
+      "digest_authoritative": "sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6 (registry/ghcr; resolves on pull)",
+      "config_digest": "sha256:cf153c6899717e4d38f6a855ae40bfd2a4abec0c30d5a1e1f982698023adfdbb (= image id; identical across both manifest encodings, so content is bit-identical)",
+      "local_manifest_digest_note": "podman images --digests initially showed sha256:d1b271bb... for the local build; that string returns 'manifest unknown' from ghcr -> it is a podman LOCAL manifest-encoding artifact, NOT a registry content address. The registry stores 7e8762ae (confirmed: requesting @sha256:7e8762ae returns the manifest; config cf153c6 matches). Reconciled 2026-10-20 by removing the local image and re-pulling by digest, so podman images --digests now shows 7e8762ae. The SC recompute ran on config cf153c6, i.e. content bit-identical to the registry image."
+    },
+    "version_control": {
+      "github": {
+        "org": "wetware-hq",
+        "repos": [
+          "bindi (code, MIT, v0.1.0)",
+          "wing (fleet backup, fleets/)"
+        ],
+        "backup_pr": "wing#6 (draft) - refreshed this pass to carry the ODC-BY string, per-token PAE caveat, and the ghcr digest"
+      },
+      "open_prs": [
+        {
+          "id": "PR #14",
+          "subject": "ipSAE worker (PAE + CIF)",
+          "state": "draft, unmerged"
+        },
+        {
+          "id": "PR #15",
+          "subject": "fleet-env: exact descriptor dep pins + ghcr image",
+          "state": "draft, unmerged, head b53c9af"
+        },
+        {
+          "id": "PR #6 (wing)",
+          "subject": "fleets/ backup bundle",
+          "state": "draft"
+        }
+      ],
+      "closed_prs": [
+        {
+          "id": "PR #13",
+          "subject": "self-hosted Boltz on Modal GPU",
+          "state": "CLOSED, rejected"
+        }
+      ],
+      "origin": {
+        "namespace": "wetwarehq",
+        "wing_status": "NOT present; 4 of 9 Origin repos are inbound GitHub mirrors, so the Origin leg is a mirror/create decision, not a second push - Mathew's call"
+      },
+      "verified": "on_box"
+    }
+  },
+  "descriptors": {
+    "stack": [
+      "complex_iplddt",
+      "shape_complementarity",
+      "plddt",
+      "min_ipsae",
+      "ipsae",
+      "iptm",
+      "pae_interaction"
+    ],
+    "roc_auc": {
+      "complex_iplddt": 0.698,
+      "shape_complementarity": 0.688,
+      "plddt": 0.646,
+      "min_ipsae": 0.642,
+      "ipsae": 0.633,
+      "iptm": 0.607,
+      "esmfold_plddt": 0.603,
+      "pdockq": 0.5,
+      "pdockq2": 0.5
+    },
+    "roc_auc_note": "AUCs transferred from Adaptyv Proteinbase (ODC-BY, 4273 PPIs, 17 targets, no pMHC complexes); every threshold is TRANSFERRED not calibrated. Campaign one is itself the calibration experiment.",
+    "combination_rule": "rank_average",
+    "producer_map": {
+      "iptm": {
+        "producer": "boltz_api (design_to_target_iptm, mapped in src/bindi/boltz.py)",
+        "verified": "on_box"
+      },
+      "plddt": {
+        "producer": "interface_descriptor_worker (CIF B_iso_or_equiv, 0-100 for Boltz)",
+        "verified": "reported"
+      },
+      "ipsae": {
+        "producer": "interface_descriptor_worker (ipsae.py)",
+        "verified": "reported (validated on box fixtures); DunbrackLab/IPSAE SHA 6174cf9, agrees ~3e-7 per-direction"
+      },
+      "min_ipsae": {
+        "producer": "interface_descriptor_worker (ipsae.py, min of the two directions; reference uses aggregate max - intentional)",
+        "verified": "reported"
+      },
+      "complex_iplddt": {
+        "producer": "box implementation PENDING; derived from CIF B-factor over interface residues (benchmark AUC only)",
+        "verified": "docs"
+      },
+      "pae_interaction": {
+        "producer": "box implementation PENDING; mean of the two off-diagonal PAE blocks per Adaptyv competition_metrics (Apache-2.0); NOT the same quantity as AF2 ipAE",
+        "verified": "docs"
+      },
+      "shape_complementarity": {
+        "producer": "box implementation PENDING (worker module not yet written); the descriptor dependency is now pinned in the fleet-env image (shape-complementarity==0.2.0)",
+        "verified": "on_box (dep pinned in image; producer module pending)"
+      }
+    },
+    "excluded": {
+      "pdockq": "returned exactly 0.500 (constant/broken column)",
+      "pdockq2": "returned exactly 0.500 (constant/broken column)"
+    },
+    "attribution_required": "This work used Proteinbase by Adaptyv Bio under ODC-BY license",
+    "pae_npz_token_caveat": "pae.npz from Boltz is per-TOKEN, not per-residue (ligands are tokenized per-atom; fixtures show a 256x256 PAE against 169 residues + a 1-residue ligand). The descriptor worker MUST build an explicit token->residue map from the CIF and fail loudly if it cannot, even where tokens should equal residues. verified: on_box (fixture shapes)",
+    "calibrated_with": {
+      "complex_iplddt": "Adaptyv Proteinbase column (ODC-BY); AUC TRANSFERRED, not recomputed under our implementation",
+      "plddt": "Adaptyv Proteinbase column (ODC-BY); AUC TRANSFERRED, not recomputed under our implementation",
+      "min_ipsae": "Adaptyv Proteinbase column (ODC-BY); AUC TRANSFERRED, not recomputed under our implementation",
+      "ipsae": "Adaptyv Proteinbase column (ODC-BY); AUC TRANSFERRED, not recomputed under our implementation",
+      "iptm": "Adaptyv Proteinbase column (ODC-BY); AUC TRANSFERRED, not recomputed under our implementation",
+      "esmfold_plddt": "Adaptyv Proteinbase column (ODC-BY); AUC TRANSFERRED, not recomputed under our implementation",
+      "pae_interaction": "Adaptyv Proteinbase column (ODC-BY); AUC TRANSFERRED, not recomputed under our implementation",
+      "shape_complementarity": "VALIDATED for implementation (BIO Scientist, 2026-10-20, in-image, $0.00, nothing submitted). Recomputed under shape-complementarity==0.2.0 / sc-rs befcc6c on n=1,028 Nipah glycoprotein-G complexes: Pearson r=0.999959, Spearman rho=0.999945, mean |delta| 2.9e-4 SC units, 100% within +/-0.01, no signed offset. ROC-AUC vs measured BLI binding (100 binders/928 non-binders): ours 0.6873 [95% boot CI 0.6224,0.7480] vs Adaptyv column 0.6878 [0.6229,0.7479]; paired dAUC -0.00044 [-0.00109,+0.00016] (straddles zero, 4 orders narrower than the AUC CI). So shape-complementarity==0.2.0 REPRODUCES Adaptyv's quantity to float noise -> the 0.688 transfer STANDS and SC keeps its rank_average weight unchanged. STILL transferred ACROSS TARGET CLASS: Proteinbase has no pMHC, so the threshold is validated for implementation only, not for pMHC; campaign one remains its own calibration experiment. Caveat: Adaptyv's own SC parameters are an INFERENCE (proteinbase_README.md defines no params for the shape_complimentarity column); 'sc-rs at defaults' is read off 1,028 complexes agreeing to 2.9e-4, not off a spec, and only on the Nipah subset (1,028 of 4,273 PPIs). Report: /workspace/wetware/binder-design/v3/sc-recompute-2026-10-20.md (sha256 3ed7ea12f000...90c8cdf0).",
+      "pdockq": "excluded (AUC 0.500, constant column)",
+      "pdockq2": "excluded (AUC 0.500, constant column)"
+    },
+    "calibration_note": "Every roc_auc above is a threshold TRANSFERRED from Adaptyv's own columns, not computed under our stack. calibrated_with names the producing implementation per descriptor so a reproducible pin is never mistaken for a calibrated number. Campaign one is itself the calibration experiment.",
+    "recompute_environment": "Any descriptor recompute/recalibration MUST run inside the ghcr image ghcr.io/wetware-hq/bindi-fleet-env:2026-10-20 (numpy==2.4.6), NOT on the bare box (numpy 2.5.4). The box is now the divergent env; every descriptor number quoted before 2026-10-20 night was computed under 2.5.4, so an on-box recompute would inherit the flaw it is meant to settle.",
+    "shape_complementarity_parameters": {
+      "source": "read from sc-rs settings.rs at embedded checkout befcc6c (0.2.0 exposes no settings argument), not chosen by us",
+      "probe_radius_A": 1.7,
+      "dot_density_per_A2": 15,
+      "peripheral_band_A": 1.5,
+      "weight_w_per_A2": 0.5,
+      "separation_cutoff_A": 8.0,
+      "use_atom_type_radius": false,
+      "statistic": "mean of medians of S(A->B)/S(B->A)",
+      "chains": "B binder / A target, heavy atoms only, no HETATM, model 0",
+      "scale": "Adaptyv publishes 0-100 (observed 30.94-69.15); sc-rs returns native 0-1; theirs is /100 (monotone unit convention, cannot affect Spearman or AUC)"
+    },
+    "interface_definition_note": "SC's interface is NOT our interface: sc-rs uses a native Connolly surface with nearest-neighbour dot pairing, while our ifd_* descriptors use a 5.0 A residue contact cutoff and a 1.4 A SASA probe. SC and the other rank-average descriptors are scoring interfaces defined two different ways. Defensible, but recorded so it is not discovered later.",
+    "data_join_caveat": "id is NOT unique in tidy.parquet (204 dupes: same designs counter-screened vs human serum albumin). A naive merge on id gives ~1,129 rows and silently mixes an off-target row into the on-target cohort. Filter target=='nipah-glycoprotein-g' first and assert one-to-one."
+  },
+  "excluded_tools": [
+    {
+      "tool": "BoltzGen self-hosted on Modal GPU",
+      "reason": "REJECTED by Mathew 2026-10-20 (not deferred); bindi PR #13 closed. Modal stub in src/bindi/structural_margin.py is inert.",
+      "verified": "on_box"
+    },
+    {
+      "tool": "AF2 initial-guess / ColabFold re-predictor",
+      "reason": "cut with the rented GPU to hold two layers; published 7/12 A gates live on AF2 ipAE, which this stack does not contain. Reinstating it re-adds a GPU layer (open: thresholds question).",
+      "verified": "reported"
+    },
+    {
+      "tool": "AlphaFold3",
+      "reason": "disqualified on licence for this use",
+      "verified": "docs"
+    },
+    {
+      "tool": "OpenMM MM-GBSA",
+      "reason": "cut; physics rescoring not needed pre-wet-lab",
+      "verified": "reported"
+    },
+    {
+      "tool": "BoTorch / TuRBO",
+      "reason": "cut; no wet-lab readout to learn from yet",
+      "verified": "reported"
+    },
+    {
+      "tool": "pdockq / pdockq2",
+      "reason": "excluded descriptors (AUC 0.500)",
+      "verified": "on_box"
+    }
+  ],
+  "licensing": {
+    "policy": "Wetware is NON-PROFIT, so non-commercial licences are in bounds by LICENCE; note this does not reopen tools Mathew rejected on other grounds (Modal self-hosting stays rejected).",
+    "af2_params": "CC BY 4.0 (permissive) if AF2 is reinstated",
+    "af3": "params not available on usable terms",
+    "verified": "docs"
+  },
+  "secrets_referenced_names_only": [
+    "BOLTZ_API_KEY (x-api-key)",
+    "GITHUB_PAT",
+    "MODAL_TOKEN_ID (inert)",
+    "MODAL_TOKEN_SECRET (inert)"
+  ],
+  "open_decisions_touching_infra": [
+    "OD-8: content address includes the ghcr image digest, reconciled to the registry digest 7e8762ae (first half closed); remaining half is code/script hash (adopt Workflow RO-Crate eventually)",
+    "DONE: pinned bindi deps (gemmi/biopython/numpy floors + exact pins) and built the ghcr fleet-env image so the worker is reproducible from an image, not just PR #14 - BIO Engineer",
+    "Origin durability: mirror wing into Origin (recommended) vs create a deliberate Origin wing - Mathew's call",
+    "thresholds: Boltz-native recalibration vs reinstating AF2 initial-guess (re-adds a GPU layer)"
+  ]
+}

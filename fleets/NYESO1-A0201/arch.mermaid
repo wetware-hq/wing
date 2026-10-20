@@ -1,0 +1,68 @@
+%% arch.mermaid — planned information transport, FLEET >> CASE
+%% Target NYESO1-A0201. Companion to FLEET.toml (machine half) and CASE.md (clinical half).
+%% Nothing submitted, nothing spent. Solid edges = execution; thick edges = the fleet>>case transport; dashed = requirements defined back by the case.
+flowchart TD
+
+    subgraph HUMAN["Human-authored inputs"]
+        CFG["CFG · campaign manifest<br/>(the only human-authored artifact)"]
+        NEG["negative-design panel<br/>conservative / <b>targeted</b> / aggressive (OD-2)"]
+        DEC["decoy set · 10 SLLMWITQC mutants<br/>exact sequences OUTSTANDING (OD-3)"]
+        TGT["target · 3-chain pMHC<br/>HLA-A*02:01 + b2m + SLLMWITQC"]
+    end
+
+    subgraph FLEET["FLEET.toml — agentic execution graph (in silico)"]
+        APPR{{"APPR · human gate<br/>Mathew approves · spend_cap $15 · on_deny HALT"}}
+        HALT["HALT · zero cost"]
+        L1A["L1A · generate<br/>300 binders vs the real epitope<br/>Boltz hosted API · $15"]
+        L1B["L1B · decoy refold<br/>survivors × decoy panel, same HLA"]
+        ART[("ART · content-addressed artifacts<br/>_predicted.cif · metrics.json · pae.npz<br/>mirrored off-API · 7-day clock")]
+        L2["L2 · interface descriptors<br/>pure CPU on box · ipSAE/min_ipSAE · iPLDDT · SC<br/>rank-average"]
+        DIV["DIV · diversity / novelty filter"]
+        PANEL["PANEL · ranked panel<br/>per-design provenance, replayable from manifest hash"]
+    end
+
+    subgraph CASE["CASE.md — clinical half (in vitro only)"]
+        MARGIN["specificity margin<br/>on-target rank − best-decoy rank<br/>(the product is specificity, not affinity)"]
+        INVITRO["in-vitro hand-off (BIO Physician)<br/>SPR/BLI · counter-screen · multimer + Jurkat-NFAT<br/>± co-culture cytotoxicity (OD-5)"]
+        CLIN["clinical bet · resected high-TMB melanoma<br/>MRD / adjuvant window<br/>proves the pipeline, NOT personalisation"]
+    end
+
+    %% requirements the case defines back into the inputs (dashed, case >> fleet)
+    CLIN -.->|defines indication| CFG
+    CLIN -.->|fixes target choice| TGT
+    INVITRO -.->|sets decoy & self-peptide panels| DEC
+    INVITRO -.->|sets in-vitro pass bar| CFG
+
+    %% human inputs into the graph
+    CFG --> APPR
+    NEG -->|non_binding_residues| L1A
+    TGT -->|epitope_residues| L1A
+    DEC -->|peptide variants| L1B
+
+    %% forward execution + information transport inside the fleet
+    APPR -->|deny| HALT
+    APPR -->|approve| L1A
+    L1A -->|300 designs| L1B
+    L1B -->|folds + confidences| ART
+    ART -->|pae.npz + cif| L2
+    L2 --> DIV
+    DIV --> PANEL
+
+    %% the fleet >> case transport (thick)
+    PANEL ==>|ranked designs + specificity_margin + provenance| MARGIN
+    MARGIN ==>|designs high on-target AND low on decoys| INVITRO
+    INVITRO ==>|validated specific binders| CLIN
+
+    %% scale handoff
+    PANEL -.->|only if n outgrows the hosted API| ENG["handoff · BIO Engineer<br/>parallelism & provenance"]
+
+    classDef gate fill:#fde68a,stroke:#b45309,color:#111;
+    classDef halt fill:#fecaca,stroke:#b91c1c,color:#111;
+    classDef store fill:#e0e7ff,stroke:#3730a3,color:#111;
+    classDef caseNode fill:#dcfce7,stroke:#15803d,color:#111;
+    classDef warn fill:#fef9c3,stroke:#a16207,color:#111;
+    class APPR gate;
+    class HALT halt;
+    class ART store;
+    class MARGIN,INVITRO,CLIN caseNode;
+    class DEC warn;
