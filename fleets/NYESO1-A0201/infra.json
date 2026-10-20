@@ -349,7 +349,21 @@
       "pdockq2": "returned exactly 0.500 (constant/broken column)"
     },
     "attribution_required": "This work used Proteinbase by Adaptyv Bio under ODC-BY license",
-    "pae_npz_token_caveat": "pae.npz from Boltz is per-TOKEN, not per-residue (ligands are tokenized per-atom; fixtures show a 256x256 PAE against 169 residues + a 1-residue ligand). The descriptor worker MUST build an explicit token->residue map from the CIF and fail loudly if it cannot, even where tokens should equal residues. verified: on_box (fixture shapes)"
+    "pae_npz_token_caveat": "pae.npz from Boltz is per-TOKEN, not per-residue (ligands are tokenized per-atom; fixtures show a 256x256 PAE against 169 residues + a 1-residue ligand). The descriptor worker MUST build an explicit token->residue map from the CIF and fail loudly if it cannot, even where tokens should equal residues. verified: on_box (fixture shapes)",
+    "calibrated_with": {
+      "complex_iplddt": "Adaptyv Proteinbase column (ODC-BY); AUC TRANSFERRED, not recomputed under our implementation",
+      "plddt": "Adaptyv Proteinbase column (ODC-BY); AUC TRANSFERRED, not recomputed under our implementation",
+      "min_ipsae": "Adaptyv Proteinbase column (ODC-BY); AUC TRANSFERRED, not recomputed under our implementation",
+      "ipsae": "Adaptyv Proteinbase column (ODC-BY); AUC TRANSFERRED, not recomputed under our implementation",
+      "iptm": "Adaptyv Proteinbase column (ODC-BY); AUC TRANSFERRED, not recomputed under our implementation",
+      "esmfold_plddt": "Adaptyv Proteinbase column (ODC-BY); AUC TRANSFERRED, not recomputed under our implementation",
+      "pae_interaction": "Adaptyv Proteinbase column (ODC-BY); AUC TRANSFERRED, not recomputed under our implementation",
+      "shape_complementarity": "Adaptyv Proteinbase shape_complementarity column (ODC-BY). The 0.688 AUC was NOT produced by shape-complementarity==0.2.0 (the package we pinned). Pinning makes the number REPRODUCIBLE, not CALIBRATED: two Lawrence-Colman implementations differ on probe radius, dot density, and interface-atom selection. PENDING (BIO Scientist): recompute SC with 0.2.0 on the Proteinbase structures, correlate design-by-design vs their column, re-derive AUC under our implementation. If it agrees, transfer stands with a stated number; if it diverges, SC's rank_average weight comes from our own curve or SC is dropped.",
+      "pdockq": "excluded (AUC 0.500, constant column)",
+      "pdockq2": "excluded (AUC 0.500, constant column)"
+    },
+    "calibration_note": "Every roc_auc above is a threshold TRANSFERRED from Adaptyv's own columns, not computed under our stack. calibrated_with names the producing implementation per descriptor so a reproducible pin is never mistaken for a calibrated number. Campaign one is itself the calibration experiment.",
+    "recompute_environment": "Any descriptor recompute/recalibration MUST run inside the ghcr image ghcr.io/wetware-hq/bindi-fleet-env:2026-10-20 (numpy==2.4.6), NOT on the bare box (numpy 2.5.4). The box is now the divergent env; every descriptor number quoted before 2026-10-20 night was computed under 2.5.4, so an on-box recompute would inherit the flaw it is meant to settle."
   },
   "excluded_tools": [
     {
