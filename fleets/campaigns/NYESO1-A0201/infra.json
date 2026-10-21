@@ -29,7 +29,8 @@
     "gpu": "none",
     "gpu_probe": "nvidia-smi: command not found",
     "python": "3.13.5",
-    "verified": "on_box"
+    "verified": "on_box",
+    "layer2_host_note": "This box is the DEFAULT layer-2 host. Modal is an OPTIONAL parallel CPU host for the same worker (layer_2_modal_cpu_host), in scope 2026-10-21. Neither changes layer 1."
   },
   "stack": [
     {
@@ -310,6 +311,14 @@
         "wing_status": "NOT present; 4 of 9 Origin repos are inbound GitHub mirrors, so the Origin leg is a mirror/create decision, not a second push - Mathew's call"
       },
       "verified": "on_box"
+    },
+    "modal_layer2_cpu_host": {
+      "role": "optional CPU execution host for the interface_descriptor_worker (layer 2)",
+      "image": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+      "code": "fleets/campaigns/NYESO1-A0201/modal_layer2_app.py",
+      "gpu": "none (CPU only)",
+      "see": "modal_scope_note, layer_2_modal_cpu_host",
+      "verified": "docs; not deployed"
     }
   },
   "descriptors": {
@@ -407,7 +416,8 @@
     {
       "tool": "BoltzGen self-hosted on Modal GPU",
       "reason": "REJECTED by Mathew 2026-10-20 (not deferred); bindi PR #13 closed. Modal stub in src/bindi/structural_margin.py is inert.",
-      "verified": "on_box"
+      "verified": "on_box",
+      "scope_clarified_2026_10_21": "This rejection is GPU DESIGN self-hosting on Modal and STANDS. It does NOT cover Modal as a pure-CPU execution host for layer-2 scoring, which is separately in scope (see modal_scope_note)."
     },
     {
       "tool": "AF2 initial-guess / ColabFold re-predictor",
@@ -450,7 +460,8 @@
     "BOLTZ_API_KEY (x-api-key)",
     "GITHUB_PAT",
     "MODAL_TOKEN_ID (inert)",
-    "MODAL_TOKEN_SECRET (inert)"
+    "MODAL_TOKEN_SECRET (inert)",
+    "ghcr-wetware-ro (Modal Secret: REGISTRY_USERNAME + REGISTRY_PASSWORD; GitHub token with read:packages; used only by modal_layer2_app.py for the private ghcr pull; NOT created this session)"
   ],
   "open_decisions_touching_infra": [
     "OD-8: content address includes the ghcr image digest, reconciled to the registry digest 7e8762ae (first half closed); remaining half is code/script hash (adopt Workflow RO-Crate eventually)",
@@ -592,5 +603,77 @@
       "migration_status": "The v3 migration documented in PLATFORM.md section 2 is WRONG FOR THIS ENDPOINT and must not be re-applied without new evidence that the API accepts it.",
       "reconstruction_caveat": "The submitted legacy body was reconstructed after the box reset destroyed v2/pmhc/NOT-SUBMITTED-nyeso1-300designs.json. It could NOT be verified byte-identical to that file (the recorded sha256 851854f2... covers the original file's exact formatting, which is unrecoverable). It WAS verified to validate live and to price at $0.5000, and its sequences are the ones whose content address matched pre-reset."
     }
+  },
+  "modal_scope_note": {
+    "in_scope_2026_10_21": "Modal as a pure-CPU EXECUTION HOST for LAYER 2 (the ipSAE interface-scoring worker, src/bindi/ipsae.py, today run in the pinned ghcr image on the box). Mathew's direction, 2026-10-21 (Australia/Sydney). gpu is set NOWHERE in the Modal app; it is CPU-only.",
+    "still_rejected": "Self-hosting a GPU DESIGN model (BoltzGen/Boltz) on Modal GPU. See excluded_tools[0], licensing.policy ('Modal self-hosting stays rejected'), and layer_1_boltz.self_hosting. Those records STAND and are not deleted.",
+    "why_not_contradictory": "The rejection is about a GPU generator. A CPU scoring function on Modal does not reintroduce a GPU design layer; layer 1 stays on the Boltz hosted API (job prot_des_TY6KzyxULq8mACflXbhn), un-re-plumbed.",
+    "code": "fleets/campaigns/NYESO1-A0201/modal_layer2_app.py",
+    "docs_fetched_2026_10_21": [
+      "https://modal.com/docs/reference/modal.Image",
+      "https://modal.com/docs/reference/modal.App",
+      "https://modal.com/docs/reference/modal.Function",
+      "https://modal.com/docs/reference/modal.Secret",
+      "https://modal.com/docs/reference/modal.Volume",
+      "https://modal.com/docs/guide/images",
+      "https://modal.com/docs/guide/secrets",
+      "https://modal.com/docs/guide/volumes",
+      "https://modal.com/docs/guide/resources",
+      "https://modal.com/docs/guide/retries",
+      "https://modal.com/docs/guide/private-registries"
+    ],
+    "verified": "docs (Modal docs fetched 2026-10-21); code NOT deployed, NOT run"
+  },
+  "layer_2_modal_cpu_host": {
+    "role": "OPTIONAL parallel execution host for layer 2 (CPU interface scoring). The box remains the default host; Modal is the 'scale handoff' path in arch.mermaid.",
+    "status": "specified + ready-to-deploy; NOT deployed, NOT run. MODAL_TOKEN_ID/SECRET stay inert.",
+    "image": {
+      "modal_api": "modal.Image.from_registry(tag, secret=...)",
+      "tag_pinned_by_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+      "digest_is_content_address": "same digest as the pinned ghcr image elsewhere in this file; MUST NOT be replaced by a tag",
+      "private_registry_auth": "ghcr.io is private -> Modal Secret 'ghcr-wetware-ro' holding REGISTRY_USERNAME + REGISTRY_PASSWORD (a GitHub token with read:packages). Fine-grained tokens expose Packages only when the org allows it, so a classic token with read:packages is the reliable form. Per https://modal.com/docs/guide/private-registries.",
+      "add_python": "NOT used - the fleet-env image already has python+pip on PATH",
+      "content_address_effect": "Modal pulls the base by digest and does not rebuild or mutate the base layers, so the scientific env (numpy==2.4.6, gemmi==0.7.5, shape-complementarity==0.2.0, biopython) is byte-identical to the ghcr image; Modal only APPENDS its client-runtime layer. The ghcr digest stays the pinned base and the content address. OD-8 is NOT reopened. The Modal Image object-id differs from the ghcr digest - that is the appended layer, not a change to the base.",
+      "can_use_unmodified": "YES as-is, provided the image is linux/amd64 and its ENTRYPOINT execs its args (or has none). If the ghcr ENTRYPOINT does not exec \"$@\", override with Image.entrypoint([...]). This is the single item to confirm against the image.",
+      "docs": [
+        "https://modal.com/docs/reference/modal.Image",
+        "https://modal.com/docs/guide/private-registries"
+      ]
+    },
+    "functions": {
+      "score_one": {
+        "modal_api": "@app.function(image, cpu, memory, timeout, retries, max_containers)",
+        "entrypoint_in_image": "python -m bindi.ipsae <pae.npz> <_predicted.cif> --chains A:275,B:99,C:9",
+        "returns": "ipsae, min_ipsae (both chain orderings when reported), complex_plddt, plddt.present - all NON-GATING, recorded only. Gating stays iptm and plddt.",
+        "guard": "TokenAlignmentError raised in-image is re-raised, never swallowed",
+        "cpu": "1.0 physical core - ipSAE is O(n^2) numpy on a ~256x256 PAE plus one gemmi parse, sub-second to low-seconds, single-threaded; more cores buy nothing, and 1.0 stops the gemmi parse being throttled under the 0.125 default",
+        "memory_mib": "2048 - arrays are tiny (~0.26 MiB); the footprint is importing numpy+scipy+gemmi+biopython. 2 GiB gives headroom with an OOM backstop; the 128 MiB default risks OOM on import alone",
+        "timeout_s": "300 - a design scores in seconds; 300 s is a loud bound that trips a hang rather than tolerating it. Image pull and cold start are not counted against it",
+        "retries": "0 - scoring is a pure deterministic function of (cif, pae); every failure mode here (TokenAlignmentError, bad CIF, absent pLDDT) is deterministic and recurs identically, so input-retries only delay the loud failure. Container-crash reschedule (OOM, host loss) is Modal's separate mechanism, orthogonal to input retries",
+        "max_containers": "10 - one per design; bounds the concurrent billable core-second burst",
+        "docs": [
+          "https://modal.com/docs/reference/modal.App",
+          "https://modal.com/docs/guide/resources",
+          "https://modal.com/docs/guide/retries"
+        ]
+      },
+      "fan_out": {
+        "modal_api": "Function.starmap(iterable_of_tuples) - each tuple unpacked into score_one's positional args",
+        "docs": "https://modal.com/docs/reference/modal.Function"
+      },
+      "entrypoint": {
+        "modal_api": "@app.local_entrypoint() main() reads ART artifacts, starmaps, and writes ONE canonical-JSON results file (sort_keys, compact separators, sorted by design_id) so the output and its hash are deterministic regardless of completion order",
+        "docs": "https://modal.com/docs/reference/modal.App"
+      }
+    },
+    "cost_surface": {
+      "gpu_spend": "none - CPU only",
+      "where_in_graph": "L2 is downstream of the APPR approve edge (CFG->APPR->L1A->L1B->ART->L2), so it only runs on the approve path and already inherits the human gate; no new gate added",
+      "hard_ceiling": "billable core-seconds <= max_containers * timeout * cpu = 10 * 300 * 1.0 = 3000 per 10-design run; memory billed at max(request, usage)",
+      "rate_not_quoted": "Modal's $/core-second is on its pricing page, NOT fetched this session, so no dollar figure is asserted here; at any plausible rate 3000 core-seconds is cents, negligible beside the $15 Boltz spend but NOT zero",
+      "rule": "the Modal layer-2 projection MUST be added to costs.spent_to_date_usd and included in the same pre-APPR cost projection as the Boltz spend; the run aborts if (Boltz + Modal projected) > spend_cap_usd = 15.00. The cap and on_deny = HALT are unchanged.",
+      "optional_volume_cut": "a modal.Volume was deliberately NOT used: the 10 artifacts are tiny and already mirrored off-API to repo and box, so a Volume adds a durability surface that buys nothing here"
+    },
+    "verified": "docs (Modal docs 2026-10-21); NOT deployed, NOT run"
   }
 }

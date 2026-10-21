@@ -247,7 +247,7 @@ honesty_condition = "legitimate only if the run trace records which threshold pr
 [platform]
 endpoint  = "POST https://api.boltz.bio/compute/v1/protein/design"
 auth      = "x-api-key header"
-request_shape = "type-discriminated: {\"type\":\"binder\", target:{entities}, binder:{modality, entities}} - migration already done"
+request_shape = "LEGACY REQUIRED: {num_proteins, target{type:\"no_template\", entities, epitope_residues}, binder_specification{type:\"no_template\", modality, entities}}. The migrated type-discriminated {\"type\":\"binder\"} shape was REJECTED LIVE 2026-10-21 (HTTP 400: binder_specification is required, templates is required). The former claim -migration already done- was FALSE. See infra.json code_and_provenance.A4_ANSWERED_2026_10_21."
 model_selector = "NONE on the design endpoint; versioning is by request shape"
 prediction_model = "boltz-2.1 (only documented value)"
 api_contract_version = "v2026-03-01"
@@ -295,6 +295,32 @@ severity = "advisory, recorded 2026-10-20"
 statement = "The ipSAE worker performs NO 0-1 to 0-100 pLDDT rescale (the DunbrackLab reference multiplies by 100 iff max <= 1). This is safe for Boltz mmCIF, which is always 0-100, but a future 0-1 pLDDT source would read as ~0.5 and be mis-flagged as PRESENT rather than caught by the zero-variance absence test. Reported by BIO Engineer."
 mitigation = "if a non-Boltz pLDDT source is ever added, the worker must assert the scale explicitly rather than infer it."
 
+# ---- Modal as an OPTIONAL CPU execution host for LAYER 2 (in scope 2026-10-21) ----
+# Does NOT reopen GPU self-hosting on Modal, which stays rejected. Layer 1 stays on the
+# Boltz hosted API. gpu is set nowhere. Code: modal_layer2_app.py. Docs fetched 2026-10-21.
+[platform.modal_layer2]
+in_scope       = "CPU execution host for the ipSAE scoring worker (layer 2)"
+still_rejected = "GPU design self-hosting on Modal (unchanged, see infra.json excluded_tools)"
+image          = "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6"
+image_api      = "modal.Image.from_registry, private ghcr via Modal Secret REGISTRY_USERNAME + REGISTRY_PASSWORD (GitHub token needs read:packages)"
+code           = "modal_layer2_app.py"
+gpu            = "none"
+cpu_cores      = 1.0
+memory_mib     = 2048
+timeout_s      = 300
+retries        = 0        # scoring is deterministic; a retry would recur identically
+max_containers = 10       # one per design
+deployed       = false    # specified only; no modal deploy, no modal run
+docs_fetched_2026_10_21 = [
+  "https://modal.com/docs/reference/modal.Image",
+  "https://modal.com/docs/reference/modal.App",
+  "https://modal.com/docs/reference/modal.Function",
+  "https://modal.com/docs/reference/modal.Secret",
+  "https://modal.com/docs/guide/resources",
+  "https://modal.com/docs/guide/retries",
+  "https://modal.com/docs/guide/private-registries",
+]
+
 # ----------------------------------------------------------------- costs
 
 [costs]
@@ -302,8 +328,14 @@ campaign_one_usd        = 15.00
 per_design_usd          = 0.05
 tier_note               = "500 aa target + 100-250 aa binder lands in the 513-1024 residue tier at $0.10/design ($30 per 300, $100 per 1000); cropping the target below 512 total residues halves it back"
 wet_lab_from_usd        = 99.00
-spent_to_date_usd       = 0.00
-submitted_to_date       = false
+spent_to_date_usd       = 0.50   # run one submitted 2026-10-21T18:17+11:00, job prot_des_TY6KzyxULq8mACflXbhn, estimate-cost $0.5000; replace with the BILLED figure when the job completes
+submitted_to_date       = true   # run one, 10 designs
+
+[costs.modal_layer2]
+gpu_spend_usd             = 0.00   # CPU only
+hard_ceiling_core_seconds = 3000   # max_containers(10) * timeout_s(300) * cpu(1.0), per 10-design run
+rate_note = "Modal $/core-second is on the pricing page, not fetched this session; 3000 core-seconds is cents, negligible beside the $15 Boltz spend but not zero"
+cap_rule  = "the Modal layer-2 projection is ADDED to spent_to_date_usd and included in the same pre-APPR projection as Boltz; abort if (Boltz + Modal projected) > spend_cap_usd (15.00). Cap and on_deny = HALT unchanged."
 
 # ------------------------------------------------------------- provenance
 
