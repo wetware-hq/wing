@@ -112,6 +112,17 @@ edges = [
   ["PANEL", "handoff:BIO Engineer"],
 ]
 
+# ------------------------------------------------------- run one, submitted
+
+[run_one.submitted]
+job_id        = "prot_des_TY6KzyxULq8mACflXbhn"
+submitted_at  = "2026-10-21T18:17+11:00"
+num_proteins  = 10
+cost_usd      = 0.50
+request_shape = "LEGACY (binder_specification + target.type no_template). The migrated type:\"binder\" shape was REJECTED live with HTTP 400: binder_specification is required, templates is required. See infra.json code_and_provenance.A4_ANSWERED_2026_10_21."
+g1            = "PASS"
+retention_note = "artifacts must be mirrored off-API within 7 days of 2026-10-21"
+
 # ---------------------------------------------------------------- target
 
 [target]

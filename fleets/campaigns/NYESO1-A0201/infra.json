@@ -571,6 +571,26 @@
       "in_image_execution": "PASS. Image pulled by full digest with podman. In-image numpy 2.4.6 and gemmi 0.7.5, so the box/image divergence (A3) does not affect layer 2 when run in-image. Ligand fixture correctly raises TokenAlignmentError; a synthetic two-chain complex scores ipSAE both orderings plus min_ipsae, with plddt.present=true and complex_plddt 91.59, so the zero-variance placeholder guard does not misfire.",
       "image_has_no_pytest": "The image is a runtime image: pytest is absent, so the suite cannot be run inside it. In-image proof must drive the module directly.",
       "remaining": "Only the APPR human gate and the submission itself."
+    },
+    "run_one_submission": {
+      "submitted_at": "2026-10-21T18:17+11:00 (Australia/Sydney)",
+      "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+      "livemode": true,
+      "workspace_id": "ws_pqmbzVxVTgdjEWifefXr",
+      "pipeline": "boltzprot 1.0",
+      "num_proteins": 10,
+      "cost_estimated_usd": "0.5000",
+      "request_body": "fleets/campaigns/NYESO1-A0201/run-one/request-legacy-submitted.json",
+      "submitted_config_hash": "sha256:c8b281078bbeaedad7ac84f21d1392bf2fb0cd706638866a862171f2c421aac5",
+      "G1": "PASS - HTTP 200, job id returned, num_proteins echoed as 10.",
+      "retention": "artifacts must be mirrored off-API within 7 days of 2026-10-21."
+    },
+    "A4_ANSWERED_2026_10_21": {
+      "finding": "The migrated type:'binder' body is REJECTED by the live design endpoint. POST /compute/v1/protein/design returned HTTP 400 VALIDATION_ERROR: binder_specification is required; templates is required. Cost $0.00 - validation failures are not billed.",
+      "consequence": "The LEGACY shape {num_proteins, target{type:'no_template', entities, epitope_residues:{C:[...]}}, binder_specification{type:'no_template', modality, entities}} is REQUIRED, not merely 'still accepted for migration'. The run that succeeded used it.",
+      "reinterpretation": "estimate-cost rejecting the type:'binder' body was never a quirk of the read-only pricing path. It was the API reporting the shape was wrong, for free, and the repo misread it as a pricing-path limitation (see A5, PLATFORM.md 102-116).",
+      "migration_status": "The v3 migration documented in PLATFORM.md section 2 is WRONG FOR THIS ENDPOINT and must not be re-applied without new evidence that the API accepts it.",
+      "reconstruction_caveat": "The submitted legacy body was reconstructed after the box reset destroyed v2/pmhc/NOT-SUBMITTED-nyeso1-300designs.json. It could NOT be verified byte-identical to that file (the recorded sha256 851854f2... covers the original file's exact formatting, which is unrecoverable). It WAS verified to validate live and to price at $0.5000, and its sequences are the ones whose content address matched pre-reset."
     }
   }
 }
