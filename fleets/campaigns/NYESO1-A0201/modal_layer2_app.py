@@ -91,24 +91,60 @@ BINDI_FLEET_ENV_DIGEST = (
 #   - built for linux/amd64
 #   - `python` + `pip` on $PATH (the fleet-env image has them; it runs the worker)
 #     -> so add_python is NOT needed and is intentionally omitted.
-#   - an ENTRYPOINT that `exec "$@"` (or none). If the ghcr image's ENTRYPOINT does
-#     not exec its args, Modal cannot start the function in it; override with
-#     .entrypoint([...]) then. THIS IS THE ONE THING TO CONFIRM against the image
-#     (the concurrent podman verification covers it).
-layer2_image = modal.Image.from_registry(
-    BINDI_FLEET_ENV_DIGEST,
-    secret=modal.Secret.from_name(
-        "ghcr-wetware-ro",
-        required_keys=["REGISTRY_USERNAME", "REGISTRY_PASSWORD"],
-    ),
+#   - an ENTRYPOINT that `exec "$@"` (or none). CONFIRMED 2026-10-21 by podman
+#     inspect: the image has NO ENTRYPOINT (Cmd is only an import smoke test), so
+#     no .entrypoint([...]) override is needed.
+# THE PINNED IMAGE DOES NOT CONTAIN THE WORKER. Verified in-image 2026-10-21:
+# `python -m bindi.ipsae` -> "No module named bindi.ipsae". The image ships bindi
+# 0.1.0 with only cli, curate, generate, policy, resource, run; ipsae.py, gates.py,
+# case.py, e2e.py, boltz.py and data.py are ALL absent. It was built 2026-10-20 from
+# a tree predating the ipSAE work, so it is an ENVIRONMENT image, not a worker image.
+# Fix: append the worker as a wheel layer. Do NOT rebuild and repin ghcr - that would
+# reopen OD-8, invalidate the recorded digest everywhere, and buy nothing scientific,
+# since this layer is pure python and touches no pinned scientific dependency.
+# Build the wheel inside this same base image (verified: pip wheel --no-deps succeeds
+# and the archive carries all six modules plus both data TOMLs):
+#   podman run --rm -v <bindi>:/src -w /src <BINDI_FLEET_ENV_DIGEST> \
+#     sh -lc 'pip wheel --no-deps --wheel-dir /src/dist /src'
+# SECOND PINNED COORDINATE. With a wheel layer the ghcr digest pins the BASE, not the
+# whole execution environment, so the worker MUST be pinned separately. Both are
+# recorded in infra.json code_and_provenance.layer2_execution_pin:
+WORKER_WHEEL = "bindi-0.2.0-py3-none-any.whl"
+WORKER_WHEEL_SHA256 = (
+    "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+)
+WORKER_COMMIT = "70b6c6c"  # wetware-hq/bindi
+
+layer2_image = (
+    modal.Image.from_registry(
+        BINDI_FLEET_ENV_DIGEST,
+        secret=modal.Secret.from_name(
+            "ghcr-wetware-ro",
+            required_keys=["REGISTRY_USERNAME", "REGISTRY_PASSWORD"],
+        ),
+    )
+    # copy=True is required because a build step (run_commands) follows.
+    .add_local_file(f"dist/{WORKER_WHEEL}", f"/tmp/{WORKER_WHEEL}", copy=True)
+    .run_commands(f"pip install --no-cache-dir /tmp/{WORKER_WHEEL}")
 )
 
 app = modal.App("nyeso1-a0201-layer2")
 
-# Campaign default chain lengths (target A:275 / B:99 / C:9, binder D). The worker
-# reads chains from the CIF; --chains is the explicit cross-check that makes a
-# re-lettering or token/residue mismatch fail LOUDLY instead of silently.
-DEFAULT_CHAINS = "A:275,B:99,C:9"
+# --chains is a STRICT ASSERTION against the CIF, not a repartitioning override:
+# bindi._resolve_chain_specs requires every named chain to exist in the CIF with the
+# EXACT residue count, and validate_token_alignment additionally requires the chain
+# lengths to sum to the PAE token count. A hardcoded target-only string therefore
+# CANNOT work: the predicted complex also contains the binder chain, whose length
+# varies per design, so "A:275,B:99,C:9" always raises TokenAlignmentError.
+# Default to "" -> the worker derives chains from the CIF, which is authoritative.
+# Set CHAINS_ASSERTION per design only when the binder length is known, e.g.
+# "A:275,B:99,C:9,D:62" for a 62-residue binder.
+DEFAULT_CHAINS = ""
+
+# Which chain is the designed binder. Required whenever the complex has >2 chains,
+# because the worker emits one entry in pairs{} per chain PAIR (a 4-chain complex
+# gives 6 pairs) and there is no single "the" interface to report without it.
+BINDER_CHAIN = "D"
 
 
 # -----------------------------------------------------------------------------
@@ -155,6 +191,7 @@ def score_one(
     cif_bytes: bytes,
     pae_bytes: bytes,
     chains: str = DEFAULT_CHAINS,
+    binder_chain: str = BINDER_CHAIN,
 ) -> dict:
     """Score ONE design in-image via the worker's documented, box-verified entrypoint:
         python -m bindi.ipsae <pae.npz> <_predicted.cif> [--chains A:275,B:99,C:9]
@@ -202,30 +239,68 @@ def score_one(
 
         raw = _read_worker_output(proc.stdout)
 
-    # Normalize to exactly the fields the brief asks for. KeyError here is intended:
-    # it means the worker's schema diverged and must be reconciled, not papered over.
-    plddt = raw.get("plddt", {})
+    # The worker's JSON is NESTED (verified live in-image 2026-10-21):
+    #   {chains:[{chain_id,length}], n_tokens, ordered:{"A->B":..,"B->A":..},
+    #    pae_cutoff,
+    #    pairs:{"A|B":{ipsae_A_to_B, ipsae_B_to_A, min_ipsae}},
+    #    plddt:{complex_plddt, interface_plddt, present}}
+    # There are NO top-level "ipsae"/"min_ipsae"/"complex_plddt" keys.
+    pair_key, pair = _select_pair(raw, binder_chain)
+    chain_a, chain_b = pair_key.split("|")
+    plddt = raw["plddt"]
     result = {
         "design_id": design_id,
-        # NON-GATING, recorded only:
-        "ipsae": raw["ipsae"],
-        "min_ipsae": raw["min_ipsae"],
-        # both chain orderings when present (worker computes min(A->B, B->A)):
-        "ipsae_ab": raw.get("ipsae_ab", raw.get("ipsae_a_b")),
-        "ipsae_ba": raw.get("ipsae_ba", raw.get("ipsae_b_a")),
-        "complex_plddt": raw.get("complex_plddt", raw.get("complex_iplddt")),
-        "plddt_present": bool(
-            plddt.get("present") if isinstance(plddt, dict) else raw.get("plddt_present")
-        ),
-        "chains": chains,
+        "pair": pair_key,
+        # NON-GATING, recorded only. "ipsae" is the conservative weakest-direction
+        # screen, i.e. min(A->B, B->A), which is exactly pairs[key]["min_ipsae"].
+        "ipsae": pair["min_ipsae"],
+        "min_ipsae": pair["min_ipsae"],
+        # both chain orderings, keyed by the ACTUAL chain ids in this pair:
+        "ipsae_ab": pair[f"ipsae_{chain_a}_to_{chain_b}"],
+        "ipsae_ba": pair[f"ipsae_{chain_b}_to_{chain_a}"],
+        "complex_plddt": plddt["complex_plddt"],
+        "interface_plddt": plddt["interface_plddt"],
+        "plddt_present": bool(plddt["present"]),
+        "n_tokens": raw["n_tokens"],
+        "chains_reported": raw["chains"],
+        "chains_asserted": chains or None,
         "worker_raw": raw,  # full output kept for provenance / replay
     }
     return result
 
 
+def _select_pair(raw: dict, binder_chain: str | None) -> tuple[str, dict]:
+    """Resolve the worker's pairs{} map to the ONE interface this design is judged on.
+
+    A 2-chain complex has exactly one pair and needs no hint. A real campaign complex
+    (target A/B/C + binder D) has 6 pairs, so the binder chain must be named; we then
+    take the WEAKEST binder-containing interface, consistent with bindi's conservative
+    min(A->B, B->A) screen. Failing loudly beats silently scoring the wrong interface.
+    """
+    pairs = raw["pairs"]
+    if not binder_chain:
+        if len(pairs) != 1:
+            raise RuntimeError(
+                f"binder_chain is not set and the complex has {len(pairs)} chain pairs "
+                f"({sorted(pairs)}); cannot infer which interface to score"
+            )
+        return next(iter(pairs.items()))
+    candidates = {k: v for k, v in pairs.items() if binder_chain in k.split("|")}
+    if not candidates:
+        raise RuntimeError(
+            f"binder chain {binder_chain!r} is not in any reported pair ({sorted(pairs)}); "
+            f"chains present: {[c['chain_id'] for c in raw['chains']]}"
+        )
+    return min(candidates.items(), key=lambda kv: kv[1]["min_ipsae"])
+
+
 def _read_worker_output(stdout: str) -> dict:
-    """Parse the worker's stdout as JSON. Isolated so it is trivial to repoint at a
-    metrics file if bindi writes one instead of printing JSON."""
+    """Parse the worker's stdout as JSON.
+
+    CONFIRMED 2026-10-21 against bindi @70b6c6c installed into the pinned image:
+    `python -m bindi.ipsae` writes ONE JSON object to stdout via
+    json.dump(result, sys.stdout, indent=2, sort_keys=True). It does not write a
+    metrics file, so parsing stdout is correct."""
     stdout = (stdout or "").strip()
     if not stdout:
         raise RuntimeError("bindi.ipsae produced no stdout to parse")
@@ -248,6 +323,7 @@ def main(
     artifacts_dir: str = "run-one/artifacts",
     out_path: str = "run-one/layer2_results.json",
     chains: str = DEFAULT_CHAINS,
+    binder_chain: str = BINDER_CHAIN,
 ):
     """Expect artifacts_dir/<design_id>/ each holding `_predicted.cif` and `pae.npz`
     (the ART node outputs, infra.json:100-102). Mirror those off-API first (7-day
@@ -261,7 +337,7 @@ def main(
     for did in designs:
         cif = next(adir.joinpath(did).glob("*_predicted.cif"))
         pae = next(adir.joinpath(did).glob("*pae*.npz"))
-        inputs.append((did, cif.read_bytes(), pae.read_bytes(), chains))
+        inputs.append((did, cif.read_bytes(), pae.read_bytes(), chains, binder_chain))
 
     # starmap: each tuple is unpacked into score_one's positional args.
     # order_outputs=True (default) -> outputs match input order; we also sort below.
