@@ -1,6 +1,6 @@
 # FLEET.toml - agentic execution graph for target NYESO1-A0201
 # Clinical case, mechanism and in-vitro hand-off: see CASE.md in this directory.
-# Rendered architecture diagram: ../architecture-2layer-fleet-2026-10-20.mermaid
+# Rendered architecture diagram: arch.mermaid (in this directory)
 # Nothing in this file has been submitted. No money has been spent.
 
 [fleet]
@@ -9,7 +9,7 @@ version          = "1.0"
 date             = "2026-10-20"
 status           = "staged, not submitted"
 case_file        = "CASE.md"
-diagram          = "../architecture-2layer-fleet-2026-10-20.mermaid"
+diagram          = "arch.mermaid"                  # single diagram; the 2-layer duplicate was consolidated away 2026-10-21
 layers           = ["boltz", "interface"]          # per KEEP LAYERS ( Boltz, interface )
 primary_endpoint = "specificity_margin"            # on-target rank minus best-decoy rank
 scope            = "in_silico_design_and_screen"   # in vitro proof is downstream, see CASE.md
@@ -177,6 +177,15 @@ restriction_triad = "https://doi.org/10.4049/jimmunol.169.6.3146"
 a6_contacts       = "15 HLA-A2 residues: alpha-1 E58, R65, K66, K68, A69, Q72 plus nine on alpha-2"
 triad             = ["R65", "A69", "Q155"]
 unverified        = "helix spans used (alpha-1 57-84, alpha-2 138-180, author numbering) bracket every listed contact residue but were NOT checked residue-by-residue against a crystal structure; endpoints are approximate"
+numbering         = "chain A value begins GSHSMRYFFTSVSRPGRGEPRFIAVGYVDDTQFVRF, i.e. mature heavy chain from Gly1 with NO expression tag, so 0-based index = mature author number - 1 exactly. Chain A 275 aa = author 1..275; chain B b2m 99 aa; chain C SLLMWITQC 9 aa."
+domain_lengths    = "IMGT domain lengths 90/92/92; alpha-3 is the Ig-like, membrane-proximal, CD8-binding domain and b2m is likewise membrane-proximal, so neither is part of a TCR or TCR-mimic footprint. Second source: https://doi.org/10.1007/s11434-014-0211-z"
+frequent_contacts = "beyond the triad, Q72, V76, E154 and A158 are frequent contacts: https://pmc.ncbi.nlm.nih.gov/articles/PMC5701626/"
+over_marking      = "strict IMGT alpha-3 is author 183-274 (0-based 182-273); every panel marks 180-274 and therefore OVER-MARKS by three residues at the alpha-2/alpha-3 junction. Deliberate: it reproduces the earlier probe file probe-nonbind.json (chain A 180-274, chain B 0-98) exactly, the over-marking is in the safe direction, and continuity with the probe was preferred."
+panel_costs       = "whether any of the three panels changes cost is UNVERIFIED - estimate-cost rejects the type:\"binder\" body (see PLATFORM.md)."
+honoured          = "whether the hosted BoltzGen honours non_binding_residues AT ALL is UNVERIFIED - see risk boltzgen_backend_version and OD-7."
+aggressive_cost   = "a ~9-residue epitope is a very small interface for a 60-100 aa binder; the aggressive panel may be geometrically unsatisfiable or yield designs that cannot express or fold. Published de novo pMHC binders DO contact helix. Treat it as an experiment, not a default."
+sign_off          = "panels built by BIO Scientist 2026-10-20, pending BIO Physician residue-level sign-off and Mathew's choice (OD-2). None submitted, nothing spent."
+source_note       = "this block absorbs nonbinding-panel-2026-10-20.md, consolidated away 2026-10-21; the panels themselves were already machine-readable above."
 
 # ------------------------------------------------------------- descriptors
 
@@ -280,7 +289,7 @@ fan_out_shape   = "the decoy set is ten peptide mutants, so the target hash move
 known_weakness  = "Nextflow content-addresses a strict SUPERSET of our four-tuple: it also hashes the container image, the conda/spack environment, the script text and bundled scripts. We hash none of those, and all of them can silently change results. Adopting the Nextflow input list is open decision OD-8."
 
 [prior_art]
-survey = "../fleet-spec-prior-art-2026-10-20.md"
+survey = "prior-art.md"
 verdict = "the graph, typed IO, content-addressing and provenance are CWL + Workflow Run RO-Crate; the agent/owner half is an A2A Agent Card; the prose structure is a model card. The in-graph approval + spend-cap node is the one piece with no clean prior art."
 adopt = ["Workflow Run RO-Crate + RO-Crate 1.2", "Nextflow task-hash input list", "CWL requirements-vs-hints semantics", "A2A Agent Card schema", "Hugging Face model-card file shape"]
 do_not_build_on = "IBM/BeeAI ACP - folded into A2A under the Linux Foundation, repo archived"

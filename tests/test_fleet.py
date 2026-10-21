@@ -4,7 +4,7 @@ import pytest
 from conftest import caught
 from wing import fleet
 
-F = pathlib.Path(__file__).resolve().parent.parent / "fleets"
+F = pathlib.Path(__file__).resolve().parent.parent / "fleets" / "ward"
 FULL = fleet.load(F / "wing_full.toml")
 
 
@@ -23,8 +23,8 @@ def test_default_is_a_wing():
     assert set(FULL["mix"]) == {f"S{i:02d}" for i in range(1, 17)}
 
 
-def test_planted_undersize_fleet_fails():
-    caught("WG-FLEET-UNDERSIZE-PATIENTS", fleet.load, F / "planted_undersize.toml")
+def test_planted_undersize_fleet_fails(planted_undersize):
+    caught("WG-FLEET-UNDERSIZE-PATIENTS", fleet.load, planted_undersize)
 
 
 def test_tampered_too_few_patients():

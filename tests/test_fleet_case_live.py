@@ -80,7 +80,7 @@ def test_malformed_reply_not_coerced():
 
 def test_abstain_live_routes_human():
     decisions = ["yes", "abstain", "yes", "yes"]
-    out = fleet_case.run(dry_run=False, model_pin=PIN, post=_post(decisions), fleet_path=ROOT / "fleets" / "immunology_mvp.toml")
+    out = fleet_case.run(dry_run=False, model_pin=PIN, post=_post(decisions), fleet_path=ROOT / "fleets" / "ward" / "immunology_mvp.toml")
     assert out["abstain_any"] and out["pass"]
     assert any(s.get("op") == "human_route" for s in out["trace"] if s.get("kind") == "step")
 

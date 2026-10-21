@@ -1,7 +1,7 @@
 """Fleet: a whole simulated hospital wing on ONE ward clock (wing.multi.MultiWing). Beds, healthcare staff agents
 by role class (num_providers), a 12-hour shift with a night half, and simultaneous events: concurrent deteriorations,
 a whole-wing handover, a family call for help, missed observations and spurious readings.
-Config: fleets/*.toml. Synthetic only: SYNTH- ids, 1930s dates. Role names come from the TEST site profile only.
+Config: fleets/ward/*.toml. Synthetic only: SYNTH- ids, 1930s dates. Role names come from the TEST site profile only.
 Trace mode needs no key and no network; each patient-facing reply is a ward/passmarks.py record."""
 import pathlib, random, tempfile, tomllib
 from . import CheckFail
@@ -263,7 +263,7 @@ def run(c, mode="trace", reply=None, profile=None):
                 "records": records}
 
 
-if __name__ == "__main__":                  # python3 -m wing.fleet fleets/wing_full.toml OUT.json
+if __name__ == "__main__":                  # python3 -m wing.fleet fleets/ward/wing_full.toml OUT.json
     import json, sys
     out = run(load(sys.argv[1]))
     pathlib.Path(sys.argv[2]).write_text(json.dumps(out, indent=1, default=str))

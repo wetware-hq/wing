@@ -1,5 +1,5 @@
 {
-  "_comment": "infra.json - CONVERGED tool->stack map for NYESO1-A0201. Supersedes the two same-path drafts of 2026-10-20 (BIO Engineer's producer_map version and BIO Scientist's verified-field version); both kept beside this as infra.engineer-993b2f1.json and infra.scientist.json. Companion to FLEET.toml (graph), arch.mermaid (transport), CASE.md (clinical). Every entry carries 'verified' stating HOW it is known: on_box = observed on this machine today; docs = vendor documentation; reported = stated by another agent, not re-checked here; unverified = assumed/planned.",
+  "_comment": "infra.json - CONVERGED tool->stack map for NYESO1-A0201. Supersedes the two same-path drafts of 2026-10-20 (BIO Engineer's producer_map version and BIO Scientist's verified-field version); both kept beside this as infra.engineer-993b2f1.json and infra.scientist.json. Companion to FLEET.toml (graph), arch.mermaid (transport), CASE.md (clinical). Every entry carries 'verified' stating HOW it is known: on_box = observed on this machine today; docs = vendor documentation; reported = stated by another agent, not re-checked here; unverified = assumed/planned. | CONSOLIDATED 2026-10-21: this file is now the single infra map for NYESO1-A0201. infra.engineer-993b2f1.json (269 loc) and infra.scientist.json (141 loc) were merged in and deleted; 189 of the engineer file's lines were already byte-identical here. Everything either file held that was not already present is below, under its own key.",
   "meta": {
     "campaign": "NYESO1-A0201",
     "fleet_spec": "FLEET.toml",
@@ -8,7 +8,19 @@
     "generated_by": "BIO Engineer (converged with BIO Scientist's provenance scheme); ghcr fleet-env digest wired 2026-10-20T20:08+11:00",
     "governance": "No merge to main without green CI AND Mathew per-SHA sign-off (bindi#9). Nothing submitted to Boltz and nothing spent until the APPR human_gate approves.",
     "status": "spec-level map; nothing submitted, nothing spent (submitted_to_date=false, spent_to_date_usd=0.00)",
-    "verified": "on_box"
+    "verified": "on_box",
+    "consolidated": "2026-10-21 (Australia/Sydney)",
+    "supersedes": [
+      "infra.engineer-993b2f1.json (BIO Engineer, generated 2026-10-20)",
+      "infra.scientist.json (BIO Scientist, generated 2026-10-20T19:33+11:00)"
+    ],
+    "od8_conflict_resolution": {
+      "conflict": "infra.engineer-993b2f1.json and this file disagreed about OD-8 (widen the content address beyond the four-tuple).",
+      "kept": "the CONVERGED/newer statement from infra.json: the ghcr image digest is already IN the content address, reconciled to registry digest 7e8762ae, so the FIRST HALF of OD-8 is CLOSED; the remaining half is the code/script hash (adopt Workflow RO-Crate over CWL/Nextflow eventually).",
+      "discarded": "the engineer file's older wording, recorded here so it is not lost: 'OD-8: widen content address to include ghcr image digest + code/script hash (adopt Workflow RO-Crate over CWL/Nextflow eventually)' - i.e. it still listed the image digest as OUTSTANDING, and carried no record of the pinned bindi deps / built ghcr fleet-env image.",
+      "why": "the converged file is newer (generated 2026-10-20T19:41+11:00 vs 2026-10-20 undated), it is the file both authors converged on, and its claim is checkable on the box: image ghcr.io/wetware-hq/bindi-fleet-env:2026-10-20 digest sha256:7e8762ae... is recorded in tools.containers and in provenance.content_address_current.",
+      "unverified": "this resolution is a documentation reconciliation only. Nothing was re-run to re-verify the digest as part of the 2026-10-21 consolidation."
+    }
   },
   "execution_host": {
     "role": "layer 2 (interface descriptors) runs entirely here; layer 1 runs off-box",
@@ -98,7 +110,8 @@
         "image_digest"
       ],
       "cost_usd": 0.0,
-      "verified": "on_box (spec); image digest now realised (ghcr bindi-fleet-env@sha256:7e8762aebc33...); off-API mirroring planned"
+      "verified": "on_box (spec); image digest now realised (ghcr bindi-fleet-env@sha256:7e8762aebc33...); off-API mirroring planned",
+      "known_weakness": "four-tuple is a strict subset of Nextflow's hash (omits container image, environment, script text); widening to include ghcr image digest + code hash is the near-term fix (OD-8)"
     },
     {
       "node": "L2",
@@ -109,7 +122,10 @@
       "location": "bindi src/bindi/ipsae.py (PR #14, draft)",
       "entrypoint": "python -m bindi.ipsae <pae.npz> <_predicted.cif> [--chains A:275,B:99]",
       "cost_usd": 0.0,
-      "verified": "reported (validated on box fixtures in the PR #14 env 2026-10-20; deps NOT installed in the main checkout - see tools.interface_descriptor_worker.python_environment)"
+      "verified": "reported (validated on box fixtures in the PR #14 env 2026-10-20; deps NOT installed in the main checkout - see tools.interface_descriptor_worker.python_environment)",
+      "implements": "dunbracklab/IPSAE ipsae_d0res; bindi uses min(A->B, B->A) (reference uses aggregate max) for conservative weakest-direction screening",
+      "inputs": "PAE (pae.npz, per-token) + pLDDT and chains (label_asym_id, B_iso_or_equiv) from _predicted.cif",
+      "validation": "wiring-validated on real box fixtures 2026-10-20 (3/3 checks); end-to-end pending campaign one"
     },
     {
       "node": "DIV",
@@ -230,7 +246,8 @@
       "module": "bindi src/bindi/provenance.py, trace_validate.py",
       "status": "image digest is now a VERIFIED part of the content address (OD-8 first half closed: registry digest 7e8762ae authoritative, local reconciled by repull); code/script hash + merkle hash-chaining still to wire before campaign one",
       "known_weakness": "four-tuple was a strict subset of what Nextflow/RO-Crate hash; the container image is now covered via the ghcr digest, code/script text still not",
-      "verified": "on_box"
+      "verified": "on_box",
+      "known_weakness_pre_close": "four-tuple omits container image + environment + script text (OD-8)"
     },
     "containers": {
       "role": "environment snapshot / backup of fleet environments; the layer-2 descriptor environment",
@@ -252,7 +269,8 @@
       "verified": "on_box (built under podman 5.4.2, import-checked, pushed, and re-pulled by digest; registry digest confirmed authoritative)",
       "digest_authoritative": "sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6 (registry/ghcr; resolves on pull)",
       "config_digest": "sha256:cf153c6899717e4d38f6a855ae40bfd2a4abec0c30d5a1e1f982698023adfdbb (= image id; identical across both manifest encodings, so content is bit-identical)",
-      "local_manifest_digest_note": "podman images --digests initially showed sha256:d1b271bb... for the local build; that string returns 'manifest unknown' from ghcr -> it is a podman LOCAL manifest-encoding artifact, NOT a registry content address. The registry stores 7e8762ae (confirmed: requesting @sha256:7e8762ae returns the manifest; config cf153c6 matches). Reconciled 2026-10-20 by removing the local image and re-pulling by digest, so podman images --digests now shows 7e8762ae. The SC recompute ran on config cf153c6, i.e. content bit-identical to the registry image."
+      "local_manifest_digest_note": "podman images --digests initially showed sha256:d1b271bb... for the local build; that string returns 'manifest unknown' from ghcr -> it is a podman LOCAL manifest-encoding artifact, NOT a registry content address. The registry stores 7e8762ae (confirmed: requesting @sha256:7e8762ae returns the manifest; config cf153c6 matches). Reconciled 2026-10-20 by removing the local image and re-pulling by digest, so podman images --digests now shows 7e8762ae. The SC recompute ran on config cf153c6, i.e. content bit-identical to the registry image.",
+      "original_planned_use": "pin ghcr image digest into the content address to close the provenance gap (now realised: see digest above)"
     },
     "version_control": {
       "github": {
@@ -363,7 +381,10 @@
       "pae_interaction": "Adaptyv Proteinbase column (ODC-BY); AUC TRANSFERRED, not recomputed under our implementation",
       "shape_complementarity": "VALIDATED for implementation (BIO Scientist, 2026-10-20, in-image, $0.00, nothing submitted). Recomputed under shape-complementarity==0.2.0 / sc-rs befcc6c on n=1,028 Nipah glycoprotein-G complexes: Pearson r=0.999959, Spearman rho=0.999945, mean |delta| 2.9e-4 SC units, 100% within +/-0.01, no signed offset. ROC-AUC vs measured BLI binding (100 binders/928 non-binders): ours 0.6873 [95% boot CI 0.6224,0.7480] vs Adaptyv column 0.6878 [0.6229,0.7479]; paired dAUC -0.00044 [-0.00109,+0.00016] (straddles zero, 4 orders narrower than the AUC CI). So shape-complementarity==0.2.0 REPRODUCES Adaptyv's quantity to float noise -> the 0.688 transfer STANDS and SC keeps its rank_average weight unchanged. STILL transferred ACROSS TARGET CLASS: Proteinbase has no pMHC, so the threshold is validated for implementation only, not for pMHC; campaign one remains its own calibration experiment. Caveat: Adaptyv's own SC parameters are an INFERENCE (proteinbase_README.md defines no params for the shape_complimentarity column); 'sc-rs at defaults' is read off 1,028 complexes agreeing to 2.9e-4, not off a spec, and only on the Nipah subset (1,028 of 4,273 PPIs). Report: /workspace/wetware/binder-design/v3/sc-recompute-2026-10-20.md (sha256 3ed7ea12f000...90c8cdf0).",
       "pdockq": "excluded (AUC 0.500, constant column)",
-      "pdockq2": "excluded (AUC 0.500, constant column)"
+      "pdockq2": "excluded (AUC 0.500, constant column)",
+      "revision": "v2026-10-12",
+      "metric_code_reuse": "Adaptyv competition_metrics is Apache-2.0 but computes only iPTM, pae_interaction, ESM2 PLL and a rank-average - no SC/SASA/H-bond/dG code, so only the pae_interaction definition and the rank-average convention are reusable",
+      "used_for": "every threshold and keep-fraction in layer 2"
     },
     "calibration_note": "Every roc_auc above is a threshold TRANSFERRED from Adaptyv's own columns, not computed under our stack. calibrated_with names the producing implementation per descriptor so a reproducible pin is never mistaken for a calibrated number. Campaign one is itself the calibration experiment.",
     "recompute_environment": "Any descriptor recompute/recalibration MUST run inside the ghcr image ghcr.io/wetware-hq/bindi-fleet-env:2026-10-20 (numpy==2.4.6), NOT on the bare box (numpy 2.5.4). The box is now the divergent env; every descriptor number quoted before 2026-10-20 night was computed under 2.5.4, so an on-box recompute would inherit the flaw it is meant to settle.",
@@ -418,7 +439,12 @@
     "policy": "Wetware is NON-PROFIT, so non-commercial licences are in bounds by LICENCE; note this does not reopen tools Mathew rejected on other grounds (Modal self-hosting stays rejected).",
     "af2_params": "CC BY 4.0 (permissive) if AF2 is reinstated",
     "af3": "params not available on usable terms",
-    "verified": "docs"
+    "verified": "docs",
+    "consequences": [
+      "PyRosetta's non-commercial licence is acceptable",
+      "BindCraft-on-Modal is unblocked",
+      "Bennett dl_binder_design / af2_initial_guess are reopened as options"
+    ]
   },
   "secrets_referenced_names_only": [
     "BOLTZ_API_KEY (x-api-key)",
@@ -431,5 +457,94 @@
     "DONE: pinned bindi deps (gemmi/biopython/numpy floors + exact pins) and built the ghcr fleet-env image so the worker is reproducible from an image, not just PR #14 - BIO Engineer",
     "Origin durability: mirror wing into Origin (recommended) vs create a deliberate Origin wing - Mathew's call",
     "thresholds: Boltz-native recalibration vs reinstating AF2 initial-guess (re-adds a GPU layer)"
-  ]
+  ],
+  "layer_1_boltz": {
+    "role": "generator and decoy refolder; the only external dependency",
+    "self_hosting": "REJECTED by Mathew 2026-10-20; PR #13 closed, not merged, not deferred",
+    "tools": [
+      {
+        "name": "Boltz hosted design API",
+        "endpoint": "POST https://api.boltz.bio/compute/v1/protein/design",
+        "auth": "x-api-key header, key in BOLTZ_API_KEY (workspace LIVE key)",
+        "used_for": "node L1A on-target design (n=300) and node L1B decoy refold",
+        "request_shape": "type-discriminated {\"type\":\"binder\", target:{entities}, binder:{modality, entities}}",
+        "model_selector": "NONE on the design endpoint; versioning is by request shape",
+        "api_contract_version": "v2026-03-01",
+        "artifact_retention_days": 7,
+        "cost_usd_per_design": 0.05,
+        "verified": "on_box"
+      },
+      {
+        "name": "Boltz hosted prediction API",
+        "endpoint": "POST https://api.boltz.bio/compute/v1/protein/predict",
+        "model_argument": "boltz-2.1 (only documented value)",
+        "used_for": "structure prediction where design is not required",
+        "verified": "docs"
+      },
+      {
+        "name": "BoltzGen (backend of the design endpoint)",
+        "version": "UNKNOWN - the API reports only pipeline 'boltzprot', pipeline_version '1.0'",
+        "risk": "see FLEET.toml risk boltzgen_backend_version; v0.3.2 fixes binding_types dropping 'binding' when combined with 'not_binding', the exact combination this campaign uses",
+        "verified": "on_box (that the version is NOT reported); version itself unverified"
+      }
+    ],
+    "removed": [
+      {
+        "name": "BoltzGen self-hosted on Modal GPU",
+        "status": "rejected 2026-10-20, PR #13 closed"
+      },
+      {
+        "name": "AF2 initial guess / ColabFold re-predictor",
+        "status": "cut with the rented GPU to hold two layers"
+      },
+      {
+        "name": "OpenMM MM-GBSA",
+        "status": "cut; physics rescoring not needed pre-wet-lab"
+      },
+      {
+        "name": "BoTorch / TuRBO",
+        "status": "cut; no wet-lab readout to learn from"
+      },
+      {
+        "name": "AlphaFold3",
+        "status": "disqualified on licence for this use"
+      }
+    ]
+  },
+  "code_and_provenance": {
+    "repository": "wetwarehq/bindi (MIT, version 0.1.0)",
+    "backup_repository": "github.com/wetware-hq/wing under fleets/campaigns/NYESO1-A0201/ (moved from fleets/NYESO1-A0201/ on 2026-10-21)",
+    "open_prs": [
+      {
+        "id": "PR #14",
+        "subject": "ipSAE worker (PAE + CIF)",
+        "state": "draft, unmerged"
+      },
+      {
+        "id": "PR #6",
+        "subject": "fleets/ backup bundle",
+        "state": "draft, head 993b2f1, FLEET.toml sha256 ffb63dcf5af3..."
+      }
+    ],
+    "closed_prs": [
+      {
+        "id": "PR #13",
+        "subject": "self-hosted Boltz on Modal GPU",
+        "state": "CLOSED, rejected"
+      }
+    ],
+    "content_address_current": [
+      "api_version",
+      "config_hash",
+      "target_hash",
+      "seed"
+    ],
+    "content_address_planned": [
+      "+ ghcr image digest",
+      "+ code/script hash"
+    ],
+    "known_weakness": "a strict subset of what Nextflow/RO-Crate hash; container image, environment and script text can all move results under a fixed address - see the required_but_NOT_installed list above for a live example",
+    "origin_mirror": "no `wing` repository exists on Cursor Origin; four of the nine wetwarehq Origin repos are INBOUND mirrors from GitHub, so the Origin leg is a mirror/create decision, not a second push",
+    "verified": "on_box"
+  }
 }

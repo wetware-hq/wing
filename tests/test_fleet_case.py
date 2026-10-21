@@ -17,7 +17,6 @@ from wing.tools_iface import LocalStubBackend
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DISC_DATA = tomllib.loads((ROOT / "wing" / "case_disclosures.toml").read_text())
-ABSTAIN_FLEET = ROOT / "fleets" / "immunology_abstain.toml"
 
 
 @pytest.fixture(autouse=True)
@@ -50,10 +49,10 @@ def test_disclosures_in_stdout_and_manifest(tmp_path):
     assert meta["disclosures_plain"] == resolve_disclosures()["disclosures_plain"]
 
 
-def test_abstain_disclosures_in_stdout_and_manifest(tmp_path):
+def test_abstain_disclosures_in_stdout_and_manifest(tmp_path, abstain_fleet):
     out_path = tmp_path / "trace.jsonl"
     r = subprocess.run(
-        [sys.executable, "-m", "wing.fleet_case", "--dry-run", "-o", str(out_path), "--fleet", str(ABSTAIN_FLEET)],
+        [sys.executable, "-m", "wing.fleet_case", "--dry-run", "-o", str(out_path), "--fleet", str(abstain_fleet)],
         cwd=ROOT,
         capture_output=True,
         text=True,
@@ -107,8 +106,8 @@ def test_planted_unapproved_form_caught():
     assert any(s.get("op") == "plant_caught" for s in out["trace"] if s.get("kind") == "step")
 
 
-def test_abstain_script_routes_human():
-    out = fleet_case.run(dry_run=True, fleet_path=ABSTAIN_FLEET)
+def test_abstain_script_routes_human(abstain_fleet):
+    out = fleet_case.run(dry_run=True, fleet_path=abstain_fleet)
     assert out["abstain_any"] and out["pass"]
     assert any(s.get("op") == "human_route" and s.get("agent") == "lab_gate" for s in out["trace"] if s.get("kind") == "step")
 

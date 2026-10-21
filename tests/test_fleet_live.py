@@ -4,7 +4,7 @@ import pytest
 from wing import fleet, fleet_live
 from ward import live, live_client
 
-FULL = fleet.load(pathlib.Path(__file__).resolve().parent.parent / "fleets" / "wing_full.toml")
+FULL = fleet.load(pathlib.Path(__file__).resolve().parent.parent / "fleets" / "ward" / "wing_full.toml")
 KEY = "sk-or-FAKE-KEY-0000"
 
 
@@ -64,7 +64,7 @@ def test_key_in_result_is_refused():
         fleet_live.run(copy.deepcopy(FULL), post_ok(model=KEY))
 
 
-def test_planted_undersize_still_fails():
+def test_planted_undersize_still_fails(planted_undersize):
     from wing import CheckFail
     with pytest.raises(CheckFail):
-        fleet.load(pathlib.Path(__file__).resolve().parent.parent / "fleets" / "planted_undersize.toml")
+        fleet.load(planted_undersize)

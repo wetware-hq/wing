@@ -20,7 +20,7 @@ from .tools_iface import LocalStubBackend, gather_tools
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CASE = ROOT / "scenarios" / "IMM01.toml"
-FLEET = ROOT / "fleets" / "immunology_mvp.toml"
+FLEET = ROOT / "fleets" / "ward" / "immunology_mvp.toml"
 APPROVED_FORMS = frozenset({"FORM-SYNTH-PERSONAL-MED-PLAN-01"})
 # Ward TEST_PATIENTS id for IMM01 (S14 oncology-results): lab panels + held results, not the easy S05 path.
 IMM01_PATIENT_ID = "SYNTH-P1401"
@@ -272,7 +272,7 @@ def main(argv=None):
     )
     p.add_argument("-o", "--output", type=pathlib.Path, default=pathlib.Path("immunology_trace.jsonl"))
     p.add_argument("--case", type=pathlib.Path, default=CASE)
-    p.add_argument("--fleet", type=pathlib.Path, default=FLEET, help="Fleet toml (e.g. fleets/immunology_abstain.toml).")
+    p.add_argument("--fleet", type=pathlib.Path, default=FLEET, help="Fleet toml (e.g. fleets/ward/immunology_mvp.toml).")
     args = p.parse_args(argv)
     dry = not args.live
     out = run(dry_run=dry, case_path=args.case, fleet_path=args.fleet, model_pin=args.model)
