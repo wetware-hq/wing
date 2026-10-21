@@ -1,0 +1,28 @@
+# Fleet: immunology_live — the LIVE sibling of immunology_mvp.toml.
+#
+# Difference from immunology_mvp.toml / immunology_abstain.toml, and the only difference
+# that matters: those are dry runs. They set model = "DRYRUN-scripted-v1" and carry a
+# [script] block that hardcodes every agent's answer, so the agents never decide anything
+# and a dry run is NOT evidence. This file has no [script] block. Each agent is asked for
+# real, and the answers are whatever the pinned model actually returns.
+#
+# `model` must be an explicit DATED snapshot or wing refuses the run with
+# WG-MODEL-NOT-PINNED (wing/case_live.py resolve_model_pin). An undated or drifting model
+# id means a result cannot be reproduced, so it is not accepted for a live run.
+#
+# Synthetic only: SYNTH- patient ids and 1930s scenario dates, same as every other fleet here.
+# Running this spends money through the model provider. It does NOT submit anything to the
+# Boltz design API: design submission is a separate step behind the APPR human spend gate.
+
+name = "immunology_live"
+seed = 19363
+shift_start = "1936-06-15T09:00"
+model = "deepseek/deepseek-v4-pro-0813"
+
+[agents]
+intake = "immunology intake clerk"
+lab_gate = "lab routing clerk"
+pm_planner = "personalised medicine coordinator"
+
+# No [script] block. That absence is the point of this file: do not add one here. If you
+# want scripted answers, run immunology_mvp.toml or immunology_abstain.toml instead.
