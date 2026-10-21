@@ -602,6 +602,24 @@
       "reinterpretation": "estimate-cost rejecting the type:'binder' body was never a quirk of the read-only pricing path. It was the API reporting the shape was wrong, for free, and the repo misread it as a pricing-path limitation (see A5, PLATFORM.md 102-116).",
       "migration_status": "The v3 migration documented in PLATFORM.md section 2 is WRONG FOR THIS ENDPOINT and must not be re-applied without new evidence that the API accepts it.",
       "reconstruction_caveat": "The submitted legacy body was reconstructed after the box reset destroyed v2/pmhc/NOT-SUBMITTED-nyeso1-300designs.json. It could NOT be verified byte-identical to that file (the recorded sha256 851854f2... covers the original file's exact formatting, which is unrecoverable). It WAS verified to validate live and to price at $0.5000, and its sequences are the ones whose content address matched pre-reset."
+    },
+    "image_formal_verification_2026_10_21": {
+      "verdict": "FUNCTIONS, with one claim CORRECTED. Re-proved live on this box 2026-10-21 ~18:45 (Australia/Sydney) after the box reset destroyed podman and all prior local state. Nothing here is cited from before the reset.",
+      "runtime": "podman 5.4.2, installed fresh. The FIRST pull failed on corrupt pre-reset overlay storage and required `podman system reset` before it would pull clean.",
+      "pull": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6 pulled BY FULL DIGEST; podman reports that digest back character-for-character. config sha256:cf153c6899717e4d38f6a855ae40bfd2a4abec0c30d5a1e1f982698023adfdbb, 291 MB, linux/amd64.",
+      "CORRECTION_image_does_not_contain_the_worker": "The pinned image does NOT contain the ipSAE worker. Installed bindi 0.1.0 in /usr/local/lib/python3.13/site-packages/bindi ships ONLY cli, curate, generate, policy, resource, run - there is NO ipsae.py, and `python -c 'import bindi.ipsae'` raises ModuleNotFoundError in-image. /opt/bindi/src/bindi has the same six modules. This is an ENVIRONMENT image, not a worker image. Any claim or plan that `python -m bindi.ipsae ...` runs off the bare image is WRONG and would fail at import. The worker source must be mounted in (or the image rebuilt from a bindi revision that includes it).",
+      "environment_verified_in_image": "python 3.13.16, numpy 2.4.6, gemmi 0.7.5, biopython 1.88, shape_complementarity 0.2.0 - all imported successfully in-image.",
+      "entrypoint": "NONE. Cmd is only a smoke test: python -c \"import gemmi, Bio, numpy, shape_complementarity; print('fleet-env ok')\". WorkingDir /opt/bindi, User unset. Consequence: modal.Image.from_registry needs NO Image.entrypoint([...]) override - this closes the one open item in layer_2_modal_cpu_host.image.can_use_unmodified.",
+      "worker_proved_with_source_mounted": {
+        "method": "bindi worktree at local commit 6a1e999 mounted read-only at /mnt/bindi with PYTHONPATH=/mnt/bindi/src; pytest installed into the EPHEMERAL container only (the image has no pytest and was not modified).",
+        "test_suite": "tests/test_ipsae.py - 12 passed, 0 failed, in-image.",
+        "scorer": "synthetic 2-chain complex (A:6, B:6), inter-chain PAE block 3.0 A: ipsae A->B = 0.10, ipsae B->A = 0.10, min_ipsae = 0.10, complex_plddt = 83.3333, interface_plddt = 83.3333, plddt.present = true, n_tokens = 12. NOTE: this is NOT the pre-reset fixture, so the pre-reset complex_plddt 91.59 was NOT reproduced and is NOT claimed - a different fixture was used.",
+        "zero_variance_guard": "did not misfire: pLDDT column std fed = 9.0492, plddt.present = true. The degenerate case is separately covered by test_degenerate_plddt_marked_absent, which passed and emitted the expected 'B_iso_or_equiv is constant' warning.",
+        "token_alignment_guard": "ligand fixture fixtures/ipsae_predicted.cif (contains HETATM) raises TokenAlignmentError: 'CIF contains a non-polymer entity (e.g. ligand); Boltz per-atom tokenization cannot be aligned to one-token-per-residue ipSAE without an explicit token map. Refusing to truncate or pad the PAE.'",
+        "cli_contract": "bindi.ipsae._main writes json.dump(result, sys.stdout, indent=2, sort_keys=True) - confirms the stdout-JSON assumption in modal_layer2_app.py, though the key layout is nested (ordered{}, pairs{}, plddt{}), NOT flat. _read_worker_output must read the nested shape."
+      },
+      "evidence_path": "/workspace/image-verify-2026-10-21/ on the box (logs 01-15). BOX-LOCAL ONLY - will not survive another reset.",
+      "scope_note": "This verifies the layer-2 image and worker. It says NOTHING about layer-1 design quality or about specificity."
     }
   },
   "modal_scope_note": {
