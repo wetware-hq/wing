@@ -545,6 +545,32 @@
     ],
     "known_weakness": "a strict subset of what Nextflow/RO-Crate hash; container image, environment and script text can all move results under a fixed address - see the required_but_NOT_installed list above for a live example",
     "origin_mirror": "no `wing` repository exists on Cursor Origin; four of the nine wetwarehq Origin repos are INBOUND mirrors from GitHub, so the Origin leg is a mirror/create decision, not a second push",
-    "verified": "on_box"
+    "verified": "on_box",
+    "run_one_instance": {
+      "request_body": "fleets/campaigns/NYESO1-A0201/run-one/request.json",
+      "status": "PREPARED, NOT SUBMITTED. Spend/submission status authoritative in FLEET.toml.",
+      "api_version": "compute/v1",
+      "endpoint": "POST https://api.boltz.bio/compute/v1/protein/design",
+      "config_hash": "sha256:c50d617481cee2074b267f04b142acce95a3974792986db4489bcedb4ccb8a06",
+      "target_hash": "sha256:8ba2e3e31bc2cfc815464ed2f03b0b6a80d35a47a0ada39cc24bfa277cb62351",
+      "hash_rule": "sha256 over canonical JSON (sort_keys=true, separators ',' ':') of the whole body / of body.target",
+      "seed": null,
+      "seed_note": "NOT SET: the design endpoint exposes no seed field. Recorded as null rather than invented. Record the job seed if the API returns one.",
+      "image_digest": "sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+      "image_config_digest": "sha256:cf153c6899717e4d38f6a855ae40bfd2a4abec0c30d5a1e1f982698023adfdbb",
+      "sequence_provenance": "chain A = UniProt P04439 residues 25-299 (mature HLA-A heavy chain, 275 aa, starts GSHSMRYFFTSVSRPGRGEPRFIAVGYVDDTQFVRF); chain B = UniProt P61769 mature beta-2-microglobulin, 99 aa. Reconstructed 2026-10-21 after a box reset destroyed the local body; reconstruction VERIFIED byte-identical by config_hash and target_hash matching the pre-reset values.",
+      "box_reset_2026_10_21": "A box reset wiped /workspace, including the only copies of the request body and the run-one manifest. The body is now in-repo for exactly this reason. Local-only campaign artifacts are not a backup."
+    },
+    "run_one_free_step_verification": {
+      "verified_on": "2026-10-21 (Australia/Sydney)",
+      "auth": "PASS. GET https://api.boltz.bio/compute/v1/auth/me -> key_type=workspace, mode=live, organization Wetware. NOTE: the path is /compute/v1/auth/me; bare /auth/me 302s to the web app.",
+      "estimate_cost_legacy_n10": "PASS. $0.5000 = 10 units x $0.0500 per unit, live read-only call on the LEGACY-shaped control at num_proteins=10. Confirms base tier. The type:'binder' shape itself remains unpriceable read-only (A5).",
+      "residue_tier_offline": "PASS. 275 + 99 + 9 + 100 = 483 < 512 -> base tier, 29 residues of headroom. Cropping unnecessary and prohibited.",
+      "schema_self_check": "PASS, 12 assertions, including non_binding_residues absent everywhere and epitope_residues [0..8] unrenumbered on chain C.",
+      "ipsae_merge": "ALREADY MERGED. bindi PR #14 merged 2026-10-20 (merge commit 9e758a3); src/bindi/ipsae.py is on bindi main. Supersedes any statement that PR #14 is unmerged.",
+      "in_image_execution": "PASS. Image pulled by full digest with podman. In-image numpy 2.4.6 and gemmi 0.7.5, so the box/image divergence (A3) does not affect layer 2 when run in-image. Ligand fixture correctly raises TokenAlignmentError; a synthetic two-chain complex scores ipSAE both orderings plus min_ipsae, with plddt.present=true and complex_plddt 91.59, so the zero-variance placeholder guard does not misfire.",
+      "image_has_no_pytest": "The image is a runtime image: pytest is absent, so the suite cannot be run inside it. In-image proof must drive the module directly.",
+      "remaining": "Only the APPR human gate and the submission itself."
+    }
   }
 }
