@@ -41,6 +41,25 @@ solvent-exposed residue of `SLLMWITQC`.
 That is the canonical TCR-like footprint: straddling both groove-flanking helices for
 footing while reading the central peptide bulge. The ipSAE ordering was a size artefact.
 
+### How much of that is our own specification returned to us
+
+Corrected 2026-10-22 per `UPGRADES.md` section 3. The peptide-directed finding must be read
+with its circularity stated: `run-one/request-legacy-submitted.json` names **all nine**
+peptide residues in `epitope_residues`, so the model bound where it was told to bind. The
+footprint above is therefore substantially our own specification handed back to us, and is
+**not** independent evidence of selectivity.
+
+Two signals in this run were genuinely unconstrained and do carry information:
+
+- **Zero contacts to the buried P2/P9 anchors.** Not specified by us; this is real geometry,
+  and it is reproduced independently by `tier0_targeting.py` (item 3 = 0 for all ten).
+- **Heavy-chain surface use of 1.3-5.5% only**, with `non_binding_residues` barred from the
+  request body. Unconstrained, and the single most encouraging number here.
+
+The honest summary: we told it where to bind and it bound there; *how* it bound there was its
+own work. No measurement in this file has been changed or removed - only the interpretation
+around it.
+
 | design | iptm | D-pLDDT | A | B | C | pep frac (4.0/5.0 A) | % C buried | % A buried | P4-P8 | anchors | alpha3 | verdict |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | pres_KvvXtVa6yakB17EmB1Ge | 0.9825 | 82.02 | 66 | 0 | 69 | 0.511 / 0.486 | 77.9% | 4.0% | 64 | 0 | 0 | peptide-directed |
@@ -113,6 +132,18 @@ reasoned structural rule, not a validated classifier.
   predicted structure.
 - **Non-gating.** These descriptors are recorded, not gates. Gating descriptors remain `iptm`
   and `plddt` only.
+
+## Companion: Tier 0 targeting metrics
+
+`run-one/tier0_targeting.py` computes the four `UPGRADES.md` section 4 Tier 0 quantities on
+these same coordinates, using BindCraft2's G7 definitions rather than this file's
+campaign-specific rule: off-epitope contact fraction, coldspot contact fraction, buried-anchor
+contact count and invariant-surface fraction. Results are in
+`run-one/tier0_targeting_results.json`, flags in `../targeting_flags.json`.
+
+Those metrics are **RECORDED-NON-GATING**. `UPGRADES.md` marks items 1-3 as *proposed* gates
+needing the user's decision, and section 7 records that no calibrated threshold exists for any
+of them. They change nothing in `FLEET.toml`.
 
 ## Environment and parameters
 

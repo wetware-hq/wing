@@ -1,0 +1,32 @@
+{
+  "_what": "Residue flag declarations for the G7 targeting components of UPGRADES.md. One statement of intent; the epitope shell is DERIVED from the hotspots rather than declared, so the positive and negative criteria cannot drift apart (UPGRADES.md G7, Principle).",
+  "_status": "RECORDED-NON-GATING. No threshold here. UPGRADES.md section 4 items 1-3 are marked GATING, proposed and need the user's decision; nothing in this file changes FLEET.toml.",
+  "_provenance": {
+    "metric_definitions": "BindCraft2 v1.0.4 bindcraft/epitope_targeting.py:25-29, bindcraft/filters.py:200-227,423-432",
+    "chain_layout": "FLEET.toml [target.chain_A] domains + numbering_note; verified against all ten run-one CIFs by contact_analysis.assert_layout"
+  },
+
+  "epitope_shell_cutoff_angstrom": 10.0,
+  "contact_cutoff_angstrom": 4.0,
+
+  "hotspots": {
+    "C": [4, 5, 6, 7, 8],
+    "_note": "The solvent-exposed, TCR-facing face of the bound peptide. P1/P3 are partly occluded and P2/P9 are the buried anchors, so neither is a hotspot."
+  },
+
+  "buried_anchors": {
+    "C": [2, 9],
+    "_note": "Held inside the groove and not solvent-accessible. UPGRADES.md item 3: expected contact count is 0; any non-zero is a geometric red flag about the pose, not a selectivity signal."
+  },
+
+  "coldspots": {
+    "_definition": "DECISION PENDING - see _coldspot_ambiguity. Currently: all of chain B, all of alpha_3, and those alpha_1/alpha_2 helix residues that fall OUTSIDE the hotspot-derived epitope shell.",
+    "B": "all",
+    "A_ranges": [[183, 275]],
+    "A_helix_ranges_minus_shell": [[57, 84], [138, 180]],
+    "_coldspot_ambiguity": "UPGRADES.md names 'the alpha1/alpha2 rims' as coldspot but the rim is not defined anywhere in the repo. Defining it as helix-outside-the-shell makes the coldspot set depend on the shell cutoff, which is itself an uncalibrated free parameter (G7 Limits). An alternative is to declare an explicit rim residue list from the published TCR footprint literature. This file implements the first and records that the choice is unresolved."
+  },
+
+  "invariant_surface_chains": ["A", "B"],
+  "discriminating_surface_chains": ["C"]
+}

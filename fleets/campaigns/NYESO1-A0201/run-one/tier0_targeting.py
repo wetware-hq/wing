@@ -1,0 +1,347 @@
+"""Tier 0 targeting metrics for run-one, per UPGRADES.md section 4 items 1-4.
+
+These are the four quantities UPGRADES.md marks as computable today at zero spend from
+artifacts already on disk. They are implemented here as RECORDED-NON-GATING measurements.
+
+NOTHING IN THIS FILE IS A GATE. UPGRADES.md states in its own header that it changes no
+gate in ``FLEET.toml``, and marks items 1-3 as "GATING, proposed" - proposals needing the
+user's decision. Section 7 records that no calibrated threshold exists for any of them.
+This module therefore computes and records; it does not pass or fail a design.
+
+Relationship to ``contact_analysis.py``, which already lives in this directory:
+
+  ``contact_analysis.py`` answers DOCKING SITE under a campaign-specific interpretive rule
+  (is the P4-P8 strip touched, is framework footing groove-proximal). It is OURS.
+
+  This file implements the BindCraft2 G7 definitions instead, which are different
+  quantities computed differently: a hotspot-DERIVED epitope shell, and ratios of
+  CONTACTED RESIDUES rather than atom-contact counts. The point of adopting the
+  teacher's definitions verbatim is that the metric is then inherited rather than
+  invented, while the thresholds are explicitly not inherited (G7 Teacher's setting:
+  ``max_off_epitope_contact_final`` and ``min_hotspot_contact_final`` have no default
+  value in the source, so the gates are opt-in per campaign).
+
+  Both read the same coordinates and reuse ``contact_analysis``'s loader and its chain
+  layout assertion, so the two cannot silently diverge on which structures they scored.
+
+What each number is and is not evidence of (UPGRADES.md section 4):
+
+  off_epitope_contact_fraction   evidence of WHERE CONTACT FELL.
+                                 NOT evidence that on-epitope contact is favourable.
+  coldspot_contact_fraction      evidence of engagement of surface we declared off-limits.
+                                 NOT evidence of affinity, or of its absence.
+  buried_anchor_contact_count    evidence of a physically impossible or mis-modelled pose.
+                                 NOT evidence of selectivity.
+  invariant_surface_fraction     evidence of framework engagement, i.e. the hazard named in
+                                 UPGRADES.md section 2.
+                                 NOT evidence of peptide specificity.
+
+G6 audit - which projection losses these depend on: NONE. These are computed on full 3D
+heavy-atom coordinates, not on the G1 cylindrical projection, so no azimuthal, truncation
+or bin-quantisation loss applies. They do inherit the predictor's coordinate error, which
+is a different and separately recorded limitation.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from pathlib import Path
+
+import numpy as np
+
+from contact_analysis import (
+    B2M_CHAIN,
+    BINDER_CHAIN,
+    HEAVY_CHAIN,
+    PEPTIDE_CHAIN,
+    ChainAtoms,
+    assert_layout,
+    load_chains,
+)
+
+FLAGS_PATH = Path(__file__).resolve().parent.parent / "targeting_flags.json"
+
+
+def load_flags(path: Path = FLAGS_PATH) -> dict:
+    return json.loads(path.read_text())
+
+
+def _expand_ranges(ranges) -> set[int]:
+    out: set[int] = set()
+    for lo, hi in ranges:
+        out.update(range(int(lo), int(hi) + 1))
+    return out
+
+
+def hotspot_atom_mask(chains: dict[str, ChainAtoms], flags: dict) -> dict[str, np.ndarray]:
+    """Per-chain boolean atom masks selecting the declared hotspot residues."""
+    masks: dict[str, np.ndarray] = {}
+    for cid, positions in flags["hotspots"].items():
+        if cid.startswith("_"):
+            continue
+        ch = chains[cid]
+        masks[cid] = np.isin(ch.atom_seq_ids, np.asarray(positions, dtype=int))
+    return masks
+
+
+def epitope_shell(
+    chains: dict[str, ChainAtoms], flags: dict, target_chains: tuple[str, ...]
+) -> dict[str, set[int]]:
+    """Target residues within the shell cutoff of ANY hotspot atom.
+
+    Minimum heavy-atom to heavy-atom distance, exactly as BindCraft2
+    ``epitope_targeting.py:25-29`` defines it. The shell is DERIVED, never declared:
+    a single statement of which residues matter generates both the positive and the
+    negative criterion (G7 Principle).
+    """
+    cutoff = float(flags["epitope_shell_cutoff_angstrom"])
+    hs_masks = hotspot_atom_mask(chains, flags)
+    hs_coords = np.concatenate(
+        [chains[c].coords[m] for c, m in hs_masks.items() if m.any()], axis=0
+    )
+
+    shell: dict[str, set[int]] = {}
+    for cid in target_chains:
+        ch = chains[cid]
+        d = np.linalg.norm(ch.coords[:, None, :] - hs_coords[None, :, :], axis=-1)
+        within = d.min(axis=1) <= cutoff
+        shell[cid] = {int(r) for r in np.unique(ch.atom_seq_ids[within])}
+    return shell
+
+
+def contacted_residues(
+    binder: ChainAtoms, target: ChainAtoms, cutoff: float
+) -> set[int]:
+    """Target residues with at least one heavy atom within ``cutoff`` of the binder."""
+    d = np.linalg.norm(binder.coords[:, None, :] - target.coords[None, :, :], axis=-1)
+    hit = (d <= cutoff).any(axis=0)
+    return {int(r) for r in np.unique(target.atom_seq_ids[hit])}
+
+
+def coldspot_set(
+    chains: dict[str, ChainAtoms], flags: dict, shell: dict[str, set[int]]
+) -> dict[str, set[int]]:
+    """The declared coldspot residues, resolved against this structure's numbering.
+
+    The alpha1/alpha2 helix contribution is helix-minus-shell, which is why the coldspot
+    set depends on the shell cutoff. ``targeting_flags.json`` records that this definition
+    of 'rim' is unresolved.
+    """
+    spec = flags["coldspots"]
+    out: dict[str, set[int]] = {}
+
+    if spec.get("B") == "all":
+        out[B2M_CHAIN] = set(chains[B2M_CHAIN].residue_names)
+
+    a_resids = set(chains[HEAVY_CHAIN].residue_names)
+    cold_a = _expand_ranges(spec.get("A_ranges", [])) & a_resids
+    helix = _expand_ranges(spec.get("A_helix_ranges_minus_shell", [])) & a_resids
+    cold_a |= helix - shell.get(HEAVY_CHAIN, set())
+    out[HEAVY_CHAIN] = cold_a
+    return out
+
+
+def invariant_surface_fraction(cif_path: Path, flags: dict) -> dict | None:
+    """Fraction of the INVARIANT surface the binder buries (UPGRADES.md item 4).
+
+    Invariant surface is taken as chains A and B TOGETHER, not per chain, because the
+    hazard in UPGRADES.md section 2 is about the invariant body as a whole. The denominator
+    is the SASA those chains actually expose in the assembled pMHC, which is the only
+    size-normalised form of the question.
+
+    Shrake-Rupley over the predicted geometry with no repacking: a rigid-body contact area,
+    not a binding free energy. Returns None if biotite is unavailable so the caller can
+    report SKIPPED rather than substitute a proxy.
+    """
+    try:
+        import biotite.structure as struc
+        import biotite.structure.io.pdbx as pdbx
+    except ImportError:
+        return None
+
+    f = pdbx.CIFFile.read(str(cif_path))
+    arr = pdbx.get_structure(f, model=1)
+    arr = arr[struc.filter_amino_acids(arr) & (arr.element != "H")]
+
+    inv = list(flags["invariant_surface_chains"])
+    dis = list(flags["discriminating_surface_chains"])
+    pmhc = np.isin(arr.chain_id, inv + dis)
+    d_mask = arr.chain_id == BINDER_CHAIN
+
+    def group_sasa(subset_mask, group) -> float:
+        sub = arr[subset_mask]
+        vals = struc.sasa(sub, vdw_radii="Single", point_number=200)
+        return float(np.nansum(vals[np.isin(sub.chain_id, group)]))
+
+    inv_before = group_sasa(pmhc, inv)
+    inv_after = group_sasa(pmhc | d_mask, inv)
+    dis_before = group_sasa(pmhc, dis)
+    dis_after = group_sasa(pmhc | d_mask, dis)
+
+    return {
+        "invariant_chains": inv,
+        "invariant_available_sasa_A2": round(inv_before, 1),
+        "invariant_buried_A2": round(inv_before - inv_after, 1),
+        "invariant_surface_fraction": (
+            round((inv_before - inv_after) / inv_before, 5) if inv_before > 0 else None
+        ),
+        "discriminating_available_sasa_A2": round(dis_before, 1),
+        "discriminating_buried_A2": round(dis_before - dis_after, 1),
+        "discriminating_surface_fraction": (
+            round((dis_before - dis_after) / dis_before, 5) if dis_before > 0 else None
+        ),
+        "_method": (
+            "biotite.structure.sasa (Shrake-Rupley), Single vdw radii, 200 test points, "
+            "heavy atoms only; invariant chains pooled before the ratio is taken"
+        ),
+    }
+
+
+def analyse_design(design_id: str, cif_path: Path, flags: dict, with_sasa: bool = True) -> dict:
+    chains = load_chains(cif_path)
+    assert_layout(chains, cif_path)
+
+    cutoff = float(flags["contact_cutoff_angstrom"])
+    target_chains = (HEAVY_CHAIN, B2M_CHAIN, PEPTIDE_CHAIN)
+    binder = chains[BINDER_CHAIN]
+
+    shell = epitope_shell(chains, flags, target_chains)
+    cold = coldspot_set(chains, flags, shell)
+
+    contacted = {c: contacted_residues(binder, chains[c], cutoff) for c in target_chains}
+    n_contacted_total = sum(len(v) for v in contacted.values())
+
+    in_shell = sum(len(contacted[c] & shell[c]) for c in target_chains)
+    off_shell = n_contacted_total - in_shell
+
+    hotspots = {
+        c: set(v) for c, v in flags["hotspots"].items() if not c.startswith("_")
+    }
+    n_hotspots = sum(len(v) for v in hotspots.values())
+    hotspots_hit = sum(len(contacted[c] & v) for c, v in hotspots.items())
+
+    n_cold = sum(len(v) for v in cold.values())
+    cold_hit = sum(len(contacted[c] & v) for c, v in cold.items())
+
+    anchors = {
+        c: set(v) for c, v in flags["buried_anchors"].items() if not c.startswith("_")
+    }
+    anchor_hit = sorted(
+        r for c, v in anchors.items() for r in (contacted[c] & v)
+    )
+
+    rec: dict = {
+        "design_id": design_id,
+        "cif": cif_path.name,
+        "item_1_off_epitope_contact_fraction": (
+            round(off_shell / n_contacted_total, 5) if n_contacted_total else None
+        ),
+        "item_2_coldspot_contact_fraction": (
+            round(cold_hit / n_cold, 5) if n_cold else None
+        ),
+        "item_3_buried_anchor_contact_count": len(anchor_hit),
+        "hotspot_contact_fraction": (
+            round(hotspots_hit / n_hotspots, 5) if n_hotspots else None
+        ),
+        "counts": {
+            "contacted_target_residues": n_contacted_total,
+            "contacted_in_epitope_shell": in_shell,
+            "contacted_off_epitope_shell": off_shell,
+            "hotspots_declared": n_hotspots,
+            "hotspots_contacted": hotspots_hit,
+            "coldspots_declared": n_cold,
+            "coldspots_contacted": cold_hit,
+            "epitope_shell_size_by_chain": {c: len(shell[c]) for c in target_chains},
+            "contacted_by_chain": {c: sorted(contacted[c]) for c in target_chains},
+            "coldspots_contacted_by_chain": {
+                c: sorted(contacted[c] & v) for c, v in cold.items() if contacted[c] & v
+            },
+            "buried_anchor_residues_contacted": anchor_hit,
+        },
+    }
+
+    if with_sasa:
+        sasa = invariant_surface_fraction(cif_path, flags)
+        rec["item_4_invariant_surface"] = (
+            sasa if sasa else "SKIPPED: biotite unavailable; no proxy substituted"
+        )
+    return rec
+
+
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description="Tier 0 targeting metrics (recorded, non-gating)")
+    ap.add_argument("--artifacts", default=str(Path(__file__).parent / "artifacts"))
+    ap.add_argument("--flags", default=str(FLAGS_PATH))
+    ap.add_argument("--out", default=None)
+    ap.add_argument("--no-sasa", action="store_true")
+    args = ap.parse_args(argv)
+
+    flags = load_flags(Path(args.flags))
+    root = Path(args.artifacts)
+    results: dict[str, dict] = {}
+    errors: dict[str, str] = {}
+
+    for d in sorted(p for p in root.iterdir() if p.is_dir() and p.name.startswith("pres_")):
+        cif = d / f"{d.name}_predicted.cif"
+        if not cif.exists():
+            errors[d.name] = "missing _predicted.cif"
+            continue
+        try:
+            results[d.name] = analyse_design(
+                d.name, cif, flags, with_sasa=not args.no_sasa
+            )
+        except Exception as e:  # noqa: BLE001 - record, do not mask
+            errors[d.name] = f"{type(e).__name__}: {e}"
+
+    payload = {
+        "status": "RECORDED-NON-GATING",
+        "spec": "UPGRADES.md v1.0 section 4, Tier 0 items 1-4",
+        "gating_warning": (
+            "No threshold is applied anywhere in this file. UPGRADES.md marks items 1-3 as "
+            "'GATING, proposed' and section 7 records that no calibrated threshold exists "
+            "for any item. Gating descriptors remain iptm and plddt only; FLEET.toml is "
+            "untouched."
+        ),
+        "parameters": {
+            "epitope_shell_cutoff_angstrom": flags["epitope_shell_cutoff_angstrom"],
+            "contact_cutoff_angstrom": flags["contact_cutoff_angstrom"],
+            "hotspots": {k: v for k, v in flags["hotspots"].items() if not k.startswith("_")},
+            "buried_anchors": {
+                k: v for k, v in flags["buried_anchors"].items() if not k.startswith("_")
+            },
+            "coldspot_definition": flags["coldspots"]["_definition"],
+            "flags_file": str(Path(args.flags).name),
+        },
+        "provenance": {
+            "off_epitope_contact_fraction": "BindCraft2 filters.py:423-432",
+            "coldspot_contact_fraction": "BindCraft2 filters.py:219-227",
+            "hotspot_contact_fraction": "BindCraft2 filters.py:209-217",
+            "epitope_shell": "BindCraft2 epitope_targeting.py:25-29, EPITOPE_CUTOFF=10.0",
+            "buried_anchor_contact_count": "OURS (UPGRADES.md item 3)",
+            "invariant_surface_fraction": "OURS (UPGRADES.md item 4)",
+        },
+        "caveats": [
+            "Predicted coordinates, not experimental; every number inherits the predictor's "
+            "error, and contact tests are sensitive to side-chain placement.",
+            "The fractions are only as good as the flags: a mis-assigned hotspot produces a "
+            "confident number measuring the wrong thing (G7 Limits).",
+            "The 10.0 A shell cutoff is a free parameter with no calibration behind it. On a "
+            "9-residue discriminating surface the shell reaches well into the invariant "
+            "helices, which makes a LOW off-epitope fraction easier to achieve than it reads.",
+            "Nothing here says a contact is favourable; it says only where contact fell.",
+            "The coldspot definition is unresolved - see _coldspot_ambiguity in the flags file.",
+        ],
+        "designs": results,
+        "errors": errors,
+    }
+    text = json.dumps(payload, indent=1, sort_keys=True)
+    if args.out:
+        Path(args.out).write_text(text)
+    print(text)
+    return 0 if not errors else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
