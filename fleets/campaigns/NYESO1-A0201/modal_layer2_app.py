@@ -1,8 +1,12 @@
 """Modal execution-host for NYESO1-A0201 LAYER 2 (pure-CPU interface scoring).
 
-STATUS: specification + ready-to-deploy code. NOTHING LIVE. This module has NOT
-been `modal deploy`-ed or `modal run`-done; no Modal account/token was created or
-used. MODAL_TOKEN_ID / MODAL_TOKEN_SECRET stay inert (infra.json:452-453).
+STATUS: LIVE. Deployed 2026-10-21 (Australia/Sydney) to Modal workspace `wetwarehq`
+as app `nyeso1-a0201-layer2` (ap-gURujGEgW1B6kmE7RwKBfm); `score_one` has been
+invoked remotely and returned. The build log confirms Modal pulled the pinned ghcr
+BASE BY DIGEST (not by tag) and installed the bindi 0.2.0 wheel over 0.1.0 as an
+additive layer. Deploying/registering a Function is not itself a run of layer 2;
+the 10-design fan-out still sits downstream of the APPR approve edge.
+Supersedes the earlier "NOTHING LIVE" status.
 
 SCOPE (read infra.json "modal_scope_note" and FLEET.toml [platform.modal_layer2]):
   IN SCOPE  -> Modal as a CPU execution host for LAYER 2 (the ipSAE scoring worker
@@ -37,9 +41,13 @@ Modal APIs used, each with the doc URL fetched 2026-10-21 (Australia/Sydney):
   modal.App(...) / @app.function(...) / @app.local_entrypoint()
       https://modal.com/docs/reference/modal.App        (App, .function, .local_entrypoint)
 
-  @app.function(cpu=, memory=, timeout=, retries=, max_containers=)
+  @app.function(cpu=, memory=, timeout=, retries=, env=,
+                min_containers=, max_containers=, buffer_containers=,
+                scaledown_window=)
       cpu/memory meaning + billing: https://modal.com/docs/guide/resources
       retries semantics:            https://modal.com/docs/guide/retries
+      autoscaler knobs:             https://modal.com/docs/guide/scale
+      input concurrency (REJECTED): https://modal.com/docs/guide/concurrent-inputs
 
   Function.starmap(...) for fan-out over the 10 designs
       https://modal.com/docs/reference/modal.Function   (starmap, map)
@@ -115,6 +123,32 @@ WORKER_WHEEL_SHA256 = (
 )
 WORKER_COMMIT = "70b6c6c"  # wetware-hq/bindi
 
+# DEFECT D1 FIX (2026-10-21). The wheel is a BUILD ARTIFACT and is deliberately not
+# committed, so its path has to be resolved, not assumed. A bare relative
+# "dist/<wheel>" means "relative to the PROCESS CWD at deploy time" to Modal, not
+# "beside this file" - so `modal deploy` worked only from a staging dir that happened
+# to have dist/ beside the app copy, and failed from the repo. Resolve against
+# __file__ instead, with an explicit env override for an out-of-tree build dir.
+WHEEL_DIR = pathlib.Path(
+    os.environ.get("BINDI_WHEEL_DIR") or (pathlib.Path(__file__).resolve().parent / "dist")
+)
+WHEEL_PATH = WHEEL_DIR / WORKER_WHEEL
+
+# The guard is LOCAL-ONLY on purpose. Modal imports this module again INSIDE the
+# container at runtime, where no local dist/ exists; an unguarded existence check
+# would raise there and crash-loop every container. modal.is_local() is False in the
+# container, so the check runs only at deploy time, which is the only time the local
+# wheel is actually needed (add_local_file reads it during the image build).
+if modal.is_local() and not WHEEL_PATH.is_file():
+    raise SystemExit(
+        f"worker wheel not found at {WHEEL_PATH}.\n"
+        f"Build it inside the pinned base:\n"
+        f"  podman run --rm -v <bindi>:/src -w /src {BINDI_FLEET_ENV_DIGEST} \\\n"
+        f"    sh -lc 'pip wheel --no-deps --wheel-dir /src/dist /src'\n"
+        f"and check sha256 == {WORKER_WHEEL_SHA256}\n"
+        f"(or point BINDI_WHEEL_DIR at the directory holding it)."
+    )
+
 layer2_image = (
     modal.Image.from_registry(
         BINDI_FLEET_ENV_DIGEST,
@@ -124,7 +158,7 @@ layer2_image = (
         ),
     )
     # copy=True is required because a build step (run_commands) follows.
-    .add_local_file(f"dist/{WORKER_WHEEL}", f"/tmp/{WORKER_WHEEL}", copy=True)
+    .add_local_file(str(WHEEL_PATH), f"/tmp/{WORKER_WHEEL}", copy=True)
     .run_commands(f"pip install --no-cache-dir /tmp/{WORKER_WHEEL}")
 )
 
@@ -150,41 +184,133 @@ BINDER_CHAIN = "D"
 # -----------------------------------------------------------------------------
 # DELIVERABLE 2 - the functions. CPU ONLY. gpu is NOT set anywhere.
 #
-# Resource choices (every number justified; docs: /guide/resources, /guide/retries):
-#   cpu=1.0      One physical core. ipSAE is O(n^2) numpy over a ~256x256 PAE plus a
-#                single gemmi CIF parse: sub-second to low-seconds, single-threaded.
-#                More cores buy nothing (min engineering idiot index). 1.0 guarantees
-#                a full core so the gemmi parse is not throttled under the 0.125 default.
-#   memory=2048  2 GiB. The arrays are tiny (256x256 float32 ~= 0.26 MiB); the real
-#                footprint is importing numpy+scipy+gemmi+biopython. 2 GiB is generous
-#                headroom with an OOM-kill backstop if a pathological CIF blows up;
-#                the default 128 MiB would risk OOM on import alone.
-#   timeout=300  5 min. A single design scores in seconds; 300 s is a loud upper bound
-#                that trips on a hang (e.g. a pathological CIF) rather than tolerating
-#                it. Image pull/cold start is NOT counted against this.
+# EVERY NUMBER BELOW IS MEASURED, NOT GUESSED. Measurements taken 2026-10-21 in the
+# pinned image on the box, evidence /workspace/modal-deploy-2026-10-21/18,19,20:
+#   * REALISTIC case - 445 tokens (target A:275,B:99,C:9 + a 62-residue binder D):
+#       wall 0.58-0.64 s, peak RSS 55.4 MiB.
+#   * 2x case - 890 tokens (binder D:507): wall 0.5835 s median, peak RSS 59.9 MiB.
+#     i.e. NO measurable penalty at double the tokens; this is not an O(n^2) wall.
+#   * Import alone (gemmi + numpy + biopython) is 0.478 s of that 0.58 s; a bare
+#     interpreter is 0.016 s. So per-design COMPUTE is ~0.1 s and the run time is
+#     dominated by interpreter startup + import, NOT by the linear algebra.
+#   * Thread pinning - UNPINNED numpy spreads over 2.135 cores and burns
+#     1.30-1.47 CPU-core-seconds per design for the SAME OR SLIGHTLY WORSE wall time
+#     (0.6417 s median); pinned to 1 thread it uses 0.999 cores and 0.56-0.67
+#     core-seconds at 0.5823 s median. Pinning roughly HALVES the bill and is
+#     marginally FASTER. There is no tradeoff to make here.
+#
+# Docs checked 2026-10-21 (not memory): /guide/resources, /guide/retries,
+# /guide/scale, /guide/concurrent-inputs.
+#
+#   cpu=1.0      ONE physical core. Measured: one pinned core matches 2.135 unpinned
+#                cores on wall time (0.582 s vs 0.642 s), so extra cores buy nothing.
+#                Billing is max(request, usage) (/guide/resources), so requesting
+#                1.0 and using 0.999 wastes nothing; the 0.125 default would throttle
+#                the gemmi parse for no saving, since usage would bill above it anyway.
+#   memory=512   512 MiB. Measured peak RSS 55.4 MiB at 445 tokens and 59.9 MiB at
+#                890 - so this is ~8.5x headroom, not a guess, and it is a REQUEST
+#                (minimum), not a cap: no hard limit tuple is set, so a pathological
+#                CIF is caught by `timeout`, not by an OOM kill. Memory is billed at
+#                max(request, usage) too, and 0.5 GiB costs $0.0000011/s, i.e. 8% of
+#                the CPU line. The 128 MiB default would be only ~2x the measured peak.
+#   timeout=120  2 min, down from the earlier guessed 300. Real runs are 0.58 s, so
+#                120 s is ~200x headroom: still a loud tripwire on a hang rather than
+#                a tolerated one, and it halves the structural cost ceiling below.
+#                Image pull / cold start is not charged against it (startup_timeout).
 #   retries=0    Scoring is a PURE DETERMINISTIC function of (cif, pae). Every failure
-#                here - TokenAlignmentError, a malformed CIF, absent pLDDT - is
-#                deterministic and would recur identically, so an input-retry buys
-#                nothing and would only DELAY the loud failure (and could mask the
-#                guard). Genuine infra flakes (container OOM/host loss) are handled
-#                separately by Modal's container-crash rescheduling, which is
-#                orthogonal to input retries (retries guide). So retries stays 0.
-#   max_containers=10  A run is exactly 10 designs; cap concurrency at 10 so the burst
-#                (and thus the billable-core-second burst) is bounded to one container
-#                per design and never oversubscribes.
+#                here - TokenAlignmentError, a malformed CIF, absent pLDDT - recurs
+#                identically, so an input retry only DELAYS the loud failure and can
+#                mask the guard. Genuine infra flakes (container OOM / host loss) are
+#                handled by Modal's container-crash rescheduling, which is orthogonal
+#                to input retries (/guide/retries). So retries stays 0.
+#   env={...}    BLAS/OpenMP thread pinning, the single biggest cost lever measured:
+#                1.33-1.47 core-s unpinned vs 0.56-0.67 core-s pinned, for equal or
+#                better latency. /guide/resources says Modal ALSO sets these based on
+#                the cpu request - but that is Modal's heuristic, it is undocumented
+#                what value it picks, and this worker runs the scorer in a SUBPROCESS.
+#                Setting them explicitly makes the halving ours and auditable rather
+#                than inherited. (Verified live post-deploy; see evidence 24.)
+#
+# CONCURRENCY - the one choice that actually matters, and it is NOT fan-out:
+#   max_containers=2   NOT 10. A run is 10 designs x 0.58 s = ~6 s of real work. One
+#                container per design would pay a cold start (image pull/sandbox
+#                start, seconds) ten times to save ~5 s of wall. Per /guide/scale the
+#                autoscaler spins containers up only when there is no capacity for
+#                new inputs, and starmap queues inputs against the pool - so a SMALL
+#                max_containers is exactly the "few containers, many inputs each,
+#                sequentially" shape, with no extra knob needed. 2 rather than 1 keeps
+#                a hung design from blocking the other nine.
+#                HONEST CORRECTION to the import argument: container reuse does NOT
+#                amortise the 0.478 s import, because score_one shells out to
+#                `python -m bindi.ipsae` per design, so the import is paid per DESIGN
+#                regardless of pool size. What a small pool saves is COLD STARTS. (The
+#                import could be amortised by calling bindi in-process instead of via
+#                subprocess - a real ~0.5 s/design saving, but a behaviour change to
+#                the box-verified entrypoint and the TokenAlignmentError propagation,
+#                so it is NOT done here. Flagged, not applied.)
+#   min_containers=0   Scale to zero between runs. Layer 2 is a burst after ART, not
+#                a service; a warm pool would bill idle containers for nothing.
+#   buffer_containers=0  Same reason: no latency SLO to defend on a batch job.
+#   scaledown_window=10  THE dominant cost term for a 6-second burst, which is why it
+#                is set explicitly rather than left at the 60 s default: idle
+#                containers are billed, so a 60 s tail x 2 containers = 120 billed
+#                container-seconds against ~6 s of actual work - the idle tail would
+#                cost 20x the compute. 10 s still lets a container serve the whole
+#                queue without churn (inputs arrive <1 s apart).
+#   @modal.concurrent  DELIBERATELY NOT USED. /guide/concurrent-inputs states
+#                verbatim that for CPU-bound workloads input concurrency "will likely
+#                not be as effective (or will even be counterproductive)". Two inputs
+#                sharing one requested core would contend and halve each other's wall
+#                time for zero throughput gain. (`max_inputs` is separately deprecated
+#                in modal 1.6.2 in favour of single_use_containers, which is the exact
+#                opposite of what is wanted here and is left False.)
+#
+# COST AT THIS CONFIGURATION (Modal list rates, read from `modal profile` billing
+# 2026-10-21: CPU $0.0473/core/hour = $0.0000131/core/s; memory $0.008/GiB/hour =
+# $0.00000222/GiB/s):
+#   billed container-second = 1.0 core x $0.0000131 + 0.5 GiB x $0.00000222
+#                           = $0.00001425 /s
+#   PER DESIGN   0.58 s          -> $0.0000083   (0.0008 cents)
+#   PER 10-DESIGN RUN: 5.8 s of work + 2 cold starts (~5 s each) + 2 x 10 s scaledown
+#                   ~= 36 billed container-seconds -> ~$0.0005 (0.05 cents)
+#     CONFIRMED LIVE 2026-10-21 (evidence 25): 10 inputs through starmap completed
+#     in 6.77 s wall, served by EXACTLY 2 containers (not 10), every result carrying
+#     thread_env pinned to 1. 2 x (6.8 s + 10 s scaledown) = 33.6 container-seconds
+#     -> $0.00048. The estimate above is measured, not modelled.
+#   HARD STRUCTURAL CEILING (billing = max(request,usage)):
+#                   max_containers x timeout x $/s = 2 x 120 x $0.00001425 = $0.0034
+#   The Starter plan includes $30/month of compute, so in practice this run is free;
+#   it is still ADDED to the pre-APPR projection alongside the Boltz layer-1 spend and
+#   checked against spend_cap_usd = 15.00. It is negligible, not zero.
 # -----------------------------------------------------------------------------
 class TokenAlignmentError(RuntimeError):
     """Local re-raise type mirroring bindi.ipsae's guard so the token/residue
     mismatch PROPAGATES out of Modal rather than being swallowed."""
 
 
+# Measured thread pinning: 1.33-1.47 core-s unpinned -> 0.56-0.67 core-s pinned,
+# at equal-or-better wall time (evidence 18 sections A vs B). Set on the FUNCTION
+# (env=), not on the image, so no image layer is added and the pinned base build is
+# untouched; subprocesses inherit the container environment.
+BLAS_SINGLE_THREAD = {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+}
+
+
 @app.function(
     image=layer2_image,
+    env=BLAS_SINGLE_THREAD,
     cpu=1.0,
-    memory=2048,
-    timeout=300,
+    memory=512,
+    timeout=120,
     retries=0,
-    max_containers=10,
+    min_containers=0,
+    max_containers=2,
+    buffer_containers=0,
+    scaledown_window=10,
 )
 def score_one(
     design_id: str,
@@ -264,6 +390,11 @@ def score_one(
         "n_tokens": raw["n_tokens"],
         "chains_reported": raw["chains"],
         "chains_asserted": chains or None,
+        # PROVENANCE: record the thread pinning that was ACTUALLY in force for this
+        # score, rather than asserting it in a comment. Measured unpinned cost is
+        # ~2.4x pinned (evidence 18), so a silently-unpinned container is a cost
+        # regression that would otherwise be invisible in the results file.
+        "thread_env": {k: os.environ.get(k) for k in sorted(BLAS_SINGLE_THREAD)},
         "worker_raw": raw,  # full output kept for provenance / replay
     }
     return result
@@ -364,12 +495,13 @@ def main(
 #   only runs on the approve path - it ALREADY inherits the human gate. No new gate.
 #
 #   The $ ceiling is bounded structurally (billing = max(request, usage), per the
-#   resources doc): billable core-seconds <= max_containers * timeout * cpu
-#   = 10 * 300 * 1.0 = 3000 core-seconds HARD CEILING for a 10-design run; memory is
-#   billed at max(request,usage) alongside. Real usage is far below (seconds/design).
-#   The exact $/core-second is on Modal's pricing page (NOT fetched this session, so
-#   not quoted here); at that rate 3000 core-s of CPU is cents, negligible beside the
-#   $15 Boltz layer-1 spend - but it is NOT zero.
+#   resources doc): billable container-seconds <= max_containers * timeout
+#   = 2 * 120 = 240, at 1.0 core + 0.5 GiB = $0.00001425/s -> $0.0034 HARD CEILING
+#   for a 10-design run. MEASURED expectation is ~36 container-seconds -> ~$0.0005.
+#   Rates read from `modal profile` billing 2026-10-21: CPU $0.0473/core/hour,
+#   memory $0.008/GiB/hour. The Starter plan includes $30/month of compute, so in
+#   practice this is free; spend to date on this app at deploy time was $0.06
+#   metered, fully covered by credits, $0.00 billed.
 #
 #   Therefore the rule (do not hand-wave): the Modal layer-2 projection must be ADDED
 #   to spent_to_date_usd and included in the SAME pre-APPR cost projection as the

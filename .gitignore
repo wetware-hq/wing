@@ -4,3 +4,5 @@ replay/
 ward/
 forms/
 letters/
+# build artifacts: the bindi worker wheel is built from the pinned image, not committed
+fleets/campaigns/NYESO1-A0201/dist/
