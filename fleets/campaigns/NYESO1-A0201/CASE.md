@@ -2,7 +2,7 @@
 
 **Target id:** `NYESO1-A0201` · **Case version:** 1.0 · **Date:** 2026-10-20
 **Scope:** in vitro only. No in vivo work is planned or implied.
-**Status:** nothing submitted, nothing spent.
+**Status:** see `FLEET.toml` keys `spent_to_date_usd` / `submitted_to_date` (single source of truth).
 
 > This file is the clinical half of the specification: the case, the target, and the
 > mechanistic argument, written to be read by a clinician. The executable half — the

@@ -7,7 +7,7 @@
     "generated": "2026-10-20T19:41+11:00",
     "generated_by": "BIO Engineer (converged with BIO Scientist's provenance scheme); ghcr fleet-env digest wired 2026-10-20T20:08+11:00",
     "governance": "No merge to main without green CI AND Mathew per-SHA sign-off (bindi#9). Nothing submitted to Boltz and nothing spent until the APPR human_gate approves.",
-    "status": "spec-level map; nothing submitted, nothing spent (submitted_to_date=false, spent_to_date_usd=0.00)",
+    "status": "spec-level map; spend/submission status is authoritative in FLEET.toml (spent_to_date_usd, submitted_to_date) - not restated here",
     "verified": "on_box",
     "consolidated": "2026-10-21 (Australia/Sydney)",
     "supersedes": [

@@ -3,7 +3,7 @@
 Consolidated 2026-10-21 from `boltz-version-2026-10-20.md` (64 loc) and
 `migration-notes-2026-10-20.md` (97 loc); both were written on 2026-10-20 and restated the
 same four facts. All URLs below were fetched 2026-10-20 (Australia/Sydney).
-**NOTHING SUBMITTED. NOTHING SPENT.**
+**Spend/submission status: see `FLEET.toml` `spent_to_date_usd` / `submitted_to_date` (single source of truth).**
 
 ---
 
