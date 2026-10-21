@@ -1,0 +1,157 @@
+{
+ "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+ "workspace_id": "ws_pqmbzVxVTgdjEWifefXr",
+ "note": "presigned artifact URLs removed (they carry AWS credentials and expire in 30 min); artifacts mirrored in this directory",
+ "designs": [
+  {
+   "id": "pres_lppWP1t4ozGyw5s4gq3P",
+   "created_at": "2026-10-21T11:28:30.565Z",
+   "binder_sequence": "ALTVKPGTKVTVTLADGTTVEATVVRVVSDTEAVAMGTEDGSLVRITNLTETSGDAVALDLETGAEVAGTATF",
+   "binder_length": 73,
+   "api_metrics": {
+    "structure_confidence": 0.5833978652954102,
+    "helix_fraction": 0,
+    "sheet_fraction": 0.5479452013969421,
+    "loop_fraction": 0.45205479860305786,
+    "binding_confidence": 5.1397230708971624e-05,
+    "iptm": 0.8387652039527893,
+    "min_interaction_pae": 3.7724876403808594
+   }
+  },
+  {
+   "id": "pres_Bw8vknhmXJUg72L6CGAw",
+   "created_at": "2026-10-21T11:29:08.403Z",
+   "binder_sequence": "SLEEAVEFAGRALDKIFAGEALSEEERRRLEEALRLARATVERLGGALDEEGRLAAEAENLARTTLAAEALRA",
+   "binder_length": 73,
+   "api_metrics": {
+    "structure_confidence": 0.725741982460022,
+    "helix_fraction": 0.8219177722930908,
+    "sheet_fraction": 0,
+    "loop_fraction": 0.1780821979045868,
+    "binding_confidence": 0.3157403186044256,
+    "iptm": 0.9626621007919312,
+    "min_interaction_pae": 0.7368558645248413
+   }
+  },
+  {
+   "id": "pres_KvvXtVa6yakB17EmB1Ge",
+   "created_at": "2026-10-21T11:29:36.994Z",
+   "binder_sequence": "SLPVYYAPVGGPDQGSALVEVPVRVGETREVTLDFSGAAPEGVHTLTIEAVSEEQALLTYPDGTVRTVPLYAD",
+   "binder_length": 73,
+   "api_metrics": {
+    "structure_confidence": 0.738972544670105,
+    "helix_fraction": 0,
+    "sheet_fraction": 0.5616438388824463,
+    "loop_fraction": 0.4383561611175537,
+    "binding_confidence": 0.0032072013622162047,
+    "iptm": 0.9825169444084167,
+    "min_interaction_pae": 0.432365357875824
+   }
+  },
+  {
+   "id": "pres_PfYJkQdsLag9x1R5Pt6L",
+   "created_at": "2026-10-21T11:30:05.238Z",
+   "binder_sequence": "VEVLEENDETVKLYAKKGETLGEAEAKAKEIAASKGYDDAVITGVLEGDVPQDARLDDVLAVDAVLEFRFVSD",
+   "binder_length": 73,
+   "api_metrics": {
+    "structure_confidence": 0.5486618280410767,
+    "helix_fraction": 0.19178082048892975,
+    "sheet_fraction": 0.36986300349235535,
+    "loop_fraction": 0.4383561611175537,
+    "binding_confidence": 1.7865546396933497e-06,
+    "iptm": 0.7876076698303223,
+    "min_interaction_pae": 4.974269390106201
+   }
+  },
+  {
+   "id": "pres_JA4idjMYaE8EsQKrcb6K",
+   "created_at": "2026-10-21T11:30:06.356Z",
+   "binder_sequence": "MEVRASGVIQNPETVKVGDRVSFALAGSKESLEGTVVSVTADEVVIETETGARIVAKYDPALNAAIGEGTVEL",
+   "binder_length": 73,
+   "api_metrics": {
+    "structure_confidence": 0.6878701448440552,
+    "helix_fraction": 0.04109589010477066,
+    "sheet_fraction": 0.6164383292198181,
+    "loop_fraction": 0.34246575832366943,
+    "binding_confidence": 6.478369323303923e-06,
+    "iptm": 0.924859881401062,
+    "min_interaction_pae": 1.53951096534729
+   }
+  },
+  {
+   "id": "pres_2SOqXG5xbTO4FD4yB5so",
+   "created_at": "2026-10-21T11:30:33.514Z",
+   "binder_sequence": "SMELLEYGKELAKEVAERSGLSDEELEEVYKYLEENISDIRSKEDVLVHVHQAVGRIRPDNLAALDWLAEQIS",
+   "binder_length": 73,
+   "api_metrics": {
+    "structure_confidence": 0.6168659329414368,
+    "helix_fraction": 0.8219177722930908,
+    "sheet_fraction": 0,
+    "loop_fraction": 0.1780821979045868,
+    "binding_confidence": 0.022797334808627525,
+    "iptm": 0.8471744656562805,
+    "min_interaction_pae": 3.106726884841919
+   }
+  },
+  {
+   "id": "pres_G3ZfGGLFJXddOc0vhQwO",
+   "created_at": "2026-10-21T11:31:01.792Z",
+   "binder_sequence": "MDEGARLYELTAAHPELQEEALRLLTEWEATHRLSMEQQLELTARMAEWLAETSDVEEFRERLREALEELLAR",
+   "binder_length": 73,
+   "api_metrics": {
+    "structure_confidence": 0.604717493057251,
+    "helix_fraction": 0.8219177722930908,
+    "sheet_fraction": 0,
+    "loop_fraction": 0.1780821979045868,
+    "binding_confidence": 9.331393812317401e-06,
+    "iptm": 0.8731725811958313,
+    "min_interaction_pae": 2.5549328327178955
+   }
+  },
+  {
+   "id": "pres_xpto8wJvfrJQhLVH4Mvz",
+   "created_at": "2026-10-21T11:31:30.096Z",
+   "binder_sequence": "AVRVTLSDGTVVEITVLGPNRVEVSGDFERAEIVEMDAETAVLRFTNAARREEVLVTLDMRTGEVLSVEVRPL",
+   "binder_length": 73,
+   "api_metrics": {
+    "structure_confidence": 0.20332659780979156,
+    "helix_fraction": 0,
+    "sheet_fraction": 0.5890411138534546,
+    "loop_fraction": 0.4109588861465454,
+    "binding_confidence": 5.157729901839048e-06,
+    "iptm": 0.5105286836624146,
+    "min_interaction_pae": 11.995018005371094
+   }
+  },
+  {
+   "id": "pres_B8eqLRLyLSgzkVbLyC7C",
+   "created_at": "2026-10-21T11:31:58.270Z",
+   "binder_sequence": "MVVLPDDPAFAEAVEAARKKLEEAEGFDDEELKEEIARIEAERDKAIEAGNSEEARKLNIVLNALRAVLGSRE",
+   "binder_length": 73,
+   "api_metrics": {
+    "structure_confidence": 0.6590428352355957,
+    "helix_fraction": 0.7945205569267273,
+    "sheet_fraction": 0,
+    "loop_fraction": 0.2054794430732727,
+    "binding_confidence": 0.00017964013386517763,
+    "iptm": 0.9032978415489197,
+    "min_interaction_pae": 1.6264722347259521
+   }
+  },
+  {
+   "id": "pres_rIVnI2qWY81pul3zHRrN",
+   "created_at": "2026-10-21T11:32:27.012Z",
+   "binder_sequence": "MLPGVLELEDGSRAHVEVSYDAASGRLWGYVTSVEGDSGVQPGDLIVAEGDAASRESPAVVLSLDRRGTLRLL",
+   "binder_length": 73,
+   "api_metrics": {
+    "structure_confidence": 0.6543151140213013,
+    "helix_fraction": 0.08219178020954132,
+    "sheet_fraction": 0.4931506812572479,
+    "loop_fraction": 0.42465752363204956,
+    "binding_confidence": 4.235796006438383e-06,
+    "iptm": 0.9355947971343994,
+    "min_interaction_pae": 1.6104905605316162
+   }
+  }
+ ]
+}

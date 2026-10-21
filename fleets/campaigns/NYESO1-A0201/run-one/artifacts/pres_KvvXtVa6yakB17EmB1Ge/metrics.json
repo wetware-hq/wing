@@ -1,0 +1,20 @@
+{
+  "structure_confidence": 0.738972544670105,
+  "binding_confidence": 0.0032072013622162047,
+  "iptm": 0.9825169444084167,
+  "min_interaction_pae": 0.432365357875824,
+  "ptm": 0.9279285669326782,
+  "complex_plddt": 0.9399970769882202,
+  "complex_iplddt": 0.9254123568534851,
+  "helix_fraction": 0,
+  "sheet_fraction": 0.5616438388824463,
+  "loop_fraction": 0.4383561611175537,
+  "residue_distribution": {
+    "CYS": 0,
+    "ALA": 0.0958904109589041,
+    "GLY": 0.0958904109589041,
+    "GLU": 0.0958904109589041,
+    "LEU": 0.0958904109589041,
+    "VAL": 0.1506849315068493
+  }
+}

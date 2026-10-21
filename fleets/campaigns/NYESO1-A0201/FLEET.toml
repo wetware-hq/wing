@@ -328,7 +328,7 @@ campaign_one_usd        = 15.00
 per_design_usd          = 0.05
 tier_note               = "500 aa target + 100-250 aa binder lands in the 513-1024 residue tier at $0.10/design ($30 per 300, $100 per 1000); cropping the target below 512 total residues halves it back"
 wet_lab_from_usd        = 99.00
-spent_to_date_usd       = 0.50   # run one submitted 2026-10-21T18:17+11:00, job prot_des_TY6KzyxULq8mACflXbhn, estimate-cost $0.5000; replace with the BILLED figure when the job completes
+spent_to_date_usd       = 0.50   # run one COMPLETE 2026-10-21T11:32:27Z, job prot_des_TY6KzyxULq8mACflXbhn. The API exposes NO billed/usage/invoice field (GET on usage, billing, credits, invoices, workspace and per-job cost/billing/charges all 404). Authoritative read-only price for the EXACT submitted body, re-POSTed to estimate-cost 2026-10-21: estimated_cost_usd 0.5000 = 10 units x $0.0500/unit. 0.50 is therefore the best available figure, flagged as ESTIMATE-DERIVED, not an invoice line. No further spend made.
 submitted_to_date       = true   # run one, 10 designs
 
 [costs.modal_layer2]
@@ -476,6 +476,48 @@ G2 = "billed cost <= $1.00 and <= spend_cap_usd 15.00"
 G3 = ">= 8 of 10 designs return _predicted.cif, metrics.json and pae.npz, mirrored off-API before the 7-day retention clock"
 G4 = "every returned design parses in the ghcr image with no TokenAlignmentError and the pLDDT column has std >= 1e-6 (the zero-variance placeholder test does not fire)"
 plausibility_indicator_non_gating = ">= 1 design with iptm >= 0.60 and binder-chain mean pLDDT >= 80; transferred thresholds, a miss does not void the machine pass, it is simply stated"
+
+# ---- RUN ONE RESULT (recorded 2026-10-21, job succeeded 2026-10-21T11:32:27Z) ----
+# Gate verdicts only. The required_caveat above applies unchanged to every number here.
+
+[run_one.result]
+job_id            = "prot_des_TY6KzyxULq8mACflXbhn"
+completed_at      = "2026-10-21T11:32:27Z"
+designs_returned  = 10
+verdict           = "ALL FOUR GATES PASS (machine pass only; no specificity or safety claim)"
+G1 = "PASS - submit accepted, job id returned, num_proteins 10 (recorded at submission)"
+G2 = "PASS - 0.50 USD <= 1.00 and <= spend_cap_usd 15.00. ESTIMATE-DERIVED: no billed figure exists on the API (see costs.spent_to_date_usd)."
+G3 = "PASS - 10/10 designs returned metrics.json, <id>_predicted.cif and pae.npz; all mirrored off-API into run-one/artifacts/ in this repo on 2026-10-21, day 1 of the 7-day retention clock"
+G4 = "PASS - 10/10 parsed in ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762ae... with podman; ZERO TokenAlignmentError; pLDDT std per design ranges 2.79 to 10.81, all >> 1e-6, so the zero-variance placeholder test did not fire on any design; plddt.present true for all 10"
+plausibility_indicator = "HIT (NON-GATING, TRANSFERRED thresholds): 5 of 10 designs meet iptm >= 0.60 AND chain-D mean pLDDT >= 80. Best: pres_KvvXtVa6yakB17EmB1Ge, iptm 0.9825, chain-D mean pLDDT 82.02. Thresholds are transferred from a protein-protein benchmark with no pMHC complexes; they are NOT calibrated for this target."
+
+[run_one.result.layer2]
+run_how      = "podman run, image pinned by full digest, bindi/src mounted read-only (the image is an ENVIRONMENT image and carries no worker source); driver committed as run-one/layer2_eval.py; raw output run-one/artifacts/layer2_results.json"
+image        = "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6"
+gating       = ["iptm", "plddt"]
+non_gating   = ["ipsae", "min_ipsae"]
+token_align  = "483 PAE tokens == 483 polymer residues for all 10 (A 275 + B 99 + C 9 + D 73); one token per residue, no ligand"
+binder_len   = 73
+tests        = "bindi suite on box: 130 passed, 11 skipped (unchanged code)"
+
+# NON-GATING observation worth recording, not a verdict: chain-D ipSAE is far higher against the
+# HLA heavy chain (A|D 0.017-0.878) than against the peptide (C|D 0.006-0.697) for every design.
+# Under the run-one caveat this is EXACTLY the framework-vs-peptide ambiguity that run one cannot
+# resolve; it is reported, not interpreted, and it makes no safety claim either way.
+
+[run_one.result.per_design]
+rows = [
+  { design = "pres_KvvXtVa6yakB17EmB1Ge", iptm = 0.9825, plddt_D_mean = 82.02, plddt_std_all = 7.9991, ipsae_CD_min = 0.6968, ipsae_AD_min = 0.8776, ipsae_BD_min = 0.6984, min_ipsae_overall = 0.6499, n_tokens = 456 },
+  { design = "pres_Bw8vknhmXJUg72L6CGAw", iptm = 0.9627, plddt_D_mean = 95.35, plddt_std_all = 2.7924, ipsae_CD_min = 0.4600, ipsae_AD_min = 0.8061, ipsae_BD_min = 0.6067, min_ipsae_overall = 0.4600, n_tokens = 456 },
+  { design = "pres_rIVnI2qWY81pul3zHRrN", iptm = 0.9356, plddt_D_mean = 71.80, plddt_std_all = 10.7360, ipsae_CD_min = 0.2218, ipsae_AD_min = 0.5014, ipsae_BD_min = 0.4102, min_ipsae_overall = 0.2218, n_tokens = 456 },
+  { design = "pres_JA4idjMYaE8EsQKrcb6K", iptm = 0.9249, plddt_D_mean = 77.82, plddt_std_all = 8.5096, ipsae_CD_min = 0.2403, ipsae_AD_min = 0.6048, ipsae_BD_min = 0.4113, min_ipsae_overall = 0.2403, n_tokens = 456 },
+  { design = "pres_B8eqLRLyLSgzkVbLyC7C", iptm = 0.9033, plddt_D_mean = 76.23, plddt_std_all = 9.5511, ipsae_CD_min = 0.0892, ipsae_AD_min = 0.2828, ipsae_BD_min = 0.2209, min_ipsae_overall = 0.0892, n_tokens = 456 },
+  { design = "pres_G3ZfGGLFJXddOc0vhQwO", iptm = 0.8732, plddt_D_mean = 72.43, plddt_std_all = 10.8130, ipsae_CD_min = 0.0849, ipsae_AD_min = 0.3817, ipsae_BD_min = 0.2836, min_ipsae_overall = 0.0849, n_tokens = 456 },
+  { design = "pres_2SOqXG5xbTO4FD4yB5so", iptm = 0.8472, plddt_D_mean = 86.02, plddt_std_all = 6.6339, ipsae_CD_min = 0.0654, ipsae_AD_min = 0.2427, ipsae_BD_min = 0.2204, min_ipsae_overall = 0.0654, n_tokens = 456 },
+  { design = "pres_lppWP1t4ozGyw5s4gq3P", iptm = 0.8388, plddt_D_mean = 86.53, plddt_std_all = 6.4373, ipsae_CD_min = 0.0434, ipsae_AD_min = 0.2158, ipsae_BD_min = 0.1627, min_ipsae_overall = 0.0434, n_tokens = 456 },
+  { design = "pres_PfYJkQdsLag9x1R5Pt6L", iptm = 0.7876, plddt_D_mean = 90.82, plddt_std_all = 4.0544, ipsae_CD_min = 0.0060, ipsae_AD_min = 0.0284, ipsae_BD_min = 0.0048, min_ipsae_overall = 0.0048, n_tokens = 456 },
+  { design = "pres_xpto8wJvfrJQhLVH4Mvz", iptm = 0.5105, plddt_D_mean = 82.26, plddt_std_all = 6.7987, ipsae_CD_min = 0.0058, ipsae_AD_min = 0.0167, ipsae_BD_min = 0.0046, min_ipsae_overall = 0.0046, n_tokens = 456 },
+]
 
 [run_one.deployment_ready_minset]
 item_1_appr    = "APPR approval at the rescoped $0.50 / 10-design level"
