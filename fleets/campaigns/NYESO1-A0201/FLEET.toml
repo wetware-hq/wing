@@ -249,6 +249,8 @@ epitope_indexing        = "0-based, per-chain, on the sequence path"
 non_binding_residues    = "accepted at no surcharge"
 excluded_amino_acids    = "default [\"C\"] applies to the DESIGNED BINDER only; the target peptide's terminal cysteine is untouched"
 
+# ---- RISKS (all risks for this campaign live here) ----
+
 [[risks]]
 id       = "boltzgen_backend_version"
 severity = "open, unresolved"
@@ -269,6 +271,18 @@ statement = "estimate-cost rejects the type-discriminated body (verbatim: binder
 id       = "no_test_key"
 severity = "minor"
 statement = "The account holds a workspace LIVE key, so the free test environment is unavailable and the migrated body remains unproven against the API."
+
+[[risks]]
+id       = "ipsae_worker_unvalidated_end_to_end"
+severity = "wiring-validated 2026-10-20, end-to-end pending"
+statement = "No fixture on the box carries real PAE and real pLDDT together, so the ipSAE/min_ipSAE worker cannot be validated end-to-end before campaign one. The boltz_des_* runs have pae.npz but a flat 100.0 B-factor placeholder and a protein+ligand complex whose PAE is (256,256) against 170 residues because Boltz tokenizes ligands PER-ATOM, i.e. PAE is per-TOKEN not per-residue. The boltz_run_* runs have real varying pLDDT but no pae.npz. Reported by BIO Engineer."
+mitigation = "worker must build an explicit token->residue map from the CIF and FAIL LOUDLY on mismatch rather than trust a length vector; a zero-variance pLDDT column is treated as ABSENT, not as a value. Campaign one's first batch is the first true end-to-end validation of this descriptor."
+
+[[risks]]
+id       = "plddt_scale_assumption"
+severity = "advisory, recorded 2026-10-20"
+statement = "The ipSAE worker performs NO 0-1 to 0-100 pLDDT rescale (the DunbrackLab reference multiplies by 100 iff max <= 1). This is safe for Boltz mmCIF, which is always 0-100, but a future 0-1 pLDDT source would read as ~0.5 and be mis-flagged as PRESENT rather than caught by the zero-variance absence test. Reported by BIO Engineer."
+mitigation = "if a non-Boltz pLDDT source is ever added, the worker must assert the scale explicitly rather than infer it."
 
 # ----------------------------------------------------------------- costs
 
@@ -296,47 +310,61 @@ do_not_build_on = "IBM/BeeAI ACP - folded into A2A under the Linux Foundation, r
 
 # -------------------------------------------------------- open decisions
 
+# ---- OPEN DECISIONS: LIVE (block run one) ----
+
+[[open_decisions]]
+id = "OD-6"
+owner = "Mathew"
+question = "submit the $15 / 300-design campaign"
+rescope = "run one rescoped to a $0.50 / 10-design positive control (num_proteins = 10); spend_cap_usd stays 15.00"
+
+# ---- OPEN DECISIONS: DEFERRED (not required for run one; each records what reopens it) ----
+
 [[open_decisions]]
 id = "OD-1"
 owner = "Mathew"
 question = "thresholds: Boltz-native recalibration, or reinstate AF2 initial guess (which puts the GPU layer back)"
 recommendation = "Boltz-native recalibration"
+reopen_trigger = "run two (calibration / wet-lab bar)"
+
 [[open_decisions]]
 id = "OD-2"
 owner = "Mathew with BIO Physician"
 question = "which negative-design panel"
 recommendation = "targeted"
+reopen_trigger = "run two (specificity arm)"
+
 [[open_decisions]]
 id = "OD-3"
 owner = "BIO Physician"
 question = "the ten exact SLLMWITQC mutant decoy sequences from the paper's supplement"
 note = "highest-value missing input"
+reopen_trigger = "run two (specificity arm)"
+
 [[open_decisions]]
 id = "OD-4"
 owner = "BIO Physician"
 question = "clinical proteome-near-neighbour and self-peptide panel"
+reopen_trigger = "run two (specificity arm)"
+
 [[open_decisions]]
 id = "OD-5"
 owner = "BIO Physician"
 question = "in-vitro reproduction bar: multimer + Jurkat-NFAT, or also co-culture cytotoxicity"
-[[open_decisions]]
-id = "OD-6"
-owner = "Mathew"
-question = "submit the $15 / 300-design campaign"
+reopen_trigger = "run two (calibration / wet-lab bar)"
+
 [[open_decisions]]
 id = "OD-7"
 owner = "Boltz support"
 question = "which BoltzGen version backs the hosted design pipeline, and is PR #218 in"
+reopen_trigger = "any request carrying non_binding_residues"
+
 [[open_decisions]]
 id = "OD-8"
 owner = "BIO Scientist with BIO Engineer"
 question = "re-express this spec as a Workflow RO-Crate over CWL/Nextflow with an approval profile, instead of a bespoke format"
-
-[[risks]]
-id       = "ipsae_worker_unvalidated_end_to_end"
-severity = "wiring-validated 2026-10-20, end-to-end pending"
-statement = "No fixture on the box carries real PAE and real pLDDT together, so the ipSAE/min_ipSAE worker cannot be validated end-to-end before campaign one. The boltz_des_* runs have pae.npz but a flat 100.0 B-factor placeholder and a protein+ligand complex whose PAE is (256,256) against 170 residues because Boltz tokenizes ligands PER-ATOM, i.e. PAE is per-TOKEN not per-residue. The boltz_run_* runs have real varying pLDDT but no pae.npz. Reported by BIO Engineer."
-mitigation = "worker must build an explicit token->residue map from the CIF and FAIL LOUDLY on mismatch rather than trust a length vector; a zero-variance pLDDT column is treated as ABSENT, not as a value. Campaign one's first batch is the first true end-to-end validation of this descriptor."
+image_digest_half = "CLOSED - ghcr digest 7e8762ae is part of the content address; only the code/script-hash half remains open"
+reopen_trigger = "adopting the Nextflow input-list superset (code/script-hash provenance)"
 
 # Transport contract (fleet >> case). The diagram arch.mermaid draws the topology;
 # these are the rules that govern what is allowed to cross it. Recorded here because
@@ -362,8 +390,51 @@ rules = [
 validation_2026_10_20 = "BIO Engineer validated the worker against the box fixtures (PR #14, draft, unmerged): pLDDT read on the 0-100 scale with a flat placeholder flagged absent via std<1e-6 (scale-independent, real boltz_run pLDDT read as 90.16); label_asym_id parsed as real chain ids with no silent re-lettering, and a token/residue mismatch RAISES TokenAlignmentError (256 PAE tokens vs 169 residues) under two independent guards; per-direction ipsae_d0res agrees with DunbrackLab/IPSAE at SHA 6174cf9 to ~3e-7 on a real-PAE protein slice, with our min_ipSAE=min vs their aggregate max confirmed as an intentional difference on identical d0 math. This establishes the worker is wired correctly, NOT that the descriptor is validated on campaign-one geometry."
 residual   = "No fixture carries real PAE and real pLDDT together and none has campaign-one geometry, so campaign one's first batch remains the first true end-to-end test of this descriptor."
 
-[[risks]]
-id       = "plddt_scale_assumption"
-severity = "advisory, recorded 2026-10-20"
-statement = "The ipSAE worker performs NO 0-1 to 0-100 pLDDT rescale (the DunbrackLab reference multiplies by 100 iff max <= 1). This is safe for Boltz mmCIF, which is always 0-100, but a future 0-1 pLDDT source would read as ~0.5 and be mis-flagged as PRESENT rather than caught by the zero-variance absence test. Reported by BIO Engineer."
-mitigation = "if a non-Boltz pLDDT source is ever added, the worker must assert the scale explicitly rather than infer it."
+# ---- RUN ONE: minimum set (positive control, machine-checkable) ----
+
+[run_one]
+mode             = "positive_control"
+num_proteins     = 10
+cost_usd         = 0.50
+base_tier_usd    = 0.05
+complex_residues = 483          # 275 + 99 + 9 + 100 worst case
+residue_ceiling  = 512          # 483 < 512
+tier_doubling    = false        # stays in the base $0.05/design tier
+cropping         = "prohibited" # would shift epitope indexing for zero dollars saved
+required_caveat  = '''
+A successful run one proves one thing and one thing only: that this pipeline can take the real
+NY-ESO-1 157-165 / HLA-A*02:01 complex, submit it to the hosted design API in the current request
+format, get structures back, and score them on this box without the machinery falling over. It is
+a positive control — a test of the apparatus, not of the molecule. It makes **no specificity claim
+and no safety claim of any kind.** No decoy peptides were refolded, no self-peptide or proteome
+near-neighbour panel was screened, and no negative-design constraint was applied, so the
+campaign's actual primary endpoint — the specificity margin, the on-target rank minus the
+best-decoy rank — **was never computed.** Nothing in run one can distinguish a binder that
+engages the peptide from one that engages the invariant HLA framework present on every nucleated
+cell in the body, and a framework-directed binder is not a weak result, it is an unsafe one. That
+means the MAGE-A3 / titin class of cross-reactivity risk named in `CASE.md:40` — the
+affinity-enhanced TCR that cross-reacted with titin and killed two patients by cardiogenic shock
+— **is entirely untested by run one, and a run-one "hit" carries exactly zero evidence against
+it.** Every quality number reported alongside run one is a threshold transferred from a
+protein-protein benchmark containing no pMHC complexes at all, so "plausible" here means
+"plausible under a yardstick that has never been calibrated on this kind of target". No
+independent model confirmed any design. This is in-silico only, and nothing here is a claim about
+personalised medicine, clinical benefit, or fitness for any use in a human.'''
+
+[run_one.descriptors]
+gating              = ["iptm", "plddt"]
+non_gating_recorded = ["ipsae", "min_ipsae"]
+not_required        = ["complex_iplddt", "shape_complementarity", "pae_interaction"]
+pending_note        = "the three not_required producers stay PENDING (infra.json:355-365); writing them is a run-two task, not a run-one blocker"
+
+[run_one.gates]
+G1 = "submit accepted: HTTP 2xx and a job id, body of the n=10 type:binder shape with num_proteins == 10"
+G2 = "billed cost <= $1.00 and <= spend_cap_usd 15.00"
+G3 = ">= 8 of 10 designs return _predicted.cif, metrics.json and pae.npz, mirrored off-API before the 7-day retention clock"
+G4 = "every returned design parses in the ghcr image with no TokenAlignmentError and the pLDDT column has std >= 1e-6 (the zero-variance placeholder test does not fire)"
+plausibility_indicator_non_gating = ">= 1 design with iptm >= 0.60 and binder-chain mean pLDDT >= 80; transferred thresholds, a miss does not void the machine pass, it is simply stated"
+
+[run_one.deployment_ready_minset]
+item_1_appr    = "APPR approval at the rescoped $0.50 / 10-design level"
+item_2_api_key = "BOLTZ_API_KEY confirmed live in the execution env"
+item_3_layer2  = "PR #14 merged + ghcr image pulled; needed only for the layer-2 half, without it G1-G3 can still pass on iptm alone with G4 recorded as 'layer 2 not run'"
