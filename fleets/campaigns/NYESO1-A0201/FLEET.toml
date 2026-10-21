@@ -523,3 +523,46 @@ rows = [
 item_1_appr    = "APPR approval at the rescoped $0.50 / 10-design level"
 item_2_api_key = "BOLTZ_API_KEY confirmed live in the execution env"
 item_3_layer2  = "CLEARED 2026-10-21, with a correction: PR #14 merged (9e758a3); the ghcr image re-pulled by full digest and the worker re-proved in-image AFTER the box reset (12/12 tests/test_ipsae.py pass in-image; guard raises TokenAlignmentError; scorer returns ipsae both orderings, min_ipsae, and complex_plddt 83.33 with plddt.present true). CORRECTION: the image does NOT contain ipsae.py - it is an ENVIRONMENT image and the worker source must be mounted in; python -m bindi.ipsae off the bare image raises ModuleNotFoundError. See infra.json code_and_provenance.image_formal_verification_2026_10_21. Was: PR #14 merged + ghcr image pulled; needed only for the layer-2 half, without it G1-G3 can still pass on iptm alone with G4 recorded as 'layer 2 not run'"
+
+# ------------------------------------------------- run one: contact analysis
+
+# Local geometry over the mirrored artifacts. No API calls, no spend. Settles DOCKING SITE
+# only. [run_one] required_caveat above stands as written: specificity is untested.
+[run_one.contact_analysis]
+script        = "run-one/contact_analysis.py"
+results       = "run-one/contact_analysis_results.json"
+report        = "run-one/CONTACTS.md"
+designs       = 10
+cutoff_primary_angstrom     = 4.0
+cutoff_sensitivity_angstrom = 5.0
+atoms         = "heavy only, hydrogens excluded"
+environments  = [
+  "local venv: Python 3.13.5, gemmi 0.7.5",
+  "pinned image ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6 under podman 5.4.2, gemmi 0.7.5, numpy 2.4.6, Python 3.13.16",
+]
+environments_agree = "contact results bit-identical across both"
+bsa_method    = "biotite 2.0.0 Shrake-Rupley, Single vdw radii, 200 points; local venv only (biotite absent from the pinned image). freesasa unusable on this box: wheel fails to build on Python 3.13. No proxy substituted."
+chain_layout_verified = "A 275 / B 99 / C 9 / D 73, chain C sequence SLLMWITQC, asserted against all 10 CIFs before scoring. Closes the open item that BINDER_CHAIN = \"D\" came from a comment, not an artifact."
+
+[run_one.contact_analysis.finding]
+verdict_set   = "peptide-directed, 9 of 10; 1 of 10 mixed (peptide-marginal) on breadth only"
+peptide_surface_buried_fraction_range   = [0.565, 0.815]
+heavy_chain_surface_buried_fraction_range = [0.013, 0.055]
+tcr_facing_P4_P8_contacted = "all 10 designs"
+anchor_P2_P9_contacts      = 0
+alpha3_Ig_contacts         = 0
+b2m_contacts               = 0
+chain_A_contact_regions    = "100% groove-proximal in all 10 (alpha-1 helix, alpha-2 helix, minor groove floor)"
+dominant_contact_position  = "P5 (Trp5), the prominent solvent-exposed residue of SLLMWITQC, in all 10"
+ipsae_reconciliation = "The layer-2 finding that A|D ipSAE exceeded C|D for every design was a size artefact, not framework engagement. ipSAE is not normalised for interface size and neither are raw contact counts; a 9-residue peptide is out-measured by a 275-residue chain by construction. Per-position contacts and fraction-of-available-surface-buried are immune to that asymmetry and both invert the reading."
+interpretive_rule = "Zero P4-P8 contact is framework-directed regardless of iptm; broad P4-P8 engagement with only groove-proximal framework footing is peptide-directed even when chain A out-counts the peptide."
+
+[run_one.contact_analysis.limits]
+gating        = false
+descriptor_class = "recorded, non-gating; gating descriptors remain iptm and plddt only"
+thresholds_calibrated = false
+thresholds_note = "classify() thresholds are a reasoned structural rule, not a classifier validated on pMHC-binder complexes"
+geometry_source = "predicted structures, not experimental; contact counts inherit Boltz modelling error and are most sensitive to side-chain placement, the least reliable part of a prediction"
+specificity_claim = "NONE. A peptide-directed footprint does not show the binder would reject a different peptide in the same groove. The specificity margin remains uncomputed and is a run-two endpoint requiring decoy-loaded counter-screening."
+mage_a3_titin_risk = "UNTOUCHED. That failure was cross-reactivity with a different peptide on the same HLA, which this analysis cannot see by construction: only the cognate complex was modelled. A peptide-directed footprint lowers the prior on the crudest framework-binding failure mode; it is not evidence against cross-reactivity, and carries no safety claim."
+suspect_design = "pres_xpto8wJvfrJQhLVH4Mvz has almost no framework footing (6 chain A contacts, 1.3% of chain A surface) and the lowest iptm in the set (0.5105, below the 0.60 plausibility threshold). Treat as a doubtful pose, not the cleanest hit."
