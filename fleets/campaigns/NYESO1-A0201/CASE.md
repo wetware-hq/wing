@@ -8,6 +8,8 @@
 > mechanistic argument, written to be read by a clinician. The executable half — the
 > agentic graph, the gates, the thresholds, the platform contract and the owners
 > register — is `FLEET.toml` in this directory. Neither file duplicates the other.
+> The geometric methods layer — the distilled surface-matching framework, its heuristics and
+> what they do and do not establish — is `UPGRADES.md`.
 
 ---
 
