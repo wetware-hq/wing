@@ -4,10 +4,9 @@
 **Scope:** the pre-experimental geometric layer only. No gate in `FLEET.toml` is changed by this
 document. Anything this file proposes changing is marked as a proposal and needs the user's decision.
 
-> This file is the *methods* half of the geometric layer. The clinical case is `CASE.md`, the
-> executable graph and its gates are `FLEET.toml`, the platform contract is `PLATFORM.md`, and the
-> measured run-one contact analysis is `run-one/CONTACTS.md`. This file does not duplicate them; it
-> cites them by path.
+> This file is the *methods* half of the geometric layer. It does not duplicate the clinical case,
+> the executable graph, the platform contract or the measured run-one analyses; it cites them by
+> path. **Section 8 is the single index of those files** — add a file there and nowhere else.
 
 ## How to read this file
 
@@ -340,6 +339,10 @@ heuristic derives from; **ORPHAN** means it rests on something outside the disti
 
 Nothing in this table changes `FLEET.toml`. Items marked *proposed* need the user's decision.
 
+The Tier 0 items were written before they had been run. Their measured run-one values, and the
+refinements those measurements propose, are in `REFINEMENTS.md`; **no Status in the tables below has
+been changed by it**, because each change it proposes is a decision reserved for the user.
+
 ### Tier 0 — computable today, zero spend, from artifacts already on disk
 
 | # | Heuristic | Source | Provenance | Cutoff | Evidence of | NOT evidence of | Status | Cites |
@@ -469,9 +472,31 @@ Named rather than papered over.
 
 ## 8. Related files
 
+The campaign's file index. Every other document in this directory cites this section rather than
+repeating a list of its own.
+
+**Documents**
+
 - `CASE.md` — the clinical case and target selection.
 - `FLEET.toml` — the execution graph, gates, thresholds and spend state (single source of truth).
 - `PLATFORM.md` — the platform contract.
+- `REFINEMENTS.md` — what the Tier 0 measurements changed, and the proposals P1-P4 they raise.
+  Proposals only: it changes no gate and no Status in section 4.
 - `prior-art.md` — prior art for the specification format.
+- `arch.mermaid` — the graph rendered.
 - `run-one/CONTACTS.md` — the measured run-one contact analysis.
-- `run-one/sc_results.json` — recorded, non-gating shape-complementarity measurements.
+
+**Tier 0 code and artifacts** (section 4, Tier 0; measured in `REFINEMENTS.md`)
+
+- `run-one/tier0_targeting.py` → `run-one/tier0_targeting_results.json` — the four Tier 0
+  quantities on the run-one coordinates, under BindCraft2's G7 definitions.
+- `run-one/shell_sweep.py` → `run-one/shell_sweep_results.json` — item 1 across shell cutoffs.
+- `run-one/contact_analysis.py` → `run-one/contact_analysis_results.json` — the campaign-specific
+  contact rule behind `run-one/CONTACTS.md`.
+- `targeting_flags.json` — the epitope, coldspot, anchor and invariant residue flags the above read.
+
+**Referenced but not committed**
+
+- `run-one/sc_results.json` — section 5 retains the `Sc` measurements as RECORDED-NON-GATING in
+  this file, but it is not in this repository. Either the file is uncommitted or the path is
+  wrong; **unresolved, flagged rather than silently dropped.**

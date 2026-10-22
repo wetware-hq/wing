@@ -10,8 +10,9 @@ Tier 0 items had been run. This file records what happened when they were run on
 run-one designs, and refines the campaign on that evidence. It adds no measurement to
 `CONTACTS.md` and removes none.
 
-Artifacts: `run-one/tier0_targeting_results.json`, `run-one/shell_sweep_results.json`.
-Code: `run-one/tier0_targeting.py`, `run-one/shell_sweep.py`. Flags: `targeting_flags.json`.
+The code and artifacts behind every number below are indexed in `UPGRADES.md` section 8 under
+"Tier 0 code and artifacts"; the findings here cite them by name without repeating their paths.
+This file is reached from `UPGRADES.md` section 4 and section 8, and from `run-one/CONTACTS.md`.
 
 ---
 
