@@ -4,7 +4,7 @@
 **Author:** bioengineer (expert mode), reconciled to fleet documents  
 **Status:** DRAFT for fleet review  
 **Scope:** recommendations for **this repository's in-silico campaign** plus the **downstream in-vitro bar** owned by BIO Physician (`CASE.md`).  
-**Authority order:** `FLEET.toml` (graph, spend, gates) → `UPGRADES.md` (geometric methods) → `handover.md` (coding upgrade) → this file (advisory).
+**Authority order:** `FLEET.toml` (graph, spend, gates) → `UPGRADES.md` (geometric methods + **§10 coding handover**) → this file (advisory).
 
 ---
 
@@ -13,7 +13,7 @@
 | Draft assumption | Actual campaign record |
 |---|---|
 | Affinity-matured 1G4-lineage TCR in primary T cells | **De novo minibinders / TCR-mimic antibodies** (chain D, 60–100 aa) against a **3-chain class I pMHC** target (`FLEET.toml`, `CASE.md`). |
-| Prior wing sequencing / binding curves / cytotoxicity in `handover.md` | **No such wet-lab runs in this repo.** Run one is a **$0.50 / 10-design** Boltz positive control; artifacts under `run-one/artifacts/`. |
+| Prior wing sequencing / binding curves / cytotoxicity in external drafts | **No such wet-lab runs in this repo.** Run one is a **$0.50 / 10-design** Boltz positive control; artifacts under `run-one/artifacts/`. |
 | “TCR validation wing” | **In-silico design and screen** (`FLEET.toml` `scope`); in vitro is **downstream**, not executed here. |
 | Primary success metric = affinity / K_D | **Specificity margin** — on-target rank minus best-decoy rank (`FLEET.toml` `primary_endpoint`). High `iptm` without selectivity is a **warning**, not a win (`UPGRADES.md` §6, `CASE.md`). |
 
@@ -49,7 +49,7 @@ Re-run and escalation priority for **this fleet**:
 | 4 | Diversity (DIV) → ranked PANEL | Transport payloads T1–T5 (`FLEET.toml` `[transport]`) |
 | 5 | SPR/BLI, tetramer, Jurkat-NFAT, cytotoxicity | **BIO Physician** — see `CASE.md` downstream handoff (OD-5) |
 
-7. **Unified protocol (in silico).** Before comparing run one to run two, fix one **layer-2 orchestrator** entrypoint and one **flags / shell reporting** convention (`handover.md` WP-A, P1 dual 5.0 Å + 10.0 Å reporting). Mixed entrypoints (`layer2_eval.py`, `tier0_targeting.py`, contact analysis) invalidate cross-run rankings.
+7. **Unified protocol (in silico).** Before comparing run one to run two, fix one **layer-2 orchestrator** entrypoint and one **flags / shell reporting** convention (`UPGRADES.md` §10 WP-A, P1 dual 5.0 Å + 10.0 Å reporting). Mixed entrypoints (`layer2_eval.py`, `tier0_targeting.py`, contact analysis) invalidate cross-run rankings.
 
 ---
 
@@ -69,7 +69,7 @@ Re-run and escalation priority for **this fleet**:
 
 ---
 
-## 6. Mapping draft recs → coding handover
+## 6. Mapping draft recs → `UPGRADES.md` §10
 
 | Draft § | Disposition | Handover / fleet action |
 |---------|-------------|-------------------------|
@@ -83,8 +83,8 @@ Re-run and escalation priority for **this fleet**:
 
 ## 7. Decision gates / next actions
 
-- [x] Resolve placeholders against `handover.md`, `FLEET.toml`, `CASE.md` (this document)
-- [ ] Implement `handover.md` WP-A–C (L2 orchestrator, optional buried-anchor policy, item 10 docking)
+- [x] Resolve placeholders against `UPGRADES.md` §10, `FLEET.toml`, `CASE.md` (this document)
+- [ ] Implement `UPGRADES.md` §10 WP-A–C (L2 orchestrator, optional buried-anchor policy, item 10 docking)
 - [ ] OD-3: ten decoy peptide sequences (blocks specificity margin)
 - [ ] OD-2: negative-design panel in submit body
 - [ ] P1–P4 owner sign-off (`UPGRADES.md` §9)
