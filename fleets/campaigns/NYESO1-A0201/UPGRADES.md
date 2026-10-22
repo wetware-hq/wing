@@ -313,21 +313,20 @@ deliberately and is not to be removed from this document or from `CASE.md`.
 
 ### What run one does and does not establish
 
-`run-one/CONTACTS.md` records that all ten designs contacted the peptide. That result must be read
-with its circularity stated: `run-one/request-legacy-submitted.json` names **all nine** peptide
-residues in `epitope_residues`, so the model bound where it was told to bind. The peptide-directed
-finding is substantially our own specification returned to us.
+Recorded once, in `run-one/CONTACTS.md` under "How much of that is our own specification returned
+to us", which carries the numbers, the per-design tables and the independent reproduction of the
+anchor result. That reading was adopted there on 2026-10-22; this file does not restate it.
 
-Two signals in that run were genuinely unconstrained and therefore do carry information:
+What section 4 and section 6 below depend on, and nothing more:
 
-- **Zero contacts to the buried anchor positions.** Not specified by us; this is real geometry.
-- **Heavy-chain surface use of 1.3-5.5% only**, with `non_binding_residues` barred from the request
-  body. Unconstrained, and the single most encouraging number we have.
+- The peptide-directed footprint is **substantially our own specification returned to us** — the
+  submitted request named all nine peptide residues — so it is **not** independent evidence of
+  selectivity, and must not be scored as such.
+- The **zero buried-anchor contacts** and the **1.3-5.5% heavy-chain surface use** were not
+  specified by us and do carry information. Item 4's `OURS, measured 1.3-5.5%` provenance is that
+  second number.
 
-The honest summary: we told it where to bind and it bound there; *how* it bound there was its own
-work. Any wording in `CONTACTS.md` or `CASE.md` that presents the peptide-directed result as
-independent evidence of selectivity should be corrected to this reading. **No measurement is to be
-deleted** — only the interpretation around it.
+**No measurement is to be deleted** — only the interpretation around it.
 
 ---
 
