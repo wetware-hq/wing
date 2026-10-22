@@ -8,6 +8,9 @@ gate in ``FLEET.toml``, and marks items 1-3 as "GATING, proposed" - proposals ne
 user's decision. Section 7 records that no calibrated threshold exists for any of them.
 This module therefore computes and records; it does not pass or fail a design.
 
+Also hosts the shell-cutoff sweep formerly in ``shell_sweep.py``:
+``python tier0_targeting.py sweep``. Diagnostic only — see UPGRADES.md section 9 / F1.
+
 Relationship to ``contact_analysis.py``, which already lives in this directory:
 
   ``contact_analysis.py`` answers DOCKING SITE under a campaign-specific interpretive rule
@@ -46,6 +49,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import statistics
 import sys
 from pathlib import Path
 
@@ -270,7 +274,96 @@ def analyse_design(design_id: str, cif_path: Path, flags: dict, with_sasa: bool 
     return rec
 
 
-def main(argv: list[str] | None = None) -> int:
+
+DEFAULT_SWEEP_CUTOFFS = (4.0, 5.0, 6.0, 7.0, 8.0, 10.0, 12.0)
+
+
+def sweep_design(cif_path: Path, flags: dict, cutoffs=DEFAULT_SWEEP_CUTOFFS) -> dict:
+    """Off-epitope contact fraction at each shell cutoff. Diagnostic only — not a gate."""
+    chains = load_chains(cif_path)
+    assert_layout(chains, cif_path)
+    binder = chains[BINDER_CHAIN]
+    target_chains = (HEAVY_CHAIN, B2M_CHAIN, PEPTIDE_CHAIN)
+    contact_cutoff = float(flags["contact_cutoff_angstrom"])
+
+    contacted = {c: contacted_residues(binder, chains[c], contact_cutoff) for c in target_chains}
+    n_contacted = sum(len(v) for v in contacted.values())
+
+    out: dict[str, dict] = {}
+    for cut in cutoffs:
+        shell = epitope_shell(chains, {**flags, "epitope_shell_cutoff_angstrom": cut}, target_chains)
+        in_shell = sum(len(contacted[c] & shell[c]) for c in target_chains)
+        out[f"{cut:.1f}"] = {
+            "off_epitope_contact_fraction": (
+                round((n_contacted - in_shell) / n_contacted, 5) if n_contacted else None
+            ),
+            "shell_size_by_chain": {c: len(shell[c]) for c in target_chains},
+            "shell_size_total": sum(len(shell[c]) for c in target_chains),
+        }
+    return {"contacted_target_residues": n_contacted, "by_cutoff": out}
+
+
+def main_sweep(argv: list[str] | None = None) -> int:
+    """Former shell_sweep.py entry point. Invoked as: python tier0_targeting.py sweep ..."""
+    ap = argparse.ArgumentParser(
+        prog="tier0_targeting.py sweep",
+        description=(
+            "Shell-cutoff sweep for UPGRADES.md item 1. Diagnostic only — does not choose a "
+            "cutoff, rank designs, or gate."
+        ),
+    )
+    ap.add_argument("--artifacts", default=str(Path(__file__).parent / "artifacts"))
+    ap.add_argument("--out", default=None)
+    args = ap.parse_args(argv)
+
+    flags = load_flags(FLAGS_PATH)
+    root = Path(args.artifacts)
+    per_design: dict[str, dict] = {}
+    for d in sorted(p for p in root.iterdir() if p.is_dir() and p.name.startswith("pres_")):
+        cif = d / f"{d.name}_predicted.cif"
+        if cif.exists():
+            per_design[d.name] = sweep_design(cif, flags, DEFAULT_SWEEP_CUTOFFS)
+
+    summary: dict[str, dict] = {}
+    for cut in DEFAULT_SWEEP_CUTOFFS:
+        key = f"{cut:.1f}"
+        vals = [v["by_cutoff"][key]["off_epitope_contact_fraction"] for v in per_design.values()]
+        vals = [v for v in vals if v is not None]
+        shells = [v["by_cutoff"][key]["shell_size_total"] for v in per_design.values()]
+        summary[key] = {
+            "off_epitope_min": round(min(vals), 5),
+            "off_epitope_max": round(max(vals), 5),
+            "off_epitope_median": round(statistics.median(vals), 5),
+            "off_epitope_stdev": round(statistics.pstdev(vals), 5),
+            "designs_at_zero": sum(1 for v in vals if v == 0.0),
+            "shell_size_total_min": min(shells),
+            "shell_size_total_max": max(shells),
+        }
+
+    payload = {
+        "status": "DIAGNOSTIC - not a selection, not a gate",
+        "question": (
+            "Is there a shell cutoff at which off-epitope contact fraction has enough spread "
+            "across designs to discriminate at all? At the teacher's 10.0 A it does not."
+        ),
+        "warning": (
+            "Choosing a cutoff by the spread it maximises on these ten designs would fit a "
+            "free parameter to the campaign's own output. Any cutoff adopted must be argued "
+            "structurally and pre-registered BEFORE the next run, per UPGRADES.md section 4."
+        ),
+        "contact_cutoff_angstrom": flags["contact_cutoff_angstrom"],
+        "hotspots": {k: v for k, v in flags["hotspots"].items() if not k.startswith("_")},
+        "summary_by_shell_cutoff": summary,
+        "designs": per_design,
+    }
+    text = json.dumps(payload, indent=1, sort_keys=True)
+    if args.out:
+        Path(args.out).write_text(text)
+    print(json.dumps(summary, indent=1))
+    return 0
+
+
+def main_measure(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Tier 0 targeting metrics (recorded, non-gating)")
     ap.add_argument("--artifacts", default=str(Path(__file__).parent / "artifacts"))
     ap.add_argument("--flags", default=str(FLAGS_PATH))
@@ -341,6 +434,14 @@ def main(argv: list[str] | None = None) -> int:
         Path(args.out).write_text(text)
     print(text)
     return 0 if not errors else 1
+
+
+def main(argv: list[str] | None = None) -> int:
+    """Dispatch: ``sweep`` subcommand, otherwise the Tier 0 measure (legacy CLI)."""
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if argv and argv[0] == "sweep":
+        return main_sweep(argv[1:])
+    return main_measure(argv)
 
 
 if __name__ == "__main__":

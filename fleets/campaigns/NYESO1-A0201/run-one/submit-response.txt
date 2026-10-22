@@ -1,2 +1,0 @@
-{"message":"Request validation failed. binder_specification is required. 1 other field needs attention.","code":"VALIDATION_ERROR","details":{"binder_specification":{"inputName":"binder_specification","message":"is required"},"templates":{"inputName":"templates","message":"is required"}}}
-__HTTP 400

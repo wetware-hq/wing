@@ -139,7 +139,7 @@ The four `UPGRADES.md` section 4 Tier 0 quantities are computed on these same co
 BindCraft2's G7 definitions rather than this file's campaign-specific rule: off-epitope contact
 fraction, coldspot contact fraction, buried-anchor contact count and invariant-surface fraction.
 Code and artifact paths are indexed in `UPGRADES.md` section 8, not repeated here. What those
-measurements showed, and the proposals they raise, are in `../REFINEMENTS.md`.
+measurements showed, and the proposals they raise, are in `../UPGRADES.md` section 9.
 
 Those metrics are **RECORDED-NON-GATING**. `UPGRADES.md` marks items 1-3 as *proposed* gates
 needing the user's decision, and section 7 records that no calibrated threshold exists for any

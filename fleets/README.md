@@ -45,6 +45,12 @@ HLA-A\*02:01 + β2-microglobulin).
   migration, what was verified read-only, what could not be. (Merge of `boltz-version-2026-10-20.md`
   and `migration-notes-2026-10-20.md`.)
 
+### Filecount, 2026-10-22
+
+- `campaigns/NYESO1-A0201/REFINEMENTS.md` → absorbed into `UPGRADES.md` section 9 (proposals P1-P4 left open).
+- `campaigns/NYESO1-A0201/run-one/shell_sweep.py` → folded into `run-one/tier0_targeting.py sweep`.
+- `campaigns/NYESO1-A0201/run-one/submit-response.txt` → raw HTTP 400 body kept under `infra.json` `code_and_provenance.A4_ANSWERED_2026_10_21.raw_http_400_body`.
+
 ### Move, 2026-10-22
 
 `prior-art.md` left the campaign directory for `fleets/prior-art.md`. It is a survey of
