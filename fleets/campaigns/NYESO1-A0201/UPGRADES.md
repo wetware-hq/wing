@@ -1,6 +1,6 @@
 # UPGRADES — geometric heuristics for binder design
 
-**Version:** 1.0 · **Date:** 2026-10-22 (Australia/Sydney)
+**Version:** 1.1 · **Date:** 2026-10-22 (Australia/Sydney)
 **Scope:** the pre-experimental geometric layer only. No gate in `FLEET.toml` is changed by this
 document. Anything this file proposes changing is marked as a proposal and needs the user's decision.
 
@@ -27,6 +27,9 @@ section 3: delete section 3 and the framework still stands.**
 Section 4 lists heuristics cheapest-discriminator-first. Each cites the component it derives from.
 A heuristic citing no component is marked **ORPHAN**: it rests on something outside the distilled
 model, which is a reason to distrust it, not a reason to drop it.
+
+Section 10 is the **A2A coding handover** for implementing the layer-2 upgrade (refactor) on top of
+sections 2–9. *(Former standalone `handover.md`, absorbed 2026-10-22.)*
 
 ## Sources, and their weight
 
@@ -488,6 +491,8 @@ from the repository — the one genuine non-existence is recorded under "Not com
 - `CASE.md` — the clinical case and target selection.
 - `FLEET.toml` — the execution graph, gates, thresholds and spend state (single source of truth).
 - `PLATFORM.md` — the platform contract.
+- `recommendations.md` — advisory scope, in-silico assay ladder, fleet hygiene (does not change gates).
+- *(was `handover.md`)* — absorbed into **section 10** on 2026-10-22.
 - *(was `REFINEMENTS.md`)* — absorbed into section 9 on 2026-10-22. Proposals P1-P4
   remain open there; the file itself is gone.
 - `../../prior-art.md` (`fleets/prior-art.md`) — prior art for the `.fleet` specification
@@ -655,3 +660,185 @@ residue list is invented here.
 Unchanged by this section: `FLEET.toml`, the APPR human gate, `spend_cap_usd = 15.00`,
 `on_deny = "HALT"`, the OD-8 digest resolution, and the gating descriptors `iptm` and
 `plddt`. The MAGE-A3 / titin record in `CASE.md` and `UPGRADES.md` is retained deliberately.
+
+---
+
+## 10. Layer 2 implementation handover (A2A coding)
+
+| Field | Value |
+|---|---|
+| **Task** | `refactor` / subtype `upgrade` |
+| **Assignee** | z.ai **GLM-5.3** (coding) |
+| **System** | Agentic fleet — campaign `NYESO1-A0201` |
+| **Repository** | `wetware-hq/wing` — path `fleets/campaigns/NYESO1-A0201/` |
+| **Advisory** | `recommendations.md` (fleet-truth reconciled; wet-lab items → `CASE.md`) |
+
+### 10.1 What you are being asked to do
+
+Upgrade and refactor the **pre-experimental geometric layer** for this campaign: the pure-CPU path
+that scores mirrored Boltz artifacts **after** layer 1, without touching hosted design spend, APPR,
+or `FLEET.toml` gating descriptors.
+
+Turn **section 4** (Tier 0 / Tier 1 / Tier 2) into a coherent, test-backed execution surface on
+the existing layer-2 hosts (local box + optional Modal CPU), while respecting every **proposal vs
+applied** boundary in **section 9**.
+
+**`recommendations.md`** adds fleet hygiene and scope boundaries. Implement only items cross-walked
+to code in that file §6; do not implement wet-lab assays in this task.
+
+This is **not** a clinical or affinity task. No real patient data. All coordinates are synthetic
+campaign artifacts (`pres_*` under `run-one/artifacts/`).
+
+### 10.2 Read order (do not skip)
+
+1. **This file** — sections 2 (G1–G7), 4 (heuristic table), 5 (rejections), 9 (Tier 0 P1–P4), 10 (this handover).
+2. **`recommendations.md`** — §0 fleet truth, §3 in-silico assay ladder, §5 hygiene, §6 → work packages below.
+3. **`FLEET.toml`** — `ART` → `L2` → `DIV`; `primary_endpoint = specificity_margin`; gating; Modal; APPR.
+4. **`infra.json`** — `layer2_execution_pin`, `layer_2_modal_cpu_host`, content-address pins.
+5. **`PLATFORM.md`** — hosted API vs CPU-only (item 10 docking in scope).
+6. **`CASE.md`** — specificity not affinity; SPR/tetramer/Jurkat **out of scope for coding WP**.
+7. **Code:** `run-one/contact_analysis.py`, `run-one/tier0_targeting.py`, `run-one/layer2_eval.py`,
+   `modal_layer2_app.py`, `targeting_flags.json`.
+
+**Do not open** held-out answer folders or write scenario/wording answer files (repo `AGENTS.md`).
+
+**Do not implement** superseded draft assumptions (1G4 TCR primary cells, SLLMWITQL dual-epitope wet
+lab) — see `recommendations.md` §0.
+
+### 10.3 Implementation state (as of 2026-10-22)
+
+| Area | Status |
+|---|---|
+| Run one | **Complete** — job `prot_des_TY6KzyxULq8mACflXbhn`, 10 designs, `$0.50`, `run-one/artifacts/`, G1–G4 pass. |
+| Specificity margin | **Not computed** — no L1B decoy refold in run one. |
+| Layer 2 ipSAE | **Wired** — `layer2_eval.py` + `layer2_results.json`; gating **`iptm` and `plddt` only**. |
+| Tier 0 G7 | **Implemented** — `tier0_targeting.py`; tests `tests/test_tier0_targeting.py`. |
+| Shell sweep | **Done** — F1 (10 Å vacuous). |
+| HECTOR G1/G3 | **Rejected**. |
+| Post-hoc `Sc` gate | **Rejected**; no `sc_results.json`. |
+| Item 10 docking | **Not implemented** — Tier 2 priority (section 4). |
+| L2 integration | **Fragmented** — unify per `recommendations.md` §3.7 / WP-A below. |
+
+| ID | Decision | In code today |
+|---|---|---|
+| **P1** | Item 1 at **5.0 Å** for *reporting*; RECORDED-NON-GATING through run two | `targeting_flags.json` **10.0 Å**; tier0 JSON **10.0 Å**. |
+| **P2** | Item 3 GATING at zero buried anchors | Section 4 only — not `FLEET.toml`. |
+| **P3** | Section 6 operational line | Owner only. |
+| **P4** | Rim residue list | Blocked — helix-minus-shell. |
+
+### 10.4 Goal architecture (refactor target)
+
+```mermaid
+flowchart LR
+  ART[("ART artifacts\nCIF + PAE + metrics.json")]
+  L2["L2 orchestrator"]
+  T0["Tier 0 G7\nrecorded"]
+  IPSAE["ipSAE / pLDDT"]
+  DOCK["Item 10 docking"]
+  OUT["layer2_bundle.json\n+ provenance block"]
+
+  ART --> L2
+  L2 --> T0
+  L2 --> IPSAE
+  L2 --> DOCK
+  T0 --> OUT
+  IPSAE --> OUT
+  DOCK --> OUT
+```
+
+**Principles:** conjunctive filters when enabled (G5/G6); item 10 non-Boltz, comparisons only;
+bundle records parameters + pins (`recommendations.md` §5.10).
+
+### 10.5 Work packages (priority order)
+
+**WP-A — Layer 2 orchestrator (required).** One entrypoint (local + Modal-shared) per `pres_*`: (1)
+ipSAE behaviour matches `layer2_results.json`; (2) Tier 0 with **10.0 Å** regression + **5.0 Å**
+item-1 block `reporting_shell_angstrom: 5.0` (P1); (3) merged `run-one/artifacts/layer2_bundle.json`
+with schema version. No tier0 executable thresholds; no new `FLEET.toml` gating keys.
+
+**WP-B — Buried-anchor policy (required).** `--policy buried-anchors-zero`: exit non-zero if any
+`item_3_buried_anchor_contact_count ≠ 0` (P2; not fleet gating until sign-off). All ten run-one at zero (F2).
+
+**WP-C — Item 10 docking (required).** CPU rigid-body re-derivation; pose agreement + complementarity
+**delta** (section 4 item 10).
+
+**WP-D — Policy skeleton (nice-to-have).** `run-one/l2_policy.py`: pass/fail/skipped for items 3, 5, 6.
+
+**WP-E — Doc sync (required, small).** `infra.json` / `arch.mermaid` only if entrypoints change; do not
+duplicate section 8 index.
+
+**WP-F — Bundle metadata (required).** Per design: `design_id`, `job_id` (`prot_des_TY6KzyxULq8mACflXbhn`
+for run one), artifact paths, provenance pins, optional `display_alias` `NYESO1-<design_id>` — do not
+rename artifact directories.
+
+### 10.6 Explicit non-goals
+
+| Do not | Reason |
+|---|---|
+| Change `FLEET.toml` gating (`iptm`, `plddt`) | This document + tests |
+| Spend / submit Boltz / `modal deploy` without APPR | Governance |
+| Port HECTOR G1/G3 | G1 inapplicable |
+| Absolute `Sc` / HECTOR gates | Section 5 |
+| Fit shell cutoff to run-one spread | F1 sweep warning |
+| Edit section 6 prediction (P3) | Owner |
+| SPR, tetramer, cytotoxicity, CRS | `CASE.md` |
+| TCR maturation / SLLMWITQL wet lab | `recommendations.md` §0 |
+
+### 10.7 Acceptance criteria
+
+1. `python3 -m pytest -q` exits **0** (`tests/test_tier0_targeting.py`, `tests/test_contact_analysis.py`).
+2. L2 orchestrator reproduces ipSAE vs `layer2_results.json` (additive keys OK).
+3. Tier 0: ten designs anchor count 0; dual shell documented if added.
+4. Item 10 artifact for all ten designs.
+5. No tier0 metric thresholds in executable AST.
+6. `FLEET.toml` gating and APPR unchanged unless user requests otherwise.
+7. `layer2_bundle.json` includes WP-F provenance per design.
+
+### 10.8 Verification commands
+
+```bash
+cd /workspace
+python3 -m pytest -q tests/test_tier0_targeting.py tests/test_contact_analysis.py
+
+python3 fleets/campaigns/NYESO1-A0201/run-one/tier0_targeting.py \
+  --artifacts fleets/campaigns/NYESO1-A0201/run-one/artifacts
+
+python3 -c "import ast; ast.parse(open('fleets/campaigns/NYESO1-A0201/modal_layer2_app.py').read())"
+```
+
+### 10.9 Content-address pins (do not drift)
+
+| Pin | Value |
+|---|---|
+| Layer-2 base image | `ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6` |
+| Worker wheel | `bindi-0.2.0-py3-none-any.whl`, sha256 `6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42`, commit `70b6c6c` |
+| Binder chain id | `D` |
+| Contact cutoff | 4.0 Å heavy-atom (G7) |
+| Run-one job id | `prot_des_TY6KzyxULq8mACflXbhn` |
+
+### 10.10 Open decisions (coding agent must not resolve)
+
+| ID | Question | Owner |
+|---|---|---|
+| P1 | 5.0 Å reporting + `targeting_flags.json` | Mathew |
+| P2 | Item 3 → `FLEET.toml` gate | Mathew |
+| P3 | Section 6 operational line | User |
+| P4 | Rim residue list | User + BIO Physician |
+| — | Items 5, 7, 8, 10 as fleet gates | User |
+| OD-2 | Negative-design panel | Mathew + BIO Physician |
+| OD-3 | Decoy sequences | BIO Physician |
+| OD-5 | In-vitro bar | BIO Physician |
+
+### 10.11 Deliverables checklist
+
+- [ ] WP-A unified L2 orchestrator (local + Modal)
+- [ ] WP-A dual shell 5.0 Å + 10.0 Å reporting
+- [ ] WP-B `--policy buried-anchors-zero`
+- [ ] WP-C item 10 docking + results JSON
+- [ ] WP-F provenance in bundle
+- [ ] Tests green
+
+### 10.12 Return protocol (A2A)
+
+Post **Task** artifact with: entrypoints and JSON paths; diff + tests; unchanged governance files;
+item 10 blockers; which `recommendations.md` items were implemented vs deferred to Physician.
