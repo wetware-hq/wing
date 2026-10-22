@@ -481,7 +481,8 @@ repeating a list of its own.
 - `PLATFORM.md` — the platform contract.
 - `REFINEMENTS.md` — what the Tier 0 measurements changed, and the proposals P1-P4 they raise.
   Proposals only: it changes no gate and no Status in section 4.
-- `prior-art.md` — prior art for the specification format.
+- `../../prior-art.md` (`fleets/prior-art.md`) — prior art for the `.fleet` specification
+  format. Lives at the fleets/ level because it is about the format, not this campaign.
 - `arch.mermaid` — the graph rendered.
 - `run-one/CONTACTS.md` — the measured run-one contact analysis.
 

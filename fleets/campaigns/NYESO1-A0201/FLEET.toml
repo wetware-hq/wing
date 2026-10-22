@@ -346,7 +346,7 @@ fan_out_shape   = "the decoy set is ten peptide mutants, so the target hash move
 known_weakness  = "Nextflow content-addresses a strict SUPERSET of our four-tuple: it also hashes the container image, the conda/spack environment, the script text and bundled scripts. We hash none of those, and all of them can silently change results. Adopting the Nextflow input list is open decision OD-8."
 
 [prior_art]
-survey = "prior-art.md"
+survey = "../../prior-art.md"  # fleets/prior-art.md — format survey, not campaign-local
 verdict = "the graph, typed IO, content-addressing and provenance are CWL + Workflow Run RO-Crate; the agent/owner half is an A2A Agent Card; the prose structure is a model card. The in-graph approval + spend-cap node is the one piece with no clean prior art."
 adopt = ["Workflow Run RO-Crate + RO-Crate 1.2", "Nextflow task-hash input list", "CWL requirements-vs-hints semantics", "A2A Agent Card schema", "Hugging Face model-card file shape"]
 do_not_build_on = "IBM/BeeAI ACP - folded into A2A under the Linux Foundation, repo archived"

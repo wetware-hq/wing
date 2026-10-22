@@ -20,6 +20,15 @@ so they can never drift from the base config:
 - `immunology_abstain.toml` (15 loc, 12 identical to `immunology_mvp.toml`) → a one-value script
   override (`lab_gate_ack_panel = "abstain"`) in `tests/test_fleet_case.py`.
 
+## Shared — specification prior art (read by no code)
+
+- `prior-art.md` — survey of existing frameworks and standards for declaring fleets of
+  autonomous agents (CWL, Workflow Run RO-Crate, A2A Agent Cards, model cards). Written
+  against the NYESO1-A0201 campaign as the worked example, but the findings apply to the
+  `.fleet` format itself, so the file lives here rather than under a single campaign.
+  (Was `campaigns/NYESO1-A0201/prior-art.md`, itself renamed from
+  `fleet-spec-prior-art-2026-10-20.md`.)
+
 ## `campaigns/NYESO1-A0201/` — campaign specification backup (read by no code)
 
 A point-in-time backup, as it stood on 2026-10-20, of the reproduction-campaign spec for a
@@ -35,7 +44,13 @@ HLA-A\*02:01 + β2-microglobulin).
 - `PLATFORM.md` — hosted-Boltz record: what "latest" resolves to, the legacy → `type:"binder"` request
   migration, what was verified read-only, what could not be. (Merge of `boltz-version-2026-10-20.md`
   and `migration-notes-2026-10-20.md`.)
-- `prior-art.md` — spec-standards prior-art survey (was `fleet-spec-prior-art-2026-10-20.md`).
+
+### Move, 2026-10-22
+
+`prior-art.md` left the campaign directory for `fleets/prior-art.md`. It is a survey of
+the `.fleet` format, not of this campaign; keeping it under NYESO1-A0201 would force the
+next campaign either to miss it or to copy it. References in `FLEET.toml` and
+`UPGRADES.md` section 8 were updated in the same commit.
 
 ### Consolidation, 2026-10-21
 
