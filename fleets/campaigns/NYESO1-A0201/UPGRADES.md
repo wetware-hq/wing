@@ -6,13 +6,14 @@ document. Anything this file proposes changing is marked as a proposal and needs
 
 > This file is the *methods* half of the geometric layer. It does not duplicate the clinical case,
 > the executable graph, the platform contract or the measured run-one analyses; it cites them by
-> path. **Section 8 is the single index of those files** — add a file there and nowhere else.
+> path. **Section 8 indexes the files these methods cite** — add a methods-cited file there and
+> nowhere else. It is not the campaign manifest; `fleets/README.md` is.
 
 ## How to read this file
 
 Section 2 is a **framework**, stated without loss of generality: a target body, a binder body, an
 epitope patch, invariant versus discriminating surface. No named protein appears in it. Each
-component is a block `G1`-`G6` with five fields:
+component is a block `G1`-`G7` with five fields:
 
 - **Asserts** - what it claims, in sentences a reader can apply by hand with no code.
 - **Provenance** - `CODE <file:line>`, `PAPER-ONLY`, or `OURS`.
@@ -63,10 +64,9 @@ the normal is never a coordinate; it is integrated out by construction.
 **Teacher's setting.** Cylinder radius 10 Å, axial half-height 10 Å, bin 0.2 Å, surface inflated
 0.5 Å along the normal before mapping, map min-max normalised to [0,1], stored float16
 (`CODE invoke_hector.sh:10`, `hector_mapper.py:241`, `:186-194`, `:249`).
-Note a **code-internal disagreement**: the argparse defaults at `hector_mapper.py:313-320`
-(12.0 / 6.0 / 0.4 / 40 / 8 / 0.0) are dead code, because the arguments are positional-required at
-`:312-321`. Anyone trusting those defaults runs a different algorithm. The authoritative values are
-the invocation line.
+The argparse defaults at `hector_mapper.py:313-320` are **dead code** — the arguments are
+positional-required at `:312-321` — so the authoritative values are the invocation-line ones above.
+Recorded because a reader who takes those defaults as live runs a different algorithm.
 
 **Principle.** For the purpose of deciding *fit*, a patch's identity is its depth profile as a
 function of radius. Collapsing three dimensions to two turns comparison into a cheap image
@@ -270,8 +270,8 @@ clinically useful binder here must be *selective*, and selectivity is a statemen
 
 ## 3. Instantiation — NY-ESO-1 157-165 / HLA-A\*02:01
 
-Delete this section and section 2 still stands. The clinical case is `CASE.md`; the measured
-contacts are `run-one/CONTACTS.md`.
+The clinical case is `CASE.md`; the measured contacts are `run-one/CONTACTS.md`. (Section 2 does
+not depend on this section — said once under "How to read this file".)
 
 ### Binding the general terms
 
@@ -297,7 +297,7 @@ The ratio is the whole problem: a few hundred Å² of discriminating surface aga
 | **G4** pair restraint | **PRINCIPLE APPLICABLE, SETTING NOT** | A pair of anchor points at a known separation is a strong hypothesis on any target. The ±0.01 Å tolerance is meaningful only on crystallographic coordinates and must not be carried over. |
 | **G5** retrieval and ranking | **PARTLY APPLICABLE** | Hard conjunctive filtering transfers directly and we should adopt it. Retrieval over a fingerprinted structure library does not, because it depends on G1. The epistemic point — that geometry computed before prediction is independent evidence — is the most valuable thing in the whole framework for us, and we currently satisfy none of it. |
 | **G6** projection losses | **APPLICABLE** | It is an audit, not a method. It applies to every heuristic we adopt. |
-| **G7** targeting as computed quantity | **APPLICABLE NOW, ZERO SPEND** | Contact masks already exist from run one. Flagging chain C P4-P8 as hotspot and the α1/α2 rims, α3 and chain B as coldspot makes off-epitope and coldspot engagement computable today from artifacts on disk. |
+| **G7** targeting as computed quantity | **APPLICABLE NOW, ZERO SPEND** | Contact masks already exist from run one. Flagging chain C P4-P8 as hotspot and the α1/α2 rims, α3 and chain B as coldspot makes off-epitope and coldspot engagement computable today from artifacts on disk. The "α1/α2 rims" have no residue list: `targeting_flags.json` derives them as helix-minus-shell, so they move with the shell cutoff (F4/P4). |
 
 The G1 verdict is the load-bearing one and it propagates: G3 fails because it consumes G1's output,
 and HECTOR's retrieval step fails with it. What survives from HECTOR is G2, G4's principle, G5's
@@ -336,19 +336,21 @@ Status is one of **GATING** (a pass/fail condition), **RECORDED-NON-GATING** (me
 never used to pass or fail a design), or **REJECTED**. `Cites` is the framework component a
 heuristic derives from; **ORPHAN** means it rests on something outside the distilled model.
 
-Nothing in this table changes `FLEET.toml`. Items marked *proposed* need the user's decision.
+Nothing in this table changes `FLEET.toml` (section 5, last two entries). Items marked *proposed*
+need the user's decision.
 
-The Tier 0 items were written before they had been run. Their measured run-one values, and the
-refinements those measurements propose, are in **section 9** below; **no Status in the tables below
-has been changed by them**, because each change they propose is a decision reserved for the user.
+The Tier 0 items were written before they were run; section 9 holds the measured values and the
+proposals arising. **Two of those proposals are reflected in the Status column below — P1 (item 1's
+shell) and P2 (item 3 as a pass/fail) — and nothing else is.** Every remaining proposal stays
+*proposed* and reserved for the user.
 
 ### Tier 0 — computable today, zero spend, from artifacts already on disk
 
 | # | Heuristic | Source | Provenance | Cutoff | Evidence of | NOT evidence of | Status | Cites |
 |---|---|---|---|---|---|---|---|---|
-| 1 | **Off-epitope contact fraction** — contacted target residues outside the hotspot-derived shell, over all contacted target residues | BindCraft2 | `CODE filters.py:423-432`, `epitope_targeting.py:25-29` | shell 10.0 Å, contact 4.0 Å; **no default threshold in code** — ours to set and pre-register | where contact actually fell | that on-epitope contact is favourable | **GATING, proposed** | G7 |
+| 1 | **Off-epitope contact fraction** — contacted target residues outside the hotspot-derived shell, over all contacted target residues | BindCraft2 | `CODE filters.py:423-432`, `epitope_targeting.py:25-29` | shell **5.0 Å** (P1, on the structural argument in section 9, *not* on the sweep's spread), contact 4.0 Å; **no default threshold in code** — ours to set and pre-register | where contact actually fell | that on-epitope contact is favourable | **RECORDED-NON-GATING through run two** (P1; vacuous at the inherited 10 Å — F1) | G7 |
 | 2 | **Coldspot contact fraction** — contacted residues among those explicitly flagged to avoid | BindCraft2 | `CODE filters.py:219-227`, default `CODE settings.py:196` | teacher's ≤ 0.05; ours to re-derive, not inherit | engagement of surface we declared off-limits | affinity, or the absence of it | **GATING, proposed** | G7 |
-| 3 | **Buried-anchor contact count** — contacts to anchor positions held inside the groove | ours | `OURS` | expect 0; any non-zero is a geometric red flag | a physically impossible or mis-modelled pose | selectivity | **GATING, proposed** | G7, G6 |
+| 3 | **Buried-anchor contact count** — contacts to anchor positions held inside the groove | ours | `OURS` | **exactly 0**; any non-zero fails. Needs no calibration: zero is forced by the geometry, not transferred | a physically impossible or mis-modelled pose | selectivity | **GATING, pass/fail at exactly zero** (P2, F2). Recorded here only — the `FLEET.toml` descriptors stay `iptm` and `plddt` | G7, G6 |
 | 4 | **Invariant-surface fraction** — fraction of the invariant surface the binder buries | ours (run one) | `OURS`, measured 1.3-5.5% | ours to pre-register before the next run | framework engagement, the hazard in section 2 | peptide specificity | **RECORDED-NON-GATING** | G7 |
 | 5 | **Hard conjunctive filtering** — every geometric criterion must pass on its own; no weighted composite | HECTOR | `CODE aln_fltr_4_dots.py:278-280` | not a cutoff, a combination rule | nothing by itself | nothing by itself | **GATING, proposed** (as policy) | G5 |
 | 6 | **Steric admissibility** — interface residue count and a clash ceiling as independent hard tests | HECTOR | `CODE aln_fltr_4_dots.py:279` (≥ 25 interface residues), `:278,315` (overlap ≤ 125000) | teacher's values are library- and mask-specific; **do not transfer the numbers** | that a pose is not excluded | that a pose is good | **RECORDED-NON-GATING** | G5, G2 |
@@ -365,8 +367,7 @@ has been changed by them**, because each change they propose is a decision reser
 
 | # | Heuristic | Source | Provenance | Cutoff | Evidence of | NOT evidence of | Status | Cites |
 |---|---|---|---|---|---|---|---|---|
-| 10 | **Independent pose re-derivation by classical rigid-body docking** — re-derive the pose with a scorer that shares no parameters with the designer, then compare | ours | `OURS` | ours to pre-register; report pose agreement, not a docking score | a placement independently supported by physics | binding affinity; docking scores are not affinities | **GATING, proposed** | G5 (the epistemic ordering), G2 |
-| 11 | **Change in complementarity between the designed pose and the re-derived pose** rather than its absolute value | ours | `OURS` | ours | self-consistency of the interface geometry | affinity, and not shape complementarity in the HECTOR sense | **RECORDED-NON-GATING** | G3, G5 |
+| 10 | **Independent pose re-derivation by classical rigid-body docking** — re-derive the pose with a scorer that shares no parameters with the designer, then compare. Both read-outs are *comparisons*: pose agreement, and the **change** in complementarity between the designed and re-derived pose | ours | `OURS` | ours to pre-register; report pose agreement and the complementarity *change*, never a docking score or an absolute complementarity | a placement independently supported by physics; self-consistency of the interface geometry | binding affinity (docking scores are not affinities); shape complementarity in the HECTOR sense | **GATING, proposed** (the complementarity change within it stays **RECORDED-NON-GATING**) | G5 (the epistemic ordering), G2, G3 |
 
 Item 10 is the single most valuable upgrade available to us and it is permitted: classical
 rigid-body docking is CPU-only and is not a published neural model, so it respects the standing rule
@@ -382,7 +383,11 @@ Anthropic's own self-consistency check, which they concede is partly circular.
 - **Item 7 versus item 8.** Both answer "compared with what?". They are not redundant: 7 compares a
   design against *other designs and decoys*, 8 compares a design against *a different target
   surface*. We need both, and 8 is the one that speaks to clinical selectivity.
-- **Item 11 versus our earlier `Sc` work.** Same family of quantity, different use. See section 5.
+- **The complementarity change (inside item 10) versus our earlier `Sc` work.** Same family of
+  quantity, different use: read as a *change* between two independently derived poses, never as an
+  absolute score on the designer's own coordinates (section 5). It was carried as a separate item 11
+  and is now folded into item 10, which is the only thing that can produce it; the measurement and
+  its non-gating status are unchanged.
 
 ---
 
@@ -392,17 +397,17 @@ Anthropic's own self-consistency check, which they concede is partly circular.
 Rejected. Computed on our run-one designs it correlates with the predictor's own confidence at
 Spearman 0.673 against `iptm` and 0.685 against ipSAE (n = 10), so as a gate it would largely
 re-impose the predictor's opinion under a different name, while additionally inheriting side-chain
-prediction error. It remains **RECORDED-NON-GATING** in `run-one/sc_results.json`; the measurement is
-kept, the gate is not. *This is not a rejection of complementarity as such* — see the next entry.
+prediction error. The measurement is kept and the gate is not: it stays **RECORDED-NON-GATING**, and
+the Spearman values above are its entire committed record — **no results file was ever committed**,
+so there is no `sc_results.json` or other path to cite and the per-design values are not in this
+repository (section 8). *This is not a rejection of complementarity as such* — see the next entry.
 
 **The apparent contradiction with HECTOR, resolved.** HECTOR puts surface complementarity at the
 *centre* of its method and succeeds; we rejected it. Both are correct, because they are not the same
 move. HECTOR computes complementarity as the **primary retrieval criterion over bodies whose
 coordinates were experimentally determined, before any design or prediction exists** (G5). We were
 computing it **after** prediction, on coordinates the designer produced. The arithmetic is similar;
-the epistemic status is not. And as recorded in G3, HECTOR's statistic is a structural-similarity
-score between inverted surface maps, not Lawrence-Colman `Sc` at all — an earlier claim of ours that
-these were the same quantity was wrong and is corrected here.
+the epistemic status is not. The two are not even the same statistic — see G3's correction.
 
 **HECTOR's fingerprint retrieval on this target.** Rejected on the G1 limits, not on quality: the
 descriptor cannot represent a walled groove, and its support cylinder would describe the invariant
@@ -471,8 +476,12 @@ Named rather than papered over.
 
 ## 8. Related files
 
-The campaign's file index. Every other document in this directory cites this section rather than
-repeating a list of its own.
+**Scope: the files these methods cite**, and nothing else. Every other document in this directory
+cites this section rather than repeating a list of its own. It is deliberately *not* the campaign
+manifest: `infra.json`, `modal_layer2_app.py`, `run-one/layer2_eval.py`, `run-one/request.json`,
+`run-one/request-legacy-submitted.json` and `run-one/artifacts/` exist in this directory, are cited
+by no method here, and are catalogued in `fleets/README.md`. Absence from this list is not absence
+from the repository — the one genuine non-existence is recorded under "Not committed" below.
 
 **Documents**
 
@@ -495,24 +504,26 @@ repeating a list of its own.
   contact rule behind `run-one/CONTACTS.md`.
 - `targeting_flags.json` — the epitope, coldspot, anchor and invariant residue flags the above read.
 
-**Referenced but not committed**
+**Not committed**
 
-- `run-one/sc_results.json` — section 5 retains the `Sc` measurements as RECORDED-NON-GATING in
-  this file, but it is not in this repository. Either the file is uncommitted or the path is
-  wrong; **unresolved, flagged rather than silently dropped.**
+- The `Sc` measurements of section 5 have **no results file in this repository** — none in the
+  working tree and none anywhere in git history. Their committed record is the Spearman values
+  stated in section 5; the per-design values were never committed. Earlier revisions of this index
+  cited `run-one/sc_results.json`, which has never existed — **do not cite that path.**
 
 ---
 
 ## 9. What the Tier 0 measurements changed
 
 Absorbed from the former `REFINEMENTS.md` on 2026-10-22 (file deleted; content kept).
-**Status:** findings and proposals. **No gate in `FLEET.toml` is changed by this section.**
-Every proposal below needs the user's decision, exactly as section 4 requires of its own items.
+**Status:** findings and proposals. **No gate in `FLEET.toml` is changed by this section** — see the
+unchanged-invariants note at the end.
 
-Sections 2-4 were written before the Tier 0 items had been run. This section records what
-happened when they were run on the ten run-one designs, and refines the campaign on that
-evidence. It adds no measurement to `CONTACTS.md` and removes none. Code and artifact paths
-are indexed in section 8; the findings cite them by name.
+Sections 2-4 were written before the Tier 0 items had been run. This section records what happened
+when they were run on the ten run-one designs. It adds no measurement to `CONTACTS.md` and removes
+none; code and artifact paths are indexed in section 8. **P1, P2 and P4's descriptive half are now
+reflected in section 4 and in the prose below. P3, P4's residue list, and items 5, 7, 8 and 10
+remain the user's to decide.**
 
 ---
 
@@ -550,8 +561,10 @@ effectively gone by 8 A.
 
 #### Proposal P1, and the trap inside it
 
-**Proposed:** re-register item 1 at a **5.0 A** shell, RECORDED-NON-GATING through run two.
-Consider gating only once a second run exists to calibrate against.
+**P1, applied in section 4:** item 1 is re-registered at a **5.0 A** shell, RECORDED-NON-GATING
+through run two. Consider gating only once a second run exists to calibrate against.
+`targeting_flags.json` still carries `epitope_shell_cutoff_angstrom: 10.0` as the input to its
+derived coldspot set; moving it there would also move that set (F4), so it is left for the owner.
 
 **The structural argument, which is what must carry it.** 5.0 A is about one contact shell
 beyond the hotspot atoms. It admits the groove rim a binder must touch to reach the peptide
@@ -572,16 +585,16 @@ Zero buried-anchor contacts in all ten designs, reproduced independently of
 `contact_analysis.py` by the G7 code path. Coldspot contact is ~0 throughout: one residue in
 two designs, 0.005 of the declared coldspot set.
 
-This matters because of what run one did and did not constrain. The submitted request named
-all nine peptide residues in `epitope_residues`, so the peptide-directed footprint is
-substantially our own specification returned to us. The anchor result was never specified
-and is real geometry. **Item 3 is the one Tier 0 quantity whose run-one value is independent
-evidence**, and it is also the cheapest. It should be gated first, not last.
+This matters because of what run one did and did not constrain (section 3, "What run one does and
+does not establish"): the peptide-directed footprint is substantially our own specification
+returned to us, while the anchor result was never specified and is real geometry. **Item 3 is the
+one Tier 0 quantity whose run-one value is independent evidence**, and it is also the cheapest. It
+is gated first, not last.
 
-**Proposed P2:** adopt item 3 as a GATING pass/fail at exactly zero, since any non-zero value
-is a mis-modelled pose rather than a weak design. This is the only Tier 0 item whose
-threshold needs no calibration: zero is forced by the geometry, not transferred from a
-teacher.
+**P2, applied in section 4:** item 3 is recorded as a GATING pass/fail at exactly zero, since any
+non-zero value is a mis-modelled pose rather than a weak design. It is the only Tier 0 item whose
+threshold needs no calibration - zero is forced by the geometry, not transferred from a teacher.
+The status lives in section 4 only; the `FLEET.toml` gating descriptors stay `iptm` and `plddt`.
 
 ---
 
@@ -614,14 +627,18 @@ is not computed, so the affinity-selectivity tension itself remains untested.
 
 ### F4 - The coldspot rim is still undefined
 
-UPGRADES.md names "the alpha1/alpha2 rims" as coldspot but the rim is defined nowhere in the
-repository. `targeting_flags.json` currently implements it as helix-minus-shell, which makes
-the coldspot set depend on the shell cutoff - so P1 would move it too. The alternative is an
-explicit rim residue list from the published TCR-footprint literature, which would be
-independent of the cutoff.
+Section 3 names "the alpha1/alpha2 rims" as coldspot, and no rim residue list is defined anywhere
+in the repository. **What is actually implemented, stated plainly:** `targeting_flags.json` derives
+the rim as *helix-minus-shell* - its `A_helix_ranges_minus_shell` spans 57-84 and 138-180, less
+whatever the hotspot-derived epitope shell covers - so the coldspot set depends on the shell cutoff,
+and P1's 5.0 A would move it. That derivation is the operative definition until the owner replaces
+it, and it is now stated as such in section 3 and in `targeting_flags.json`'s own
+`_coldspot_ambiguity` note, which already records the choice as unresolved.
 
-**Proposed P4:** declare an explicit rim list rather than deriving it, so items 1 and 2 stop
-sharing a free parameter. Not done here: it needs a literature decision, not a code change.
+**P4, descriptive half applied, decision still open.** The explicit rim residue list from the
+published TCR-footprint literature - which would be cutoff-independent and would stop items 1 and 2
+sharing a free parameter - **remains blocked on the owner**: it needs a literature decision, and no
+residue list is invented here.
 
 ---
 
@@ -629,10 +646,10 @@ sharing a free parameter. Not done here: it needs a literature decision, not a c
 
 | # | Decision | Blocked on |
 |---|---|---|
-| P1 | Shell cutoff for item 1: 5.0 A proposed, non-gating through run two | user |
-| P2 | Adopt item 3 as a gate at exactly zero | user |
-| P3 | Restate the section 6 operational line | user, pre-registered |
-| P4 | Explicit alpha1/alpha2 rim residue list | user + literature |
+| P1 | Item 1 re-registered at the 5.0 A shell, RECORDED-NON-GATING through run two | **applied in section 4**; owner's per-SHA sign-off |
+| P2 | Item 3 recorded as a GATING pass/fail at exactly zero | **applied in section 4 only**, not in `FLEET.toml`; owner's per-SHA sign-off |
+| P3 | Restate the section 6 operational line | user, pre-registered - section 6 is untouched here |
+| P4 | Explicit alpha1/alpha2 rim residue list | **user + literature**; the current helix-minus-shell derivation is now explicit, and `targeting_flags.json` is unchanged |
 | - | Items 5, 7, 8, 10 remain GATING-proposed and untouched here | user |
 
 Unchanged by this section: `FLEET.toml`, the APPR human gate, `spend_cap_usd = 15.00`,
