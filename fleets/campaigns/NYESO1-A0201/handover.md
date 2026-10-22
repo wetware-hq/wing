@@ -5,9 +5,10 @@
 | **Task** | `refactor` / subtype `upgrade` |
 | **Assignee** | z.ai **GLM-5.3** (coding) |
 | **System** | Agentic fleet — campaign `NYESO1-A0201` |
-| **Handover author** | Cloud agent (spec review only; no layer-2 code changes in this turn) |
+| **Handover author** | Cloud agent (spec + recommendations reconciliation) |
 | **Date** | 2026-10-22 (UTC) |
 | **Repository** | `wetware-hq/wing` — path `fleets/campaigns/NYESO1-A0201/` |
+| **Advisory** | `recommendations.md` (fleet-truth reconciled; wet-lab items → `CASE.md`) |
 
 ---
 
@@ -17,6 +18,8 @@ Upgrade and refactor the **pre-experimental geometric layer** for this campaign:
 
 The authoritative methods document is **`UPGRADES.md` (v1.0, 2026-10-22)**. Your job is to turn its **Tier 0 / Tier 1 / Tier 2** table into a coherent, test-backed execution surface on the existing layer-2 hosts (local box + optional Modal CPU), while respecting every **proposal vs applied** boundary in section 9.
 
+**`recommendations.md`** adds fleet hygiene and scope boundaries (binder modality, specificity-first ranking, artifact naming). Implement only items cross-walked to code in §6 of that file; do not implement wet-lab assays in this task.
+
 This is **not** a clinical or affinity task. No real patient data. All coordinates are synthetic campaign artifacts (`pres_*` under `run-one/artifacts/`).
 
 ---
@@ -24,18 +27,21 @@ This is **not** a clinical or affinity task. No real patient data. All coordinat
 ## 2. Read order (do not skip)
 
 1. **`UPGRADES.md`** — full file; section 2 (framework G1–G7), section 4 (heuristic table), section 5 (rejections), section 9 (Tier 0 measurements P1–P4).
-2. **`FLEET.toml`** — graph nodes `ART` → `L2` → `DIV`; `[run_one.descriptors]` gating; `[platform.modal_layer2]`; spend/APPR invariants.
-3. **`infra.json`** — `layer2_execution_pin`, `layer_2_modal_cpu_host`, content-address pins (ghcr digest + bindi wheel).
-4. **`PLATFORM.md`** — what may run on hosted API vs CPU-only self-host (item 10 docking is CPU-only and in scope).
-5. **`CASE.md`** — why **specificity**, not affinity, is the product (MAGE-A3/titin record must stay in prose).
-6. **Existing code**
+2. **`recommendations.md`** — §0 fleet truth, §3 in-silico assay ladder, §5 hygiene, §6 mapping to work packages below.
+3. **`FLEET.toml`** — graph nodes `ART` → `L2` → `DIV`; `primary_endpoint = specificity_margin`; `[run_one.descriptors]` gating; `[platform.modal_layer2]`; spend/APPR invariants.
+4. **`infra.json`** — `layer2_execution_pin`, `layer_2_modal_cpu_host`, content-address pins (ghcr digest + bindi wheel).
+5. **`PLATFORM.md`** — hosted API vs CPU-only self-host (item 10 docking is CPU-only and in scope).
+6. **`CASE.md`** — specificity not affinity; downstream SPR/tetramer/Jurkat (**out of scope for coding WP**).
+7. **Existing code**
    - `run-one/contact_analysis.py` + `CONTACTS.md` (docking site, campaign-specific rule).
    - `run-one/tier0_targeting.py` (+ `sweep` subcommand) — BindCraft2 G7 metrics, **recorded only**.
    - `run-one/layer2_eval.py` — ipSAE driver used for run one.
    - `modal_layer2_app.py` — Modal CPU host for ipSAE (live app; do not deploy or spend without APPR).
-7. **`targeting_flags.json`** — residue flags; note `_coldspot_ambiguity` and `epitope_shell_cutoff_angstrom: 10.0`.
+8. **`targeting_flags.json`** — residue flags; note `_coldspot_ambiguity` and `epitope_shell_cutoff_angstrom: 10.0`.
 
 **Do not open** held-out answer folders or write scenario/wording answer files (repo `AGENTS.md`).
+
+**Do not implement** from superseded draft assumptions: 1G4 TCR primary-cell engineering, dual peptide SLLMWITQL triage, or wet-lab runs referenced only in external drafts — none exist in this repo (`recommendations.md` §0).
 
 ---
 
@@ -43,38 +49,39 @@ This is **not** a clinical or affinity task. No real patient data. All coordinat
 
 | Area | Status |
 |---|---|
-| Run one | **Complete** — 10 designs, artifacts mirrored under `run-one/artifacts/`, machine gates G1–G4 pass (`FLEET.toml` `[run_one.result]`). |
-| Layer 2 ipSAE | **Wired** — `layer2_eval.py` + `layer2_results.json`; gating descriptors **`iptm` and `plddt` only**. |
+| Run one | **Complete** — job `prot_des_TY6KzyxULq8mACflXbhn`, 10 designs, `$0.50`, artifacts under `run-one/artifacts/`, G1–G4 pass (`FLEET.toml` `[run_one.result]`). |
+| Specificity margin | **Not computed** — no L1B decoy refold in run one (`FLEET.toml` `[run_one]` caveat). |
+| Layer 2 ipSAE | **Wired** — `layer2_eval.py` + `layer2_results.json`; gating **`iptm` and `plddt` only**. |
 | Tier 0 G7 metrics | **Implemented** — `tier0_targeting.py` → `tier0_targeting_results.json`; tests in `tests/test_tier0_targeting.py`. |
-| Shell sweep (item 1) | **Done** — `tier0_targeting.py sweep` → `shell_sweep_results.json`; proves 10 Å shell is vacuous (F1). |
-| HECTOR G1/G3 retrieval | **Rejected** for this target (groove geometry); do not port `hector_mapper` fingerprinting. |
-| Post-hoc Lawrence–Colman `Sc` gate | **Rejected**; no `sc_results.json` (never existed — do not add a gate on absolute `Sc`). |
-| **Item 10** (independent rigid-body docking) | **Not implemented** — highest-value Tier 2 upgrade in `UPGRADES.md` §4. |
-| L2 integration | **Fragmented** — ipSAE, Tier 0, and contact analysis are separate entrypoints; fleet graph shows one `L2` node. |
+| Shell sweep (item 1) | **Done** — proves 10 Å shell vacuous (F1). |
+| HECTOR G1/G3 retrieval | **Rejected** (groove geometry). |
+| Post-hoc `Sc` gate | **Rejected**; no `sc_results.json`. |
+| **Item 10** docking | **Not implemented** — Tier 2 priority (`UPGRADES.md` §4). |
+| L2 integration | **Fragmented** — violates `recommendations.md` §3.7; unify in WP-A. |
 
-### Applied proposals (already in `UPGRADES.md` text — code may lag)
+### Applied proposals (UPGRADES.md text — code may lag)
 
 | ID | Decision | In code today |
 |---|---|---|
-| **P1** | Item 1 re-registered at **5.0 Å** shell for *reporting*; **RECORDED-NON-GATING** through run two | `targeting_flags.json` still **10.0 Å** (intentional: moving it shifts coldspot rim — F4). Tier 0 JSON still records **10.0 Å** in `parameters`. |
-| **P2** | Item 3 **GATING at exactly zero** buried-anchor contacts | Documented in `UPGRADES.md` §4 only — **not** in `FLEET.toml`; tier0 module must **not** threshold per `tests/test_tier0_targeting.py`. |
-| **P3** | Fix section 6 operational line vs falsification | **Owner only** — do not edit pre-registered prediction without user sign-off. |
-| **P4** | Explicit α1/α2 rim residue list | **Blocked** — keep helix-minus-shell derivation explicit. |
+| **P1** | Item 1 at **5.0 Å** shell for *reporting*; RECORDED-NON-GATING through run two | `targeting_flags.json` still **10.0 Å**; tier0 JSON `parameters` still **10.0 Å**. |
+| **P2** | Item 3 GATING at zero buried-anchor contacts | §4 only — not `FLEET.toml`; tier0 must not threshold. |
+| **P3** | §6 operational line | Owner only. |
+| **P4** | Explicit rim residue list | Blocked — helix-minus-shell documented. |
 
 ---
 
 ## 4. Goal architecture (refactor target)
 
-Unify layer 2 under one **deterministic, conjunctive, recorded** pipeline:
+Unify layer 2 under one **deterministic, conjunctive, recorded** pipeline (aligns with `recommendations.md` §3 tier 3):
 
 ```mermaid
 flowchart LR
   ART[("ART artifacts\nCIF + PAE + metrics.json")]
-  L2["L2 worker\n(single orchestrator)"]
+  L2["L2 orchestrator"]
   T0["Tier 0 G7\nrecorded"]
-  IPSAE["ipSAE / pLDDT\nfrom metrics + PAE"]
-  DOCK["Item 10 docking\noptional module"]
-  OUT["layer2 bundle JSON\nper design + manifest metadata"]
+  IPSAE["ipSAE / pLDDT"]
+  DOCK["Item 10 docking"]
+  OUT["layer2_bundle.json\n+ provenance block"]
 
   ART --> L2
   L2 --> T0
@@ -85,11 +92,11 @@ flowchart LR
   DOCK --> OUT
 ```
 
-**Principles (from UPGRADES G5 / G6):**
+**Principles (UPGRADES G5 / G6 + recommendations §2.4):**
 
-- **Hard conjunctive filters** when gating is eventually enabled: each criterion passes or fails on its own; no weighted composite that lets a good `iptm` pay for a geometric violation.
-- **Epistemic ordering**: scores on **predicted** coordinates are not independent evidence; item 10 must use a **non-Boltz** rigid-body method and report **comparisons** (pose agreement, complementarity *change*), never an absolute docking affinity.
-- **Record parameters beside numbers** (shell cutoff, contact cutoff, flags hash).
+- Conjunctive filters when enabled; no composite that buys off geometric failures with `iptm`.
+- Item 10: non-Boltz rigid body; report **comparisons** only.
+- Bundle records **parameters + pins** (`recommendations.md` §5.10).
 
 ---
 
@@ -97,52 +104,41 @@ flowchart LR
 
 ### WP-A — Layer 2 orchestrator refactor (required)
 
-**Objective:** One entrypoint (local CLI + callable from Modal) that, per design id under `artifacts/pres_*`:
+One entrypoint (local CLI + shared core for Modal) per `artifacts/pres_*`:
 
-1. Reuses existing ipSAE path (`bindi.ipsae` / current `layer2_eval.py` logic).
-2. Invokes Tier 0 metrics (`tier0_targeting.measure_design` or equivalent) with **explicit** shell reporting:
-   - Keep **10.0 Å** run aligned with `targeting_flags.json` for regression tests.
-   - Add **parallel 5.0 Å** item-1 block per P1 (clearly labelled `reporting_shell_angstrom: 5.0`, not silently replacing 10.0).
-3. Emits one merged JSON (e.g. `run-one/artifacts/layer2_bundle.json` or extend `layer2_results.json` with a version field).
+1. ipSAE path unchanged in behaviour vs `layer2_results.json`.
+2. Tier 0: keep **10.0 Å** for regression; add **5.0 Å** item-1 block labelled `reporting_shell_angstrom: 5.0` (P1).
+3. Merged output e.g. `run-one/artifacts/layer2_bundle.json` with schema version field.
 
-**Constraints:**
+Constraints: no tier0 executable thresholds; no new `FLEET.toml` gating keys.
 
-- Do **not** add pass/fail gates inside tier0 executable code (`test_no_threshold_leaks_into_the_tier0_layer`).
-- Do **not** add new gating keys to `FLEET.toml` without owner decision (`test_fleet_toml_gating_descriptors_are_untouched_by_this_work`).
+### WP-B — Optional buried-anchor policy (required)
 
-**Modal:** Extend `modal_layer2_app.py` to call the same orchestrator body as local (shared module under `run-one/` or `fleets/campaigns/NYESO1-A0201/`). Preserve pins: ghcr digest, `WORKER_WHEEL_SHA256`, `BINDER_CHAIN = "D"`, thread env vars.
+`--policy buried-anchors-zero`: non-zero exit if any `item_3_buried_anchor_contact_count ≠ 0`; not fleet gating until sign-off (P2). All ten run-one designs expected at zero (F2).
 
-### WP-B — Item 3 “zero buried anchors” as optional CLI policy (required)
+### WP-C — Item 10 independent docking (required)
 
-**Objective:** Separate **policy** from **measurement**:
-
-- Tier 0 continues to **record** `item_3_buried_anchor_contact_count`.
-- Add an optional flag (e.g. `--policy buried-anchors-zero`) on the L2 orchestrator that exits non-zero if any design has count ≠ 0, with a clear stderr message citing UPGRADES item 3 / P2.
-- Document that this is **not** `FLEET.toml` gating until Mathew signs per-SHA.
-
-Run-one expectation: all ten designs already at zero (F2).
-
-### WP-C — Item 10 independent docking (required, Tier 2)
-
-**Objective:** Implement UPGRADES §4 item 10 on CPU only:
-
-- Rigid-body re-derivation of binder pose against target using a library **not** shared with Boltz (e.g. Open Babel / RDKit / scipy rotation search — choose one, justify in module docstring).
-- Outputs per design:
-  - **Pose agreement** metric (e.g. RMSD after superposition) between designed and re-derived pose.
-  - **Complementarity change** between designed vs re-derived pose (may use `shape_complementarity` in pinned image — report **delta**, not absolute gate).
-- Status: complementarity **change** = RECORDED-NON-GATING; pose agreement may be wired as proposed gate only behind a flag, not `FLEET.toml`.
-
-**Out of scope:** HECTOR SSIM maps, fingerprint retrieval, neural re-predictors on Modal GPU.
+CPU-only rigid-body re-derivation; pose agreement + complementarity **delta**; not affinity evidence (`UPGRADES.md` item 10).
 
 ### WP-D — Conjunctive policy skeleton (nice-to-have)
 
-Implement a small module (e.g. `run-one/l2_policy.py`) that takes recorded metrics and returns `{criterion_id: pass|fail|skipped}` for items 3, 5, 6 — **no thresholds** for items 1–2 until owner pre-registers. Default mode: all `skipped` except optional WP-B.
+`run-one/l2_policy.py`: `{criterion_id: pass|fail|skipped}` for items 3, 5, 6; default skipped except WP-B when flagged.
 
 ### WP-E — Documentation sync (required, small)
 
-- Update `infra.json` only if pins or entrypoints change (keep `verified` discipline).
-- If `arch.mermaid` L2 label still lists descriptors not produced in run one, align label with what L2 actually emits post-refactor.
-- Do **not** duplicate `UPGRADES.md` section 8 file index in new docs; cite paths.
+`infra.json` / `arch.mermaid` L2 label only if entrypoints change. Do not duplicate `UPGRADES.md` §8 index.
+
+### WP-F — Fleet hygiene in bundle metadata (required, from recommendations §5)
+
+Each design record in the L2 bundle must include:
+
+- `design_id` = directory name (`pres_*`)
+- `job_id` when known (run one: `prot_des_TY6KzyxULq8mACflXbhn`)
+- Relative artifact paths (`_predicted.cif`, `metrics.json`, `pae.npz`)
+- `provenance`: ghcr digest, bindi wheel sha256, `targeting_flags` content hash or path
+- Optional `display_alias`: `NYESO1-<design_id>` only as metadata (§5.8)
+
+Do **not** rename artifact directories.
 
 ---
 
@@ -150,25 +146,26 @@ Implement a small module (e.g. `run-one/l2_policy.py`) that takes recorded metri
 
 | Do not | Reason |
 |---|---|
-| Change `FLEET.toml` gating descriptors (`iptm`, `plddt` only) | `UPGRADES.md` header + tests |
-| Lower `spend_cap_usd`, remove APPR, or submit Boltz jobs | Governance |
-| Port HECTOR G1/G3 retrieval | G1 **INAPPLICABLE** on groove target |
-| Add absolute `Sc` or HECTOR R-factor gates on predicted coords | §5 rejections |
-| Pick item-1 shell cutoff by maximizing spread on run-one ten designs | §9 F1 / sweep `warning` |
-| Edit section 6 pre-registered prediction (P3) | Owner-only |
-| Commit bindi wheel to git unless repo policy changes | `modal_layer2_app.py` local wheel guard |
-| `modal deploy` / paid API calls | Behind APPR |
+| Change `FLEET.toml` gating (`iptm`, `plddt`) | UPGRADES + tests |
+| Spend / submit Boltz / `modal deploy` without APPR | Governance |
+| Port HECTOR G1/G3 | G1 inapplicable |
+| Absolute `Sc` / HECTOR gates on predicted coords | UPGRADES §5 |
+| Fit shell cutoff to run-one spread | F1 sweep warning |
+| Edit UPGRADES §6 prediction (P3) | Owner |
+| Implement SPR, tetramer, cytotoxicity, CRS panels | `CASE.md` / BIO Physician |
+| TCR affinity maturation, 1G4 lineage, SLLMWITQL dual-epitope wet lab | Not this campaign (`recommendations.md` §0) |
 
 ---
 
 ## 7. Acceptance criteria
 
-1. `python3 -m pytest -q` exits **0** in repo root (includes `tests/test_tier0_targeting.py`, `tests/test_contact_analysis.py`).
-2. Re-running the L2 orchestrator on `run-one/artifacts/` reproduces ipSAE fields consistent with `layer2_results.json` (allow additive JSON keys).
-3. Tier 0: all ten designs still show `item_3_buried_anchor_contact_count == 0`; parameters document both shell cutoffs if dual reporting is added.
-4. Item 10: produces a new results artifact with pose agreement + complementarity change for all ten designs, with module doc stating it is **not** affinity evidence.
-5. No new threshold comparisons on Tier 0 metrics inside `tier0_targeting.py` executable AST.
-6. `FLEET.toml` unchanged in `[run_one.descriptors]` gating and APPR/spend blocks unless the user explicitly requests otherwise in a follow-up task.
+1. `python3 -m pytest -q` exits **0** (includes `tests/test_tier0_targeting.py`, `tests/test_contact_analysis.py`).
+2. L2 orchestrator reproduces ipSAE fields consistent with `layer2_results.json` (additive keys allowed).
+3. Tier 0: all ten designs `item_3_buried_anchor_contact_count == 0`; dual shell documented if added.
+4. Item 10 artifact for all ten designs (pose agreement + complementarity change).
+5. No tier0 metric thresholds in executable AST.
+6. `FLEET.toml` gating and APPR blocks unchanged unless user requests otherwise.
+7. `layer2_bundle.json` includes WP-F provenance block for every design.
 
 ---
 
@@ -178,14 +175,9 @@ Implement a small module (e.g. `run-one/l2_policy.py`) that takes recorded metri
 cd /workspace
 python3 -m pytest -q tests/test_tier0_targeting.py tests/test_contact_analysis.py
 
-# Tier 0 (existing)
 python3 fleets/campaigns/NYESO1-A0201/run-one/tier0_targeting.py \
   --artifacts fleets/campaigns/NYESO1-A0201/run-one/artifacts
 
-# Layer 2 local (today — replace with unified orchestrator when WP-A lands)
-# See FLEET.toml [run_one.result.layer2] for podman invocation pattern.
-
-# Modal (local import check only — do not deploy without APPR)
 python3 -c "import ast; ast.parse(open('fleets/campaigns/NYESO1-A0201/modal_layer2_app.py').read())"
 ```
 
@@ -197,8 +189,9 @@ python3 -c "import ast; ast.parse(open('fleets/campaigns/NYESO1-A0201/modal_laye
 |---|---|
 | Layer-2 base image | `ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6` |
 | Worker wheel | `bindi-0.2.0-py3-none-any.whl`, sha256 `6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42`, commit `70b6c6c` |
-| Binder chain id | `D` (verified on all run-one CIFs) |
+| Binder chain id | `D` |
 | Contact cutoff | 4.0 Å heavy-atom (G7) |
+| Run-one job id | `prot_des_TY6KzyxULq8mACflXbhn` |
 
 ---
 
@@ -206,35 +199,37 @@ python3 -c "import ast; ast.parse(open('fleets/campaigns/NYESO1-A0201/modal_laye
 
 | ID | Question | Owner |
 |---|---|---|
-| P1 | Per-SHA sign-off on 5.0 Å reporting + whether to change `targeting_flags.json` | Mathew |
-| P2 | Promote item 3 policy to `FLEET.toml` gate | Mathew |
-| P3 | Restate §6 operational correlation line | User (pre-registered) |
-| P4 | Literature-based rim residue list | User + BIO Physician |
+| P1 | 5.0 Å reporting + `targeting_flags.json` | Mathew |
+| P2 | Item 3 → `FLEET.toml` gate | Mathew |
+| P3 | UPGRADES §6 operational line | User |
+| P4 | Rim residue list | User + BIO Physician |
 | — | Items 5, 7, 8, 10 as fleet gates | User |
-| OD-2 | Negative-design panel in request body | Mathew + BIO Physician |
-| OD-3 | Decoy peptide sequences | BIO Physician |
+| OD-2 | Negative-design panel in request | Mathew + BIO Physician |
+| OD-3 | Decoy peptide sequences (blocks specificity margin) | BIO Physician |
+| OD-5 | In-vitro bar (multimer vs cytotoxicity) | BIO Physician |
 
 ---
 
 ## 11. Deliverables checklist for GLM-5.3
 
-- [ ] Unified L2 orchestrator (local + Modal-shared core)
-- [ ] Dual shell reporting for item 1 (5.0 Å + 10.0 Å) without breaking tests
-- [ ] Optional `--policy buried-anchors-zero` (non-FLEET gate)
-- [ ] Item 10 docking module + results JSON
-- [ ] Tests for new behavior; full `pytest -q` green
-- [ ] Short commit message(s); no push to remotes other than `origin` on branch `cursor/*-2a3a`
+- [ ] WP-A unified L2 orchestrator (local + Modal-shared core)
+- [ ] WP-A dual shell 5.0 Å + 10.0 Å reporting
+- [ ] WP-B optional `--policy buried-anchors-zero`
+- [ ] WP-C item 10 docking + results JSON
+- [ ] WP-F provenance metadata in bundle
+- [ ] Tests green; branch `cursor/*-2a3a`
 
 ---
 
 ## 12. Return protocol
 
-When complete, post an A2A **Task** artifact containing:
+Post A2A **Task** artifact with:
 
-1. Summary of refactored entrypoints and new JSON paths.
-2. Diff stat and test command output.
-3. Explicit list of **unchanged** governance files (`FLEET.toml` gating, APPR).
-4. Any blockers on item 10 (dependency choice, runtime on Modal).
+1. Entrypoints and JSON paths (including `layer2_bundle.json`).
+2. Diff stat + test output.
+3. Unchanged governance files listed explicitly.
+4. Item 10 blockers if any.
+5. Note which `recommendations.md` items were implemented vs deferred to Physician.
 
 ---
 
