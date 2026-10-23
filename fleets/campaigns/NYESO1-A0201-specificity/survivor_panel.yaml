@@ -1,0 +1,44 @@
+# Survivor binders carried from run-one into the specificity (L1B) campaign.
+# Source: fleets/campaigns/NYESO1-A0201/run-one/artifacts/results-index.json
+
+schema_version: "1.0"
+campaign_id: NYESO1-A0201-specificity
+source_job_id: prot_des_TY6KzyxULq8mACflXbhn
+source_artifacts: ../NYESO1-A0201/run-one/artifacts/
+
+selection_rule: |
+  Default panel: all ten run-one designs (positive-control survivors).
+  Optional subset: designs meeting transferred plausibility (iptm >= 0.60 and chain-D mean pLDDT >= 80).
+  Ranking for in-vitro hand-off uses specificity_margin after L1B+L2, not run-one iptm alone.
+
+survivors:
+  - design_id: pres_KvvXtVa6yakB17EmB1Ge
+    binder_sequence: SLPVYYAPVGGPDQGSALVEVPVRVGETREVTLDFSGAAPEGVHTLTIEAVSEEQALLTYPDGTVRTVPLYAD
+    run_one_plausibility: hit
+  - design_id: pres_Bw8vknhmXJUg72L6CGAw
+    binder_sequence: SLEEAVEFAGRALDKIFAGEALSEEERRRLEEALRLARATVERLGGALDEEGRLAAEAENLARTTLAAEALRA
+    run_one_plausibility: hit
+  - design_id: pres_rIVnI2qWY81pul3zHRrN
+    binder_sequence: MLPGVLELEDGSRAHVEVSYDAASGRLWGYVTSVEGDSGVQPGDLIVAEGDAASRESPAVVLSLDRRGTLRLL
+    run_one_plausibility: miss_plddt
+  - design_id: pres_JA4idjMYaE8EsQKrcb6K
+    binder_sequence: MEVRASGVIQNPETVKVGDRVSFALAGSKESLEGTVVSVTADEVVIETETGARIVAKYDPALNAAIGEGTVEL
+    run_one_plausibility: miss_plddt
+  - design_id: pres_B8eqLRLyLSgzkVbLyC7C
+    binder_sequence: MVVLPDDPAFAEAVEAARKKLEEAEGFDDEELKEEIARIEAERDKAIEAGNSEEARKLNIVLNALRAVLGSRE
+    run_one_plausibility: miss_plddt
+  - design_id: pres_G3ZfGGLFJXddOc0vhQwO
+    binder_sequence: MDEGARLYELTAAHPELQEEALRLLTEWEATHRLSMEQQLELTARMAEWLAETSDVEEFRERLREALEELLAR
+    run_one_plausibility: miss_plddt
+  - design_id: pres_2SOqXG5xbTO4FD4yB5so
+    binder_sequence: SMELLEYGKELAKEVAERSGLSDEELEEVYKYLEENISDIRSKEDVLVHVHQAVGRIRPDNLAALDWLAEQIS
+    run_one_plausibility: hit
+  - design_id: pres_lppWP1t4ozGyw5s4gq3P
+    binder_sequence: ALTVKPGTKVTVTLADGTTVEATVVRVVSDTEAVAMGTEDGSLVRITNLTETSGDAVALDLETGAEVAGTATF
+    run_one_plausibility: hit
+  - design_id: pres_PfYJkQdsLag9x1R5Pt6L
+    binder_sequence: VEVLEENDETVKLYAKKGETLGEAEAKAKEIAASKGYDDAVITGVLEGDVPQDARLDDVLAVDAVLEFRFVSD
+    run_one_plausibility: hit
+  - design_id: pres_xpto8wJvfrJQhLVH4Mvz
+    binder_sequence: AVRVTLSDGTVVEITVLGPNRVEVSGDFERAEIVEMDAETAVLRFTNAARREEVLVTLDMRTGEVLSVEVRPL
+    run_one_plausibility: miss_iptm

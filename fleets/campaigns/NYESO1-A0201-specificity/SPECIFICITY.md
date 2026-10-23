@@ -1,109 +1,140 @@
 # Specificity margin — NYESO1-A0201-specificity
 
-**Campaign id:** `NYESO1-A0201-specificity`  
-**Primary endpoint:** `specificity_margin` (ranking key: `margin_first`)  
-**Survivor source:** `../NYESO1-A0201/run-one/artifacts/` (run-one positive control; L1B decoy refolds pending)
+**Campaign id:** `NYESO1-A0201-specificity` · **Parent:** `NYESO1-A0201` · **Date:** 2026-10-23  
+**Primary endpoint (manifest):** `specificity_margin` · **Ranking:** `margin_first`
 
-Clinical framing lives in `../NYESO1-A0201/CASE.md`. Executable graph and spend cap live in `FLEET.toml` in this directory.
+Two computation paths exist in this repository after merging main (#12) and the A2A Layer 2
+extension (#13). **Mathew / BIO Scientist must pick one primary gate before L1B submit** — see
+[Conflicting intents](#conflicting-intents-reconciled-in-docs-not-in-code-yet).
 
 ---
 
-## Margin formula
+## Path A — ipSAE score margin (Layer 2 `--specificity-campaign`) **primary for A2A gates**
 
-Layer 2 computes a **peptide–binder ipSAE** score for each complex (chain C|D minimum ipSAE from the bindi worker, same path as run-one).
+Implemented in `../NYESO1-A0201/run-one/specificity_scoring.py` and
+`layer2_orchestrator.py --specificity-campaign`.
 
 For each survivor design *d*:
 
-1. **On-target score** — ipSAE on the cognate peptide `SLLMWITQC` complex (artifact under `pres_<id>/` or mirrored decoy tree).
-2. **Decoy scores** — same metric on each L1B refold with a decoy peptide from `decoy_panel.yaml` (artifact layout below).
-3. **Score margin (primary, gating):**
+1. **On-target score** — chain C|D min ipSAE on the cognate complex (run-one `pres_*` or L1B cognate refold).
+2. **Decoy scores** — same metric on each decoy under `artifacts/decoy_refolds/<design_id>/<decoy_id>/`.
+3. **Score margin (hard gate in `FLEET.toml`):**
    ```text
    specificity_margin = on_target_ipsae_cd − max(decoy_ipsae_cd)
    ```
-   Higher is more selective under a single model. Hard gate: `specificity_margin >= 0.15` (pre-registered in `FLEET.toml`; not calibrated on pMHC).
+   Hard gate: `specificity_margin >= 0.15` (not calibrated on pMHC).
 
-4. **Rank margin (transport, secondary field):** complexes for design *d* are sorted by descending ipSAE (rank 1 = strongest). Then:
-   ```text
-   rank_margin = best_decoy_rank − on_target_rank
-   ```
-   Positive rank margin means the cognate beats the best decoy in rank space. The fleet manifest text uses “on-target rank − best-decoy rank”; the JSON panel stores both score margin (primary) and integer ranks for audit.
+4. **Rank audit fields:** peptides sorted by descending ipSAE; `rank_margin = best_decoy_rank − on_target_rank`.
 
-Until L1B decoy artifacts exist, `specificity_margin` is `null` with `margin_status: pending_l1b`.
+**Also on this path:** pure-CPU **liability filters** (motif scan, Cys, M/W proxy, SAP placeholder),
+**developability_score** (secondary rank key), **buried_anchor_contacts == 0**, soft iptm / chain-D pLDDT.
 
----
+Until L1B decoy artifacts exist, margin is `null` with `margin_status: pending_l1b`.
 
-## Liability filters (pure CPU, sequence-first)
-
-Applied to the **designed binder chain D** sequence parsed from the cognate CIF. No GPU.
-
-| Filter | Mode | Rule |
-|--------|------|------|
-| Motif scan | hard | Regex motifs: `NG`, `NS`, `NT`, `NH`, `DG`, `DS`, `DT`, `N[^P][ST]` |
-| Unpaired Cys | hard | Any cysteine in the binder sequence fails (`unpaired_cys: hard_fail`) |
-| Exposed oxidation | hard | Count of `{M, W}` in sequence ≥ `threshold` (1) — sequence proxy until solvent exposure is wired |
-| SAP patch | soft | Placeholder: no SAP executable in fleet env; `sap_patch` recorded as `skipped_no_sap` and does not hard-fail |
-
-**Developability score** (secondary rank key): starts at `1.0`, subtract `0.15` per matched liability motif, subtract `0.1` if soft SAP would fire (when implemented). Hard fails set `liability_filters.pass = false`.
-
-`allow: none` — no motif allow-list.
-
----
-
-## Other gates
-
-| Gate | Type | Rule |
-|------|------|------|
-| `buried_anchor_contacts` | hard | Tier 0 `item_3_buried_anchor_contact_count == 0` |
-| `iptm` | soft | ≥ 0.60 |
-| `chain_D_plddt` | soft | mean pLDDT on chain D ≥ 80 |
-
----
-
-## Ranking hierarchy
-
-1. `specificity_margin` (desc; nulls last)  
-2. `developability_score` (desc)  
-3. `iptm` (desc)
-
-Diversity (`DIV`) remains downstream of Layer 2 in the graph; panel JSON is pre-DIV ranked list.
-
-Hand-off: top ≤ 3 designs by primary key → BIO Physician (`handoff_top_n = 3`).
-
----
-
-## Artifact layout for decoy refolds
+### Path A artifact layout
 
 ```
-run-one/artifacts/
-  pres_<design_id>/                 # cognate (from run-one or L1A/L1B)
+../NYESO1-A0201/run-one/artifacts/
+  pres_<design_id>/                 # cognate (run-one)
   decoy_refolds/
     <design_id>/
       <decoy_id>/
-        <job_or_run_id>_predicted.cif
+        *_predicted.cif
         metrics.json
         pae.npz
 ```
 
-Provenance on every panel row: job id, relative artifact paths, `layer2_core.LAYER2_PINS` (image digest + bindi wheel SHA), API contract version from `FLEET.toml`.
+### Path A command
+
+```bash
+cd ../NYESO1-A0201/run-one
+python3 layer2_orchestrator.py --specificity-campaign \
+  --decoy-panel ../../NYESO1-A0201-specificity/decoy_panel.yaml
+```
+
+Outputs: `artifacts/panel.json` (ranked PANEL + top ≤3 hand-off).
 
 ---
 
-## Open decisions (not silently resolved)
+## Path B — rank_average rank margin (#12 stub)
 
-| Id | Owner | Question |
-|----|-------|----------|
-| OD-1 | Mathew | Boltz-native thresholds vs reinstate AF2 initial guess |
-| OD-2 | Mathew + BIO Physician | Negative-design panel (`targeted` recommended) |
-| OD-3 | BIO Physician | Ten exact decoy sequences (proposals in `decoy_panel.yaml` until signed) |
-| OD-4 | BIO Physician | Self-peptide / proteome-near-neighbour panel |
-| OD-1 (infra) | BIO Scientist + Engineer | RO-Crate / Nextflow superset (OD-8 in parent fleet) |
+Implemented in `specificity_margin.py` and `specificity_orchestrator.py`.
+
+Boltz refolds each survivor against cognate + decoys (see `FLEET.toml` L1B / `l1b_request_builder.py`).
+Layer 2 scores each peptide; descriptors are combined with **rank_average** over the stack in
+`FLEET.toml` `[descriptors]`. Within one survivor:
+
+```text
+specificity_margin = on_target_rank − best_decoy_rank
+```
+
+(rank **1** = best = lowest rank_average). Draft pass rule in #12: `specificity_margin <= 0` when
+cognate beats decoys. **This sign and threshold contradict Path A’s `>= 0.15` ipSAE gate.**
+
+### Path B artifact layout (post-L1B)
+
+```
+artifacts/
+  <design_id>/
+    cognate_SLLMWITQC/
+      ...
+    decoy_01_.../
+      ...
+```
+
+### Path B commands
+
+```bash
+python3 fleets/campaigns/NYESO1-A0201-specificity/specificity_orchestrator.py
+python3 fleets/campaigns/NYESO1-A0201-specificity/specificity_orchestrator.py --score
+python3 fleets/campaigns/NYESO1-A0201-specificity/specificity_orchestrator.py \
+  --write-l1b-manifest fleets/campaigns/NYESO1-A0201-specificity/artifacts/l1b_manifest.json
+```
+
+---
+
+## Execution graph
+
+`FLEET.toml`: **CFG → APPR → L1B → ART → L2 → MARGIN → PANEL**. L1A is skipped; survivors are
+in `survivor_panel.yaml`.
+
+---
+
+## Decoy panel
+
+`decoy_panel.yaml` — ten **OD-3 proposals** (7/2/1 on P4–P8). `panel_ready_for_l1b: false` until
+BIO Physician signs sequences. `self_peptides` empty (OD-4).
+
+---
+
+## Open decisions
+
+| Id | Question | Default |
+|---|---|---|
+| OD-1 | Recalibrate thresholds on this run vs transferred | Recalibrate (Mathew) |
+| OD-2 | Negative-design panel | **targeted** |
+| OD-3 | Ten decoy sequences | BIO Physician (blocks L1B) |
+| OD-4 | Self / proteome panel | BIO Physician |
+
+---
+
+## Conflicting intents (reconciled in docs, not in code yet)
+
+| Topic | Path A (A2A / #13) | Path B (main #12) |
+|---|---|---|
+| Margin definition | ipSAE C|D score difference | Ordinal rank from rank_average stack |
+| Pass direction | Higher margin better; gate **≥ 0.15** | Rank margin; draft pass **≤ 0** |
+| L1B API | Decoy refolds (layout above); parent **LEGACY design** unchanged | **`/protein/predict`** via `l1b_request_builder.py` |
+| Hand-off ranking | margin → developability → iptm | rank margin on descriptor stack |
+
+**Human action:** choose Path A or B (or define a single merged formula) before spend on full L1B fan-out.
 
 ---
 
 ## Validation checklist
 
-- Token alignment: bindi worker raises `TokenAlignmentError` on mismatch (unchanged).
-- Outputs: JSON with `sort_keys=True` for hashing.
-- Layer 2: pure CPU, single-thread BLAS in pinned ghcr image; no GPU spend.
-- APPR: `$14.50` spend cap on approve path.
-- Panel: ≤ 3 hand-off rows when margin is computable.
+- Token alignment: bindi `TokenAlignmentError` unchanged.
+- Deterministic JSON: `sort_keys=True` on panel outputs.
+- Layer 2: pure CPU; no GPU in scoring path.
+- APPR: `$14.50` spend cap.
+- Hand-off: ≤ 3 designs when margin is computable on the chosen path.

@@ -1,15 +1,20 @@
 # Decoy peptide panel for campaign NYESO1-A0201-specificity (L1B refold input).
-# Cognate on-target peptide: SLLMWITQC (NY-ESO-1 157-165 / HLA-A*02:01).
-# P4-P8 = MWITQ (TCR-facing strip per CASE.md / contact analysis).
+# Cognate: SLLMWITQC (NY-ESO-1 157-165 / HLA-A*02:01). Focus: TCR-facing P4-P8.
 
+schema_version: "1.0"
 campaign_id: NYESO1-A0201-specificity
+owner: BIO Physician
+status: OD-3_proposals
+panel_ready_for_l1b: false  # true only after BIO Physician signs sequences (replaces proposal flag)
+
 cognate:
+  peptide_id: cognate_SLLMWITQC
   sequence: SLLMWITQC
+  role: on_target
   hla: HLA-A*02:01
   focus_positions_p1_p9: [4, 5, 6, 7, 8]
-  owner: BIO Physician
 
-negative_design_panel: targeted  # FLEET.toml [[negative_design_panels]] recommended=true
+negative_design_panel: targeted  # OD-2 default
 
 composition:
   single: 7
@@ -17,13 +22,14 @@ composition:
   quadruple: 1
   total: 10
 
-self_peptides: []  # OD-4 placeholder — do not invent clinical self-peptides here
+self_peptides:
+  _note: OD-4 — clinical proteome-near-neighbour and self-peptide panel (optional extension)
+  entries: []
 
-status: OD-3_proposals
 note: >
   Exact sequences from the reproduction paper supplement remain OUTSTANDING (OD-3).
   The mutants below are concrete BIO Physician proposals for TCR-facing P4-P8 edits
-  until signed sequences arrive. Replace in place without renaming campaign_id.
+  until signed sequences arrive. Do not treat proposal sequences as signed for L1B submit.
 
 mutants:
   - id: decoy_p4_m_to_v
@@ -85,3 +91,7 @@ mutants:
     positions_p1_p9: [4, 5, 6, 7]
     sequence: SLLAAAAQC
     proposal: true
+
+open_decisions:
+  - OD-3
+  - OD-4

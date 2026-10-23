@@ -1,0 +1,14 @@
+{
+ "campaign_id": "NYESO1-A0201-specificity",
+ "direction": "fleet_to_case",
+ "manifest_hash": "481e0c08a15d6401e263a3c614eaddb5bbfb0638862499187b407da500c33339",
+ "note": "In-vitro work is out of scope; BIO Physician owns the reproduction bar.",
+ "open_decisions": [
+  "OD-1",
+  "OD-2",
+  "OD-3",
+  "OD-4"
+ ],
+ "top_designs_by_specificity_margin": [],
+ "transport": "T1"
+}
