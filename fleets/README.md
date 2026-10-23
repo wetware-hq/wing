@@ -76,4 +76,4 @@ outstanding — is recorded verbatim in `infra.json` under `meta.od8_conflict_re
 ### Status
 
 - **Nothing has been submitted to any design API and nothing has been spent.**
-- Merge to `main` requires Mathew's **per-SHA sign-off** (governance rule, bindi #9).
+- Merge to `main` requires the principal's **per-SHA sign-off** (governance rule, bindi #9).

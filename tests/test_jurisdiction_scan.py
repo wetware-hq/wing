@@ -14,6 +14,7 @@ TERM_EXC = [(re.compile(e["path"]), re.compile(r"(?<![\w-])" + re.escape(e["term
             for e in CFG["exceptions"].get("term", [])]     # one entry per term: term, path, reason
 SELF = {"jurisdiction_scan.toml", pathlib.Path(__file__).name}
 TRAILERS = frozenset(CFG.get("commit_trailers", {}).get("allow", []))
+SKIP_PREFIXES = tuple(CFG.get("scan", {}).get("skip_prefixes", []))
 
 
 def strip_ids(text):
@@ -38,7 +39,12 @@ def tracked():
         [str(p.relative_to(ROOT)) for p in ROOT.rglob("*") if p.is_file() and ".git" not in p.parts]
     files += [str(p.relative_to(ROOT)) for p in ROOT.rglob("live_*.json")      # live results, tracked or not
               if ".git" not in p.parts and str(p.relative_to(ROOT)) not in files]
-    return [f for f in files if pathlib.Path(f).name not in SELF]
+    return [
+        f
+        for f in files
+        if pathlib.Path(f).name not in SELF
+        and not any(f.startswith(p) for p in SKIP_PREFIXES)
+    ]
 
 
 def scan_repo():

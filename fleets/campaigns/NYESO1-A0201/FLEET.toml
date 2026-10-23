@@ -306,11 +306,12 @@ image_api      = "modal.Image.from_registry, private ghcr via Modal Secret REGIS
 code           = "modal_layer2_app.py"
 gpu            = "none"
 cpu_cores      = 1.0
-memory_mib     = 2048
-timeout_s      = 300
+memory_mib     = 512    # matches modal_layer2_app.py (measured RSS ~60 MiB)
+timeout_s      = 120    # matches modal_layer2_app.py
 retries        = 0        # scoring is deterministic; a retry would recur identically
-max_containers = 10       # one per design
-deployed       = false    # specified only; no modal deploy, no modal run
+max_containers = 2        # matches modal_layer2_app.py (pool + cold-start tradeoff)
+deployed       = true     # redeployed 2026-10-23; app nyeso1-a0201-layer2 on wetwarehq
+modal_run      = "2026-10-23: modal run ::main, 10/10 score_one via starmap, ~8.7 s wall; artifacts run-one/artifacts/layer2_results_modal.json; run ap-HPPAF8OwXnpUdNvYrxaB6s"
 docs_fetched_2026_10_21 = [
   "https://modal.com/docs/reference/modal.Image",
   "https://modal.com/docs/reference/modal.App",
@@ -333,7 +334,7 @@ submitted_to_date       = true   # run one, 10 designs
 
 [costs.modal_layer2]
 gpu_spend_usd             = 0.00   # CPU only
-hard_ceiling_core_seconds = 3000   # max_containers(10) * timeout_s(300) * cpu(1.0), per 10-design run
+hard_ceiling_core_seconds = 240    # max_containers(2) * timeout_s(120) * cpu(1.0), per 10-design run
 rate_note = "Modal $/core-second is on the pricing page, not fetched this session; 3000 core-seconds is cents, negligible beside the $15 Boltz spend but not zero"
 cap_rule  = "the Modal layer-2 projection is ADDED to spent_to_date_usd and included in the same pre-APPR projection as Boltz; abort if (Boltz + Modal projected) > spend_cap_usd (15.00). Cap and on_deny = HALT unchanged."
 
@@ -492,13 +493,23 @@ G4 = "PASS - 10/10 parsed in ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762ae.
 plausibility_indicator = "HIT (NON-GATING, TRANSFERRED thresholds): 5 of 10 designs meet iptm >= 0.60 AND chain-D mean pLDDT >= 80. Best: pres_KvvXtVa6yakB17EmB1Ge, iptm 0.9825, chain-D mean pLDDT 82.02. Thresholds are transferred from a protein-protein benchmark with no pMHC complexes; they are NOT calibrated for this target."
 
 [run_one.result.layer2]
-run_how      = "podman run, image pinned by full digest, bindi/src mounted read-only (the image is an ENVIRONMENT image and carries no worker source); driver run-one/layer2_orchestrator.py --ipsae-only; raw output run-one/artifacts/layer2_results.json (full bundle: layer2_bundle.json)"
+run_how      = "layer2_orchestrator.py (full bundle + legacy ipSAE); bindi 0.2.0 wheel; outputs run-one/artifacts/layer2_bundle.json and layer2_results.json (regenerated 2026-10-23)"
 image        = "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6"
 gating       = ["iptm", "plddt"]
 non_gating   = ["ipsae", "min_ipsae"]
 token_align  = "483 PAE tokens == 483 polymer residues for all 10 (A 275 + B 99 + C 9 + D 73); one token per residue, no ligand"
 binder_len   = 73
 tests        = "bindi suite on box: 130 passed, 11 skipped (unchanged code)"
+
+[run_one.result.layer2_modal]
+run_how      = "modal deploy + modal run modal_layer2_app.py::main; ghcr base by digest + bindi-0.2.0 wheel layer; score_one.starmap over run-one/artifacts/pres_*"
+completed_at = "2026-10-23T05:22Z"
+modal_app    = "nyeso1-a0201-layer2"
+modal_run_id = "ap-HPPAF8OwXnpUdNvYrxaB6s"
+designs      = 10
+token_errors = 0
+results_json = "run-one/artifacts/layer2_results_modal.json"
+reconcile    = "layer2_bundle.json + layer2_results.json regenerated with bindi 0.2.0 (2026-10-23); Modal path in layer2_results_modal.json (weakest binder-containing pair: 8x C|D, 2x B|D)"
 
 # NON-GATING observation worth recording, not a verdict: chain-D ipSAE is far higher against the
 # HLA heavy chain (A|D 0.017-0.878) than against the peptide (C|D 0.006-0.697) for every design.
