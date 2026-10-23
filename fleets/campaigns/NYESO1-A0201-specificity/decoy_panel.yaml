@@ -1,0 +1,70 @@
+# Decoy and on-target peptide panel for campaign NYESO1-A0201-specificity.
+# Sequences marked PLACEHOLDER must be supplied by BIO Physician (OD-3, OD-4) before L1B submit.
+
+schema_version: "1.0"
+campaign_id: NYESO1-A0201-specificity
+owner: BIO Physician
+status: draft_pending_OD-3
+
+cognate:
+  peptide_id: cognate_SLLMWITQC
+  sequence: SLLMWITQC
+  role: on_target
+  positions_mutated: []
+  rationale: NY-ESO-1 157-165 epitope on HLA-A*02:01 (campaign reference peptide)
+
+decoys:
+  _note: |
+    Ten peptide mutants of SLLMWITQC (nine single/double, one quadruple) per reproduction
+    target 10.1101/2024.11.27.624796. Mutations should focus on TCR-facing P4-P8 (0-based
+    indices 3-7 on chain C). DO NOT run L1B with placeholder sequences.
+  entries:
+    - peptide_id: decoy_01_PLACEHOLDER
+      sequence: null
+      positions_mutated: [TBD]
+      rationale: OD-3 — exact mutant from paper supplement
+    - peptide_id: decoy_02_PLACEHOLDER
+      sequence: null
+      positions_mutated: [TBD]
+      rationale: OD-3
+    - peptide_id: decoy_03_PLACEHOLDER
+      sequence: null
+      positions_mutated: [TBD]
+      rationale: OD-3
+    - peptide_id: decoy_04_PLACEHOLDER
+      sequence: null
+      positions_mutated: [TBD]
+      rationale: OD-3
+    - peptide_id: decoy_05_PLACEHOLDER
+      sequence: null
+      positions_mutated: [TBD]
+      rationale: OD-3
+    - peptide_id: decoy_06_PLACEHOLDER
+      sequence: null
+      positions_mutated: [TBD]
+      rationale: OD-3
+    - peptide_id: decoy_07_PLACEHOLDER
+      sequence: null
+      positions_mutated: [TBD]
+      rationale: OD-3
+    - peptide_id: decoy_08_PLACEHOLDER
+      sequence: null
+      positions_mutated: [TBD]
+      rationale: OD-3
+    - peptide_id: decoy_09_PLACEHOLDER
+      sequence: null
+      positions_mutated: [TBD]
+      rationale: OD-3
+    - peptide_id: decoy_10_PLACEHOLDER
+      sequence: null
+      positions_mutated: [TBD]
+      rationale: OD-3 — quadruple mutant slot
+
+self_peptides:
+  _note: OD-4 — clinical proteome-near-neighbour and self-peptide panel (optional extension)
+  entries: []
+
+panel_ready_for_l1b: false
+open_decisions:
+  - OD-3
+  - OD-4
