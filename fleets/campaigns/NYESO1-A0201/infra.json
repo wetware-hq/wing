@@ -121,7 +121,7 @@
       "tool": "interface_descriptor_worker",
       "runtime": "pure CPU on box, zero GPU, zero rent",
       "location": "bindi src/bindi/ipsae.py (PR #14, draft)",
-      "entrypoint": "run-one/layer2_orchestrator.py (layer2_bundle.json); legacy: layer2_eval.py or python -m bindi.ipsae <pae.npz> <_predicted.cif>",
+      "entrypoint": "run-one/layer2_orchestrator.py (layer2_bundle.json); ipSAE-only: --ipsae-only → layer2_results.json",
       "cost_usd": 0.0,
       "verified": "reported (validated on box fixtures in the PR #14 env 2026-10-20; deps NOT installed in the main checkout - see tools.interface_descriptor_worker.python_environment)",
       "implements": "dunbracklab/IPSAE ipsae_d0res; bindi uses min(A->B, B->A) (reference uses aggregate max) for conservative weakest-direction screening",

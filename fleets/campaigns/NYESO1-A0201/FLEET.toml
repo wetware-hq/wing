@@ -492,7 +492,7 @@ G4 = "PASS - 10/10 parsed in ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762ae.
 plausibility_indicator = "HIT (NON-GATING, TRANSFERRED thresholds): 5 of 10 designs meet iptm >= 0.60 AND chain-D mean pLDDT >= 80. Best: pres_KvvXtVa6yakB17EmB1Ge, iptm 0.9825, chain-D mean pLDDT 82.02. Thresholds are transferred from a protein-protein benchmark with no pMHC complexes; they are NOT calibrated for this target."
 
 [run_one.result.layer2]
-run_how      = "podman run, image pinned by full digest, bindi/src mounted read-only (the image is an ENVIRONMENT image and carries no worker source); driver committed as run-one/layer2_eval.py; raw output run-one/artifacts/layer2_results.json"
+run_how      = "podman run, image pinned by full digest, bindi/src mounted read-only (the image is an ENVIRONMENT image and carries no worker source); driver run-one/layer2_orchestrator.py --ipsae-only; raw output run-one/artifacts/layer2_results.json (full bundle: layer2_bundle.json)"
 image        = "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6"
 gating       = ["iptm", "plddt"]
 non_gating   = ["ipsae", "min_ipsae"]
@@ -530,7 +530,7 @@ item_3_layer2  = "CLEARED 2026-10-21, with a correction: PR #14 merged (9e758a3)
 # only. [run_one] required_caveat above stands as written: specificity is untested.
 [run_one.contact_analysis]
 script        = "run-one/contact_analysis.py"
-results       = "run-one/contact_analysis_results.json"
+results       = "run-one/artifacts/layer2_bundle.json (designs[].contact_site; manifest contact_site)"
 report        = "run-one/CONTACTS.md"
 designs       = 10
 cutoff_primary_angstrom     = 4.0

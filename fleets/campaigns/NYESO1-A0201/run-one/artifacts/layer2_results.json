@@ -1,812 +1,92 @@
 {
  "pres_2SOqXG5xbTO4FD4yB5so": {
-  "chain_len": {
-   "A": 275,
-   "B": 99,
-   "C": 9,
-   "D": 73
-  },
-  "chain_mean_plddt": {
-   "A": 95.25822545454547,
-   "B": 96.95033333333332,
-   "C": 88.80677777777777,
-   "D": 86.01620547945205
-  },
   "complex_plddt_metrics_json": 0.9401872158050537,
   "has_cif": true,
   "has_metrics": true,
   "has_pae": true,
-  "ipsae_ordered": {
-   "A->B": 0.9537156688710872,
-   "A->C": 0.7382698301325914,
-   "A->D": 0.24270438940840022,
-   "B->A": 0.9732005371428458,
-   "B->C": 0.5617065512291993,
-   "B->D": 0.2230411004698295,
-   "C->A": 0.9432916512841782,
-   "C->B": 0.8126247511136715,
-   "C->D": 0.22579207090670936,
-   "D->A": 0.5063651568501443,
-   "D->B": 0.22043392809353518,
-   "D->C": 0.0654306831581959
-  },
   "iptm": 0.8471744656562805,
-  "min_ipsae_D_pairs": {
-   "A|D": 0.24270438940840022,
-   "B|D": 0.22043392809353518,
-   "C|D": 0.0654306831581959
-  },
-  "min_ipsae_overall": 0.0654306831581959,
-  "n_tokens": 456,
-  "pairs": {
-   "A|B": {
-    "ipsae_A_to_B": 0.9537156688710872,
-    "ipsae_B_to_A": 0.9732005371428458,
-    "min_ipsae": 0.9537156688710872
-   },
-   "A|C": {
-    "ipsae_A_to_C": 0.7382698301325914,
-    "ipsae_C_to_A": 0.9432916512841782,
-    "min_ipsae": 0.7382698301325914
-   },
-   "A|D": {
-    "ipsae_A_to_D": 0.24270438940840022,
-    "ipsae_D_to_A": 0.5063651568501443,
-    "min_ipsae": 0.24270438940840022
-   },
-   "B|C": {
-    "ipsae_B_to_C": 0.5617065512291993,
-    "ipsae_C_to_B": 0.8126247511136715,
-    "min_ipsae": 0.5617065512291993
-   },
-   "B|D": {
-    "ipsae_B_to_D": 0.2230411004698295,
-    "ipsae_D_to_B": 0.22043392809353518,
-    "min_ipsae": 0.22043392809353518
-   },
-   "C|D": {
-    "ipsae_C_to_D": 0.22579207090670936,
-    "ipsae_D_to_C": 0.0654306831581959,
-    "min_ipsae": 0.0654306831581959
-   }
-  },
-  "parse_error": null,
-  "plddt_block": {
-   "complex_plddt": 94.01872587719299,
-   "interface_plddt": 94.06982417582418,
-   "present": true
-  },
-  "plddt_mean_all": 94.01872587719299,
-  "plddt_std_all": 6.633856501684703,
-  "score_error": null
+  "parse_error": "ImportError: bindi.ipsae unavailable in this environment",
+  "score_error": "ImportError: bindi.ipsae unavailable in this environment"
  },
  "pres_B8eqLRLyLSgzkVbLyC7C": {
-  "chain_len": {
-   "A": 275,
-   "B": 99,
-   "C": 9,
-   "D": 73
-  },
-  "chain_mean_plddt": {
-   "A": 94.95954181818182,
-   "B": 97.67478787878788,
-   "C": 85.84355555555555,
-   "D": 76.23320547945205
-  },
   "complex_plddt_metrics_json": 0.9237126111984253,
   "has_cif": true,
   "has_metrics": true,
   "has_pae": true,
-  "ipsae_ordered": {
-   "A->B": 0.9458409488357694,
-   "A->C": 0.6845522275801224,
-   "A->D": 0.28279826944235276,
-   "B->A": 0.9681204244723666,
-   "B->C": 0.49710482419925206,
-   "B->D": 0.2527280359566899,
-   "C->A": 0.9259131489900722,
-   "C->B": 0.7575397002682052,
-   "C->D": 0.2819126993895518,
-   "D->A": 0.5047173046099632,
-   "D->B": 0.2209255697880598,
-   "D->C": 0.0891797738998594
-  },
   "iptm": 0.9032978415489197,
-  "min_ipsae_D_pairs": {
-   "A|D": 0.28279826944235276,
-   "B|D": 0.2209255697880598,
-   "C|D": 0.0891797738998594
-  },
-  "min_ipsae_overall": 0.0891797738998594,
-  "n_tokens": 456,
-  "pairs": {
-   "A|B": {
-    "ipsae_A_to_B": 0.9458409488357694,
-    "ipsae_B_to_A": 0.9681204244723666,
-    "min_ipsae": 0.9458409488357694
-   },
-   "A|C": {
-    "ipsae_A_to_C": 0.6845522275801224,
-    "ipsae_C_to_A": 0.9259131489900722,
-    "min_ipsae": 0.6845522275801224
-   },
-   "A|D": {
-    "ipsae_A_to_D": 0.28279826944235276,
-    "ipsae_D_to_A": 0.5047173046099632,
-    "min_ipsae": 0.28279826944235276
-   },
-   "B|C": {
-    "ipsae_B_to_C": 0.49710482419925206,
-    "ipsae_C_to_B": 0.7575397002682052,
-    "min_ipsae": 0.49710482419925206
-   },
-   "B|D": {
-    "ipsae_B_to_D": 0.2527280359566899,
-    "ipsae_D_to_B": 0.2209255697880598,
-    "min_ipsae": 0.2209255697880598
-   },
-   "C|D": {
-    "ipsae_C_to_D": 0.2819126993895518,
-    "ipsae_D_to_C": 0.0891797738998594,
-    "min_ipsae": 0.0891797738998594
-   }
-  },
-  "parse_error": null,
-  "plddt_block": {
-   "complex_plddt": 92.37125877192983,
-   "interface_plddt": 92.37125877192983,
-   "present": true
-  },
-  "plddt_mean_all": 92.37125877192983,
-  "plddt_std_all": 9.551097593473466,
-  "score_error": null
+  "parse_error": "ImportError: bindi.ipsae unavailable in this environment",
+  "score_error": "ImportError: bindi.ipsae unavailable in this environment"
  },
  "pres_Bw8vknhmXJUg72L6CGAw": {
-  "chain_len": {
-   "A": 275,
-   "B": 99,
-   "C": 9,
-   "D": 73
-  },
-  "chain_mean_plddt": {
-   "A": 97.68590545454545,
-   "B": 98.10725252525253,
-   "C": 96.06788888888889,
-   "D": 95.35480821917808
-  },
   "complex_plddt_metrics_json": 0.9737222194671631,
   "has_cif": true,
   "has_metrics": true,
   "has_pae": true,
-  "ipsae_ordered": {
-   "A->B": 0.9519503725683521,
-   "A->C": 0.7153896308872056,
-   "A->D": 0.8061150325274462,
-   "B->A": 0.9720037254659618,
-   "B->C": 0.5326173158353484,
-   "B->D": 0.7051026940150049,
-   "C->A": 0.9391318218144653,
-   "C->B": 0.8001448666893815,
-   "C->D": 0.7232571631808704,
-   "D->A": 0.847269162193748,
-   "D->B": 0.6066705411920071,
-   "D->C": 0.45996453000944765
-  },
   "iptm": 0.9626621007919312,
-  "min_ipsae_D_pairs": {
-   "A|D": 0.8061150325274462,
-   "B|D": 0.6066705411920071,
-   "C|D": 0.45996453000944765
-  },
-  "min_ipsae_overall": 0.45996453000944765,
-  "n_tokens": 456,
-  "pairs": {
-   "A|B": {
-    "ipsae_A_to_B": 0.9519503725683521,
-    "ipsae_B_to_A": 0.9720037254659618,
-    "min_ipsae": 0.9519503725683521
-   },
-   "A|C": {
-    "ipsae_A_to_C": 0.7153896308872056,
-    "ipsae_C_to_A": 0.9391318218144653,
-    "min_ipsae": 0.7153896308872056
-   },
-   "A|D": {
-    "ipsae_A_to_D": 0.8061150325274462,
-    "ipsae_D_to_A": 0.847269162193748,
-    "min_ipsae": 0.8061150325274462
-   },
-   "B|C": {
-    "ipsae_B_to_C": 0.5326173158353484,
-    "ipsae_C_to_B": 0.8001448666893815,
-    "min_ipsae": 0.5326173158353484
-   },
-   "B|D": {
-    "ipsae_B_to_D": 0.7051026940150049,
-    "ipsae_D_to_B": 0.6066705411920071,
-    "min_ipsae": 0.6066705411920071
-   },
-   "C|D": {
-    "ipsae_C_to_D": 0.7232571631808704,
-    "ipsae_D_to_C": 0.45996453000944765,
-    "min_ipsae": 0.45996453000944765
-   }
-  },
-  "parse_error": null,
-  "plddt_block": {
-   "complex_plddt": 97.37226754385965,
-   "interface_plddt": 97.37226754385965,
-   "present": true
-  },
-  "plddt_mean_all": 97.37226754385965,
-  "plddt_std_all": 2.7923541816518735,
-  "score_error": null
+  "parse_error": "ImportError: bindi.ipsae unavailable in this environment",
+  "score_error": "ImportError: bindi.ipsae unavailable in this environment"
  },
  "pres_G3ZfGGLFJXddOc0vhQwO": {
-  "chain_len": {
-   "A": 275,
-   "B": 99,
-   "C": 9,
-   "D": 73
-  },
-  "chain_mean_plddt": {
-   "A": 94.3322290909091,
-   "B": 97.30477777777779,
-   "C": 85.45611111111111,
-   "D": 72.42616438356164
-  },
   "complex_plddt_metrics_json": 0.9129552245140076,
   "has_cif": true,
   "has_metrics": true,
   "has_pae": true,
-  "ipsae_ordered": {
-   "A->B": 0.9478105300936003,
-   "A->C": 0.7356501923385026,
-   "A->D": 0.38165730704942513,
-   "B->A": 0.9701242243366881,
-   "B->C": 0.5570373127930396,
-   "B->D": 0.32939191563126397,
-   "C->A": 0.9370868033599504,
-   "C->B": 0.7978569190980793,
-   "C->D": 0.3620698439279804,
-   "D->A": 0.5975471007813914,
-   "D->B": 0.2835703843711242,
-   "D->C": 0.08487528025374977
-  },
   "iptm": 0.8731725811958313,
-  "min_ipsae_D_pairs": {
-   "A|D": 0.38165730704942513,
-   "B|D": 0.2835703843711242,
-   "C|D": 0.08487528025374977
-  },
-  "min_ipsae_overall": 0.08487528025374977,
-  "n_tokens": 456,
-  "pairs": {
-   "A|B": {
-    "ipsae_A_to_B": 0.9478105300936003,
-    "ipsae_B_to_A": 0.9701242243366881,
-    "min_ipsae": 0.9478105300936003
-   },
-   "A|C": {
-    "ipsae_A_to_C": 0.7356501923385026,
-    "ipsae_C_to_A": 0.9370868033599504,
-    "min_ipsae": 0.7356501923385026
-   },
-   "A|D": {
-    "ipsae_A_to_D": 0.38165730704942513,
-    "ipsae_D_to_A": 0.5975471007813914,
-    "min_ipsae": 0.38165730704942513
-   },
-   "B|C": {
-    "ipsae_B_to_C": 0.5570373127930396,
-    "ipsae_C_to_B": 0.7978569190980793,
-    "min_ipsae": 0.5570373127930396
-   },
-   "B|D": {
-    "ipsae_B_to_D": 0.32939191563126397,
-    "ipsae_D_to_B": 0.2835703843711242,
-    "min_ipsae": 0.2835703843711242
-   },
-   "C|D": {
-    "ipsae_C_to_D": 0.3620698439279804,
-    "ipsae_D_to_C": 0.08487528025374977,
-    "min_ipsae": 0.08487528025374977
-   }
-  },
-  "parse_error": null,
-  "plddt_block": {
-   "complex_plddt": 91.29550657894738,
-   "interface_plddt": 91.29550657894738,
-   "present": true
-  },
-  "plddt_mean_all": 91.29550657894738,
-  "plddt_std_all": 10.81299633907753,
-  "score_error": null
+  "parse_error": "ImportError: bindi.ipsae unavailable in this environment",
+  "score_error": "ImportError: bindi.ipsae unavailable in this environment"
  },
  "pres_JA4idjMYaE8EsQKrcb6K": {
-  "chain_len": {
-   "A": 275,
-   "B": 99,
-   "C": 9,
-   "D": 73
-  },
-  "chain_mean_plddt": {
-   "A": 95.17809818181817,
-   "B": 97.70628282828284,
-   "C": 87.87144444444445,
-   "D": 77.81597260273973
-  },
   "complex_plddt_metrics_json": 0.9280332326889038,
   "has_cif": true,
   "has_metrics": true,
   "has_pae": true,
-  "ipsae_ordered": {
-   "A->B": 0.958176114218326,
-   "A->C": 0.767482089344043,
-   "A->D": 0.6047985107305764,
-   "B->A": 0.9758956598485177,
-   "B->C": 0.5839756545934408,
-   "B->D": 0.5505117385044782,
-   "C->A": 0.9476108875370298,
-   "C->B": 0.8239205319241154,
-   "C->D": 0.5667911899758636,
-   "D->A": 0.7350025390905498,
-   "D->B": 0.4113499990386833,
-   "D->C": 0.24026643432751346
-  },
   "iptm": 0.924859881401062,
-  "min_ipsae_D_pairs": {
-   "A|D": 0.6047985107305764,
-   "B|D": 0.4113499990386833,
-   "C|D": 0.24026643432751346
-  },
-  "min_ipsae_overall": 0.24026643432751346,
-  "n_tokens": 456,
-  "pairs": {
-   "A|B": {
-    "ipsae_A_to_B": 0.958176114218326,
-    "ipsae_B_to_A": 0.9758956598485177,
-    "min_ipsae": 0.958176114218326
-   },
-   "A|C": {
-    "ipsae_A_to_C": 0.767482089344043,
-    "ipsae_C_to_A": 0.9476108875370298,
-    "min_ipsae": 0.767482089344043
-   },
-   "A|D": {
-    "ipsae_A_to_D": 0.6047985107305764,
-    "ipsae_D_to_A": 0.7350025390905498,
-    "min_ipsae": 0.6047985107305764
-   },
-   "B|C": {
-    "ipsae_B_to_C": 0.5839756545934408,
-    "ipsae_C_to_B": 0.8239205319241154,
-    "min_ipsae": 0.5839756545934408
-   },
-   "B|D": {
-    "ipsae_B_to_D": 0.5505117385044782,
-    "ipsae_D_to_B": 0.4113499990386833,
-    "min_ipsae": 0.4113499990386833
-   },
-   "C|D": {
-    "ipsae_C_to_D": 0.5667911899758636,
-    "ipsae_D_to_C": 0.24026643432751346,
-    "min_ipsae": 0.24026643432751346
-   }
-  },
-  "parse_error": null,
-  "plddt_block": {
-   "complex_plddt": 92.80330701754386,
-   "interface_plddt": 92.80330701754386,
-   "present": true
-  },
-  "plddt_mean_all": 92.80330701754386,
-  "plddt_std_all": 8.509644278830429,
-  "score_error": null
+  "parse_error": "ImportError: bindi.ipsae unavailable in this environment",
+  "score_error": "ImportError: bindi.ipsae unavailable in this environment"
  },
  "pres_KvvXtVa6yakB17EmB1Ge": {
-  "chain_len": {
-   "A": 275,
-   "B": 99,
-   "C": 9,
-   "D": 73
-  },
-  "chain_mean_plddt": {
-   "A": 96.0728509090909,
-   "B": 97.50508080808079,
-   "C": 89.24977777777778,
-   "D": 82.02186301369862
-  },
   "complex_plddt_metrics_json": 0.9399970769882202,
   "has_cif": true,
   "has_metrics": true,
   "has_pae": true,
-  "ipsae_ordered": {
-   "A->B": 0.9669680279428889,
-   "A->C": 0.8291458398291953,
-   "A->D": 0.8776213428139285,
-   "B->A": 0.9813864885095129,
-   "B->C": 0.6498761676468214,
-   "B->D": 0.8069689316942974,
-   "C->A": 0.9550556425288506,
-   "C->B": 0.8475303154036744,
-   "C->D": 0.8389488797426652,
-   "D->A": 0.8969068904102969,
-   "D->B": 0.698400375913453,
-   "D->C": 0.6967623884137182
-  },
   "iptm": 0.9825169444084167,
-  "min_ipsae_D_pairs": {
-   "A|D": 0.8776213428139285,
-   "B|D": 0.698400375913453,
-   "C|D": 0.6967623884137182
-  },
-  "min_ipsae_overall": 0.6498761676468214,
-  "n_tokens": 456,
-  "pairs": {
-   "A|B": {
-    "ipsae_A_to_B": 0.9669680279428889,
-    "ipsae_B_to_A": 0.9813864885095129,
-    "min_ipsae": 0.9669680279428889
-   },
-   "A|C": {
-    "ipsae_A_to_C": 0.8291458398291953,
-    "ipsae_C_to_A": 0.9550556425288506,
-    "min_ipsae": 0.8291458398291953
-   },
-   "A|D": {
-    "ipsae_A_to_D": 0.8776213428139285,
-    "ipsae_D_to_A": 0.8969068904102969,
-    "min_ipsae": 0.8776213428139285
-   },
-   "B|C": {
-    "ipsae_B_to_C": 0.6498761676468214,
-    "ipsae_C_to_B": 0.8475303154036744,
-    "min_ipsae": 0.6498761676468214
-   },
-   "B|D": {
-    "ipsae_B_to_D": 0.8069689316942974,
-    "ipsae_D_to_B": 0.698400375913453,
-    "min_ipsae": 0.698400375913453
-   },
-   "C|D": {
-    "ipsae_C_to_D": 0.8389488797426652,
-    "ipsae_D_to_C": 0.6967623884137182,
-    "min_ipsae": 0.6967623884137182
-   }
-  },
-  "parse_error": null,
-  "plddt_block": {
-   "complex_plddt": 93.9997390350877,
-   "interface_plddt": 93.9997390350877,
-   "present": true
-  },
-  "plddt_mean_all": 93.9997390350877,
-  "plddt_std_all": 7.999101919703836,
-  "score_error": null
+  "parse_error": "ImportError: bindi.ipsae unavailable in this environment",
+  "score_error": "ImportError: bindi.ipsae unavailable in this environment"
  },
  "pres_PfYJkQdsLag9x1R5Pt6L": {
-  "chain_len": {
-   "A": 275,
-   "B": 99,
-   "C": 9,
-   "D": 73
-  },
-  "chain_mean_plddt": {
-   "A": 96.86850181818181,
-   "B": 97.23788888888889,
-   "C": 91.20455555555556,
-   "D": 90.82328767123288
-  },
   "complex_plddt_metrics_json": 0.9586915373802185,
   "has_cif": true,
   "has_metrics": true,
   "has_pae": true,
-  "ipsae_ordered": {
-   "A->B": 0.9549147398039743,
-   "A->C": 0.7104841481079879,
-   "A->D": 0.0425483650189112,
-   "B->A": 0.9722406557826029,
-   "B->C": 0.5242710744496774,
-   "B->D": 0.03901873809979183,
-   "C->A": 0.938402696150333,
-   "C->B": 0.7988988733923273,
-   "C->D": 0.04252927116639263,
-   "D->A": 0.0284297527770769,
-   "D->B": 0.004787960852190686,
-   "D->C": 0.005974362120038042
-  },
   "iptm": 0.7876076698303223,
-  "min_ipsae_D_pairs": {
-   "A|D": 0.0284297527770769,
-   "B|D": 0.004787960852190686,
-   "C|D": 0.005974362120038042
-  },
-  "min_ipsae_overall": 0.004787960852190686,
-  "n_tokens": 456,
-  "pairs": {
-   "A|B": {
-    "ipsae_A_to_B": 0.9549147398039743,
-    "ipsae_B_to_A": 0.9722406557826029,
-    "min_ipsae": 0.9549147398039743
-   },
-   "A|C": {
-    "ipsae_A_to_C": 0.7104841481079879,
-    "ipsae_C_to_A": 0.938402696150333,
-    "min_ipsae": 0.7104841481079879
-   },
-   "A|D": {
-    "ipsae_A_to_D": 0.0425483650189112,
-    "ipsae_D_to_A": 0.0284297527770769,
-    "min_ipsae": 0.0284297527770769
-   },
-   "B|C": {
-    "ipsae_B_to_C": 0.5242710744496774,
-    "ipsae_C_to_B": 0.7988988733923273,
-    "min_ipsae": 0.5242710744496774
-   },
-   "B|D": {
-    "ipsae_B_to_D": 0.03901873809979183,
-    "ipsae_D_to_B": 0.004787960852190686,
-    "min_ipsae": 0.004787960852190686
-   },
-   "C|D": {
-    "ipsae_C_to_D": 0.04252927116639263,
-    "ipsae_D_to_C": 0.005974362120038042,
-    "min_ipsae": 0.005974362120038042
-   }
-  },
-  "parse_error": null,
-  "plddt_block": {
-   "complex_plddt": 95.8691447368421,
-   "interface_plddt": 96.0208207964602,
-   "present": true
-  },
-  "plddt_mean_all": 95.8691447368421,
-  "plddt_std_all": 4.054389341294892,
-  "score_error": null
+  "parse_error": "ImportError: bindi.ipsae unavailable in this environment",
+  "score_error": "ImportError: bindi.ipsae unavailable in this environment"
  },
  "pres_lppWP1t4ozGyw5s4gq3P": {
-  "chain_len": {
-   "A": 275,
-   "B": 99,
-   "C": 9,
-   "D": 73
-  },
-  "chain_mean_plddt": {
-   "A": 95.52774181818182,
-   "B": 97.37411111111109,
-   "C": 90.26922222222223,
-   "D": 86.52994520547945
-  },
   "complex_plddt_metrics_json": 0.9438439607620239,
   "has_cif": true,
   "has_metrics": true,
   "has_pae": true,
-  "ipsae_ordered": {
-   "A->B": 0.9503335442908442,
-   "A->C": 0.6966318292848361,
-   "A->D": 0.21578437940209677,
-   "B->A": 0.9705549805860751,
-   "B->C": 0.5148121169957629,
-   "B->D": 0.2006389187996042,
-   "C->A": 0.9345733096270222,
-   "C->B": 0.786575814403378,
-   "C->D": 0.21247504931276703,
-   "D->A": 0.4064081402803938,
-   "D->B": 0.1627390779620579,
-   "D->C": 0.04343433100173654
-  },
   "iptm": 0.8387652039527893,
-  "min_ipsae_D_pairs": {
-   "A|D": 0.21578437940209677,
-   "B|D": 0.1627390779620579,
-   "C|D": 0.04343433100173654
-  },
-  "min_ipsae_overall": 0.04343433100173654,
-  "n_tokens": 456,
-  "pairs": {
-   "A|B": {
-    "ipsae_A_to_B": 0.9503335442908442,
-    "ipsae_B_to_A": 0.9705549805860751,
-    "min_ipsae": 0.9503335442908442
-   },
-   "A|C": {
-    "ipsae_A_to_C": 0.6966318292848361,
-    "ipsae_C_to_A": 0.9345733096270222,
-    "min_ipsae": 0.6966318292848361
-   },
-   "A|D": {
-    "ipsae_A_to_D": 0.21578437940209677,
-    "ipsae_D_to_A": 0.4064081402803938,
-    "min_ipsae": 0.21578437940209677
-   },
-   "B|C": {
-    "ipsae_B_to_C": 0.5148121169957629,
-    "ipsae_C_to_B": 0.786575814403378,
-    "min_ipsae": 0.5148121169957629
-   },
-   "B|D": {
-    "ipsae_B_to_D": 0.2006389187996042,
-    "ipsae_D_to_B": 0.1627390779620579,
-    "min_ipsae": 0.1627390779620579
-   },
-   "C|D": {
-    "ipsae_C_to_D": 0.21247504931276703,
-    "ipsae_D_to_C": 0.04343433100173654,
-    "min_ipsae": 0.04343433100173654
-   }
-  },
-  "parse_error": null,
-  "plddt_block": {
-   "complex_plddt": 94.384375,
-   "interface_plddt": 94.46242637362639,
-   "present": true
-  },
-  "plddt_mean_all": 94.384375,
-  "plddt_std_all": 6.437266668037579,
-  "score_error": null
+  "parse_error": "ImportError: bindi.ipsae unavailable in this environment",
+  "score_error": "ImportError: bindi.ipsae unavailable in this environment"
  },
  "pres_rIVnI2qWY81pul3zHRrN": {
-  "chain_len": {
-   "A": 275,
-   "B": 99,
-   "C": 9,
-   "D": 73
-  },
-  "chain_mean_plddt": {
-   "A": 94.15930545454546,
-   "B": 96.76284848484848,
-   "C": 86.69344444444444,
-   "D": 71.79847945205478
-  },
   "complex_plddt_metrics_json": 0.909974992275238,
   "has_cif": true,
   "has_metrics": true,
   "has_pae": true,
-  "ipsae_ordered": {
-   "A->B": 0.9405363023499477,
-   "A->C": 0.7426412262393911,
-   "A->D": 0.5014471097796662,
-   "B->A": 0.9684650704825791,
-   "B->C": 0.5342534999314352,
-   "B->D": 0.43333087583037294,
-   "C->A": 0.9345850081998299,
-   "C->B": 0.7888020456914693,
-   "C->D": 0.4754635310375029,
-   "D->A": 0.7370754891889162,
-   "D->B": 0.4101724290724658,
-   "D->C": 0.2217962365730534
-  },
   "iptm": 0.9355947971343994,
-  "min_ipsae_D_pairs": {
-   "A|D": 0.5014471097796662,
-   "B|D": 0.4101724290724658,
-   "C|D": 0.2217962365730534
-  },
-  "min_ipsae_overall": 0.2217962365730534,
-  "n_tokens": 456,
-  "pairs": {
-   "A|B": {
-    "ipsae_A_to_B": 0.9405363023499477,
-    "ipsae_B_to_A": 0.9684650704825791,
-    "min_ipsae": 0.9405363023499477
-   },
-   "A|C": {
-    "ipsae_A_to_C": 0.7426412262393911,
-    "ipsae_C_to_A": 0.9345850081998299,
-    "min_ipsae": 0.7426412262393911
-   },
-   "A|D": {
-    "ipsae_A_to_D": 0.5014471097796662,
-    "ipsae_D_to_A": 0.7370754891889162,
-    "min_ipsae": 0.5014471097796662
-   },
-   "B|C": {
-    "ipsae_B_to_C": 0.5342534999314352,
-    "ipsae_C_to_B": 0.7888020456914693,
-    "min_ipsae": 0.5342534999314352
-   },
-   "B|D": {
-    "ipsae_B_to_D": 0.43333087583037294,
-    "ipsae_D_to_B": 0.4101724290724658,
-    "min_ipsae": 0.4101724290724658
-   },
-   "C|D": {
-    "ipsae_C_to_D": 0.4754635310375029,
-    "ipsae_D_to_C": 0.2217962365730534,
-    "min_ipsae": 0.2217962365730534
-   }
-  },
-  "parse_error": null,
-  "plddt_block": {
-   "complex_plddt": 90.99750219298245,
-   "interface_plddt": 90.99750219298245,
-   "present": true
-  },
-  "plddt_mean_all": 90.99750219298245,
-  "plddt_std_all": 10.73602555977633,
-  "score_error": null
+  "parse_error": "ImportError: bindi.ipsae unavailable in this environment",
+  "score_error": "ImportError: bindi.ipsae unavailable in this environment"
  },
  "pres_xpto8wJvfrJQhLVH4Mvz": {
-  "chain_len": {
-   "A": 275,
-   "B": 99,
-   "C": 9,
-   "D": 73
-  },
-  "chain_mean_plddt": {
-   "A": 95.33186181818182,
-   "B": 97.15938383838382,
-   "C": 92.97155555555555,
-   "D": 82.25530136986302
-  },
   "complex_plddt_metrics_json": 0.9358863830566406,
   "has_cif": true,
   "has_metrics": true,
   "has_pae": true,
-  "ipsae_ordered": {
-   "A->B": 0.9461847541090834,
-   "A->C": 0.6667690717545358,
-   "A->D": 0.01667486304681005,
-   "B->A": 0.9684956847315669,
-   "B->C": 0.4820766539317723,
-   "B->D": 0.016405745888067296,
-   "C->A": 0.929234596265979,
-   "C->B": 0.7707907207538279,
-   "C->D": 0.013537632018145557,
-   "D->A": 0.0397250865506746,
-   "D->B": 0.004605277681641059,
-   "D->C": 0.0057552743154277546
-  },
   "iptm": 0.5105286836624146,
-  "min_ipsae_D_pairs": {
-   "A|D": 0.01667486304681005,
-   "B|D": 0.004605277681641059,
-   "C|D": 0.0057552743154277546
-  },
-  "min_ipsae_overall": 0.004605277681641059,
-  "n_tokens": 456,
-  "pairs": {
-   "A|B": {
-    "ipsae_A_to_B": 0.9461847541090834,
-    "ipsae_B_to_A": 0.9684956847315669,
-    "min_ipsae": 0.9461847541090834
-   },
-   "A|C": {
-    "ipsae_A_to_C": 0.6667690717545358,
-    "ipsae_C_to_A": 0.929234596265979,
-    "min_ipsae": 0.6667690717545358
-   },
-   "A|D": {
-    "ipsae_A_to_D": 0.01667486304681005,
-    "ipsae_D_to_A": 0.0397250865506746,
-    "min_ipsae": 0.01667486304681005
-   },
-   "B|C": {
-    "ipsae_B_to_C": 0.4820766539317723,
-    "ipsae_C_to_B": 0.7707907207538279,
-    "min_ipsae": 0.4820766539317723
-   },
-   "B|D": {
-    "ipsae_B_to_D": 0.016405745888067296,
-    "ipsae_D_to_B": 0.004605277681641059,
-    "min_ipsae": 0.004605277681641059
-   },
-   "C|D": {
-    "ipsae_C_to_D": 0.013537632018145557,
-    "ipsae_D_to_C": 0.0057552743154277546,
-    "min_ipsae": 0.0057552743154277546
-   }
-  },
-  "parse_error": null,
-  "plddt_block": {
-   "complex_plddt": 93.5886447368421,
-   "interface_plddt": 93.99926398210292,
-   "present": true
-  },
-  "plddt_mean_all": 93.5886447368421,
-  "plddt_std_all": 6.7986952141580925,
-  "score_error": null
+  "parse_error": "ImportError: bindi.ipsae unavailable in this environment",
+  "score_error": "ImportError: bindi.ipsae unavailable in this environment"
  }
 }

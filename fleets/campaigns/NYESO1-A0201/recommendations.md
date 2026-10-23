@@ -49,7 +49,7 @@ Re-run and escalation priority for **this fleet**:
 | 4 | Diversity (DIV) → ranked PANEL | Transport payloads T1–T5 (`FLEET.toml` `[transport]`) |
 | 5 | SPR/BLI, tetramer, Jurkat-NFAT, cytotoxicity | **BIO Physician** — see `CASE.md` downstream handoff (OD-5) |
 
-7. **Unified protocol (in silico).** Before comparing run one to run two, fix one **layer-2 orchestrator** entrypoint and one **flags / shell reporting** convention (`UPGRADES.md` §10 WP-A, P1 dual 5.0 Å + 10.0 Å reporting). Mixed entrypoints (`layer2_eval.py`, `tier0_targeting.py`, contact analysis) invalidate cross-run rankings.
+7. **Unified protocol (in silico).** Before comparing run one to run two, fix one **layer-2 orchestrator** entrypoint and one **flags / shell reporting** convention (`UPGRADES.md` §10 WP-A, P1 dual 5.0 Å + 10.0 Å reporting). Use `layer2_orchestrator.py` only for cross-run rankings (replaces separate tier0/contact JSON exports).
 
 ---
 

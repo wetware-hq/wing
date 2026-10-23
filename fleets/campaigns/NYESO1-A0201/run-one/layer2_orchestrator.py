@@ -1,7 +1,7 @@
 """Unified layer-2 orchestrator for NYESO1-A0201 run-one (WP-A–F).
 
-One entrypoint merges ipSAE, Tier 0 G7 metrics, dual item-1 shell reporting (5.0 + 10.0 Å),
-item 10 docking, and per-design provenance into ``layer2_bundle.json``.
+Canonical artifact: ``artifacts/layer2_bundle.json`` (ipSAE, Tier 0, item 10, contact site,
+provenance). Legacy ipSAE-only: ``--ipsae-only`` (container path; replaces ``layer2_eval.py``).
 """
 
 from __future__ import annotations
@@ -9,15 +9,15 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import sys
 from pathlib import Path
 
-import item10_docking
-import l2_policy
+import contact_analysis
 import layer2_core
 import tier0_targeting
 
-BUNDLE_VERSION = "1.0.0"
+BUNDLE_VERSION = "1.1.0"
 REPORTING_SHELLS = (10.0, 5.0)
 
 
@@ -30,9 +30,9 @@ def score_design(
     design_dir: Path,
     artifacts_root: Path,
     flags: dict,
-    flags_path: Path,
     with_sasa: bool,
     with_docking: bool,
+    with_contact_site: bool,
 ) -> dict:
     paths = layer2_core.design_paths(design_dir)
     block: dict = {
@@ -57,7 +57,9 @@ def score_design(
             for shell in REPORTING_SHELLS
         }
         if with_docking:
-            block["item10_docking"] = item10_docking.measure_design(paths["cif"])
+            block["item10_docking"] = layer2_core.measure_item10_docking(paths["cif"])
+        if with_contact_site:
+            block["contact_site"] = contact_analysis.analyse_design(design_id, paths["cif"])
     return block
 
 
@@ -67,33 +69,42 @@ def run_bundle(
     *,
     with_sasa: bool = True,
     with_docking: bool = True,
+    with_contact_site: bool = True,
     policies: tuple[str, ...] = (),
 ) -> dict:
     flags = tier0_targeting.load_flags(flags_path)
     designs: dict[str, dict] = {}
     errors: dict[str, str] = {}
+    tier0_rows: dict[str, dict] = {}
+    contact_rows: dict[str, dict] = {}
 
     for d in sorted(p for p in artifacts_root.iterdir() if p.is_dir() and p.name.startswith("pres_")):
         try:
             rec = score_design(
-                d.name, d, artifacts_root, flags, flags_path, with_sasa, with_docking
+                d.name,
+                d,
+                artifacts_root,
+                flags,
+                with_sasa,
+                with_docking,
+                with_contact_site,
             )
-            rec["policy"] = l2_policy.evaluate_recorded(rec.get("tier0", {}), policies)
+            rec["policy"] = layer2_core.evaluate_l2_policies(rec.get("tier0", {}), policies)
             designs[d.name] = rec
+            if "tier0" in rec:
+                tier0_rows[d.name] = rec["tier0"]
+            if "contact_site" in rec:
+                contact_rows[d.name] = rec["contact_site"]
         except Exception as e:  # noqa: BLE001
             errors[d.name] = f"{type(e).__name__}: {e}"
-
-    item10_summary = (
-        item10_docking.measure_all(artifacts_root) if with_docking else {"designs": {}, "errors": {}}
-    )
 
     return {
         "schema_version": BUNDLE_VERSION,
         "campaign": "NYESO1-A0201",
         "status": "RECORDED-NON-GATING",
         "gating_warning": (
-            "FLEET.toml gating remains iptm and plddt only. All Tier 0, item 10, and "
-            "policy results here are recorded or optional CLI policy — not fleet gates."
+            "FLEET.toml gating remains iptm and plddt only. Tier 0, item 10, contact site, "
+            "and CLI policy results are recorded or optional — not fleet gates."
         ),
         "parameters": {
             "epitope_shell_cutoff_angstrom": flags["epitope_shell_cutoff_angstrom"],
@@ -104,9 +115,19 @@ def run_bundle(
         },
         "pins": layer2_core.LAYER2_PINS,
         "job_id": layer2_core.RUN_ONE_JOB_ID,
+        "tier0": tier0_targeting.manifest_payload(flags, flags_path, tier0_rows, errors),
+        "contact_site": {
+            "method_note": (
+                "Per-design rows under designs[].contact_site; interpretive rule in "
+                "run-one/CONTACTS.md"
+            ),
+            "cutoff_primary_angstrom": contact_analysis.CUTOFF_PRIMARY,
+            "cutoff_sensitivity_angstrom": contact_analysis.CUTOFF_SENSITIVITY,
+            "designs": contact_rows,
+            "errors": errors,
+        },
         "designs": designs,
         "errors": errors,
-        "item10_docking_artifact": item10_summary,
     }
 
 
@@ -116,9 +137,15 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--artifacts", default=str(run_dir / "artifacts"))
     ap.add_argument("--flags", default=str(run_dir.parent / "targeting_flags.json"))
     ap.add_argument("--bundle-out", default=None, help="default: <artifacts>/layer2_bundle.json")
-    ap.add_argument("--legacy-out", default=None, help="optional layer2_results.json path")
+    ap.add_argument(
+        "--legacy-out",
+        default=None,
+        help="default: <artifacts>/layer2_results.json when running full bundle",
+    )
+    ap.add_argument("--ipsae-only", action="store_true", help="ipSAE JSON only (container entry)")
     ap.add_argument("--no-sasa", action="store_true")
     ap.add_argument("--no-docking", action="store_true")
+    ap.add_argument("--no-contact-site", action="store_true")
     ap.add_argument(
         "--policy",
         action="append",
@@ -128,6 +155,12 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     artifacts = Path(args.artifacts)
+    if args.ipsae_only:
+        out = Path(args.legacy_out or artifacts / "layer2_results.json")
+        code = layer2_core.write_ipsae_only(artifacts, out)
+        print(f"WROTE {out}")
+        return code
+
     flags_path = Path(args.flags)
     bundle_path = Path(args.bundle_out or artifacts / "layer2_bundle.json")
 
@@ -136,21 +169,19 @@ def main(argv: list[str] | None = None) -> int:
         flags_path,
         with_sasa=not args.no_sasa,
         with_docking=not args.no_docking,
+        with_contact_site=not args.no_contact_site,
         policies=tuple(args.policy),
     )
     bundle_path.write_text(json.dumps(payload, indent=1, sort_keys=True))
 
-    if args.legacy_out:
-        legacy = layer2_core.legacy_ipsae_map(payload["designs"])
-        Path(args.legacy_out).write_text(json.dumps(legacy, indent=1, sort_keys=True))
-
-    item10_path = artifacts / "item10_docking_results.json"
-    item10_path.write_text(json.dumps(payload["item10_docking_artifact"], indent=1, sort_keys=True))
+    legacy_path = Path(args.legacy_out or artifacts / "layer2_results.json")
+    legacy_path.write_text(
+        json.dumps(layer2_core.legacy_ipsae_map(payload["designs"]), indent=1, sort_keys=True)
+    )
 
     violations: list[str] = []
     for did, rec in payload["designs"].items():
-        for crit in l2_policy.policy_violations(rec.get("policy", {})):
-            violations.append(f"{did}:{crit}")
+        violations.extend(layer2_core.policy_violations(rec.get("policy", {})))
         t0 = rec.get("tier0") or {}
         if "buried-anchors-zero" in args.policy and t0.get("item_3_buried_anchor_contact_count", 0) != 0:
             print(
@@ -162,10 +193,14 @@ def main(argv: list[str] | None = None) -> int:
             violations.append(f"{did}:item_3_buried_anchor_contact_count")
 
     print(f"WROTE {bundle_path} ({len(payload['designs'])} designs)")
+    print(f"WROTE {legacy_path} (legacy ipSAE)")
     if violations:
         return 2
     return 0 if not payload["errors"] else 1
 
 
 if __name__ == "__main__":
+    # Container: LAYER2_ARTIFACTS=/artifacts and argv may be empty.
+    if os.environ.get("LAYER2_IPSAE_ONLY") == "1":
+        sys.exit(main(["--ipsae-only"]))
     sys.exit(main())

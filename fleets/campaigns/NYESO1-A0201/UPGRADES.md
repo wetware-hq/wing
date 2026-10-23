@@ -481,7 +481,7 @@ Named rather than papered over.
 
 **Scope: the files these methods cite**, and nothing else. Every other document in this directory
 cites this section rather than repeating a list of its own. It is deliberately *not* the campaign
-manifest: `infra.json`, `modal_layer2_app.py`, `run-one/layer2_eval.py`, `run-one/request.json`,
+manifest: `infra.json`, `modal_layer2_app.py`, `run-one/layer2_orchestrator.py`, `run-one/request.json`,
 `run-one/request-legacy-submitted.json` and `run-one/artifacts/` exist in this directory, are cited
 by no method here, and are catalogued in `fleets/README.md`. Absence from this list is not absence
 from the repository — the one genuine non-existence is recorded under "Not committed" below.
@@ -502,11 +502,11 @@ from the repository — the one genuine non-existence is recorded under "Not com
 
 **Tier 0 code and artifacts** (section 4, Tier 0; measured in section 9)
 
-- `run-one/tier0_targeting.py` → `run-one/tier0_targeting_results.json` — the four Tier 0
-  quantities on the run-one coordinates, under BindCraft2's G7 definitions.
-- `run-one/tier0_targeting.py sweep` → `run-one/shell_sweep_results.json` — item 1 across shell cutoffs.
-- `run-one/contact_analysis.py` → `run-one/contact_analysis_results.json` — the campaign-specific
-  contact rule behind `run-one/CONTACTS.md`.
+- `run-one/layer2_orchestrator.py` → `run-one/artifacts/layer2_bundle.json` — canonical L2 bundle
+  (ipSAE, Tier 0, item 10, contact site, provenance). Legacy ipSAE slice: `artifacts/layer2_results.json`.
+- `run-one/tier0_targeting.py` — Tier 0 definitions; rows live under `layer2_bundle.json` → `tier0`.
+- `run-one/tier0_targeting.py sweep` — diagnostic shell sweep (stdout / optional `--out`; not committed).
+- `run-one/contact_analysis.py` — contact-site rule; rows under `layer2_bundle.json` → `designs[].contact_site`.
 - `targeting_flags.json` — the epitope, coldspot, anchor and invariant residue flags the above read.
 
 **Not committed**
@@ -697,7 +697,7 @@ campaign artifacts (`pres_*` under `run-one/artifacts/`).
 4. **`infra.json`** — `layer2_execution_pin`, `layer_2_modal_cpu_host`, content-address pins.
 5. **`PLATFORM.md`** — hosted API vs CPU-only (item 10 docking in scope).
 6. **`CASE.md`** — specificity not affinity; SPR/tetramer/Jurkat **out of scope for coding WP**.
-7. **Code:** `run-one/contact_analysis.py`, `run-one/tier0_targeting.py`, `run-one/layer2_eval.py`,
+7. **Code:** `run-one/layer2_orchestrator.py`, `run-one/layer2_core.py`, `run-one/contact_analysis.py`, `run-one/tier0_targeting.py`,
    `modal_layer2_app.py`, `targeting_flags.json`.
 
 **Do not open** held-out answer folders or write scenario/wording answer files (repo `AGENTS.md`).
@@ -711,12 +711,12 @@ lab) — see `recommendations.md` §0.
 |---|---|
 | Run one | **Complete** — job `prot_des_TY6KzyxULq8mACflXbhn`, 10 designs, `$0.50`, `run-one/artifacts/`, G1–G4 pass. |
 | Specificity margin | **Not computed** — no L1B decoy refold in run one. |
-| Layer 2 ipSAE | **Wired** — `layer2_eval.py` + `layer2_results.json`; gating **`iptm` and `plddt` only**. |
+| Layer 2 ipSAE | **Wired** — `layer2_orchestrator.py` (`--ipsae-only` or bundle); gating **`iptm` and `plddt` only**. |
 | Tier 0 G7 | **Implemented** — `tier0_targeting.py`; tests `tests/test_tier0_targeting.py`. |
 | Shell sweep | **Done** — F1 (10 Å vacuous). |
 | HECTOR G1/G3 | **Rejected**. |
 | Post-hoc `Sc` gate | **Rejected**; no `sc_results.json`. |
-| Item 10 docking | **Implemented** — `run-one/item10_docking.py` + `artifacts/item10_docking_results.json`. |
+| Item 10 docking | **Implemented** — `layer2_core.measure_item10_docking` in `layer2_bundle.json`. |
 | L2 integration | **Unified** — `run-one/layer2_orchestrator.py` + `layer2_bundle.json` (WP-A–F). |
 
 | ID | Decision | In code today |
@@ -762,7 +762,7 @@ with schema version. No tier0 executable thresholds; no new `FLEET.toml` gating 
 **WP-C — Item 10 docking (required).** CPU rigid-body re-derivation; pose agreement + complementarity
 **delta** (section 4 item 10).
 
-**WP-D — Policy skeleton (nice-to-have).** `run-one/l2_policy.py`: pass/fail/skipped for items 3, 5, 6.
+**WP-D — Policy skeleton (nice-to-have).** `layer2_core.evaluate_l2_policies`: pass/fail/skipped for items 3, 5, 6.
 
 **WP-E — Doc sync (required, small).** `infra.json` / `arch.mermaid` only if entrypoints change; do not
 duplicate section 8 index.

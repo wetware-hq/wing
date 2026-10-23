@@ -20,7 +20,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 CAMPAIGN = ROOT / "fleets" / "campaigns" / "NYESO1-A0201"
 RUN_ONE = CAMPAIGN / "run-one"
 FLAGS = CAMPAIGN / "targeting_flags.json"
-RESULTS = RUN_ONE / "tier0_targeting_results.json"
+BUNDLE = RUN_ONE / "artifacts" / "layer2_bundle.json"
 
 
 def _load(name):
@@ -104,11 +104,12 @@ def test_a_wider_shell_can_only_grow_the_shell():
     assert small[ca.HEAVY_CHAIN] < big[ca.HEAVY_CHAIN]
 
 
-@pytest.mark.skipif(not RESULTS.exists(), reason="tier0 results not generated")
+@pytest.mark.skipif(not BUNDLE.exists(), reason="layer2_bundle not generated")
 class TestRecordedResults:
     @staticmethod
     def _payload():
-        return json.loads(RESULTS.read_text())
+        bundle = json.loads(BUNDLE.read_text())
+        return bundle["tier0"]
 
     def test_every_design_scored_with_no_errors(self):
         p = self._payload()

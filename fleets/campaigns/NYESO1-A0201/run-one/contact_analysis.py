@@ -6,11 +6,10 @@ HLA-A*02:01 FRAMEWORK (chain A heavy chain, chain B beta-2-microglobulin)?
 
 This is purely local geometry over the mirrored artifacts. No API calls, no spend.
 
-Why this lives beside ``layer2_eval.py`` rather than inside it or inside bindi:
-  * ``layer2_eval.py`` is the container entrypoint for the Modal layer-2 ipSAE pass,
-    hardcoded to ``/src`` and ``/artifacts``. That path is box-verified under the
-    pinned image; folding a local geometry pass into it would couple the two and put
-    the verified parse path at risk for no gain.
+Why this lives beside the layer-2 orchestrator rather than inside bindi:
+  * ipSAE runs via ``layer2_orchestrator.py`` / ``layer2_core.py`` (container: ``--ipsae-only``).
+    Keeping contact geometry separate avoids coupling the verified ipSAE path to campaign-specific
+    interpretive rules.
   * bindi's ``parse_predicted_cif`` deliberately keeps only per-residue pLDDT and
     discards coordinates, so it cannot serve contacts; and the HLA alpha1/alpha2/alpha3
     region map below is campaign-specific knowledge, not a general scorer. If a future

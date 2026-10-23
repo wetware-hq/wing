@@ -374,32 +374,14 @@ def main_sweep(argv: list[str] | None = None) -> int:
     return 0
 
 
-def main_measure(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description="Tier 0 targeting metrics (recorded, non-gating)")
-    ap.add_argument("--artifacts", default=str(Path(__file__).parent / "artifacts"))
-    ap.add_argument("--flags", default=str(FLAGS_PATH))
-    ap.add_argument("--out", default=None)
-    ap.add_argument("--no-sasa", action="store_true")
-    args = ap.parse_args(argv)
-
-    flags = load_flags(Path(args.flags))
-    root = Path(args.artifacts)
-    results: dict[str, dict] = {}
-    errors: dict[str, str] = {}
-
-    for d in sorted(p for p in root.iterdir() if p.is_dir() and p.name.startswith("pres_")):
-        cif = d / f"{d.name}_predicted.cif"
-        if not cif.exists():
-            errors[d.name] = "missing _predicted.cif"
-            continue
-        try:
-            results[d.name] = analyse_design(
-                d.name, cif, flags, with_sasa=not args.no_sasa
-            )
-        except Exception as e:  # noqa: BLE001 - record, do not mask
-            errors[d.name] = f"{type(e).__name__}: {e}"
-
-    payload = {
+def manifest_payload(
+    flags: dict,
+    flags_path: Path,
+    designs: dict[str, dict],
+    errors: dict[str, str],
+) -> dict:
+    """Tier 0 manifest + per-design rows (also embedded in ``layer2_bundle.json``)."""
+    return {
         "status": "RECORDED-NON-GATING",
         "spec": "UPGRADES.md v1.0 section 4, Tier 0 items 1-4",
         "gating_warning": (
@@ -416,7 +398,7 @@ def main_measure(argv: list[str] | None = None) -> int:
                 k: v for k, v in flags["buried_anchors"].items() if not k.startswith("_")
             },
             "coldspot_definition": flags["coldspots"]["_definition"],
-            "flags_file": str(Path(args.flags).name),
+            "flags_file": str(flags_path.name),
         },
         "provenance": {
             "off_epitope_contact_fraction": "BindCraft2 filters.py:423-432",
@@ -437,9 +419,41 @@ def main_measure(argv: list[str] | None = None) -> int:
             "Nothing here says a contact is favourable; it says only where contact fell.",
             "The coldspot definition is unresolved - see _coldspot_ambiguity in the flags file.",
         ],
-        "designs": results,
+        "designs": designs,
         "errors": errors,
     }
+
+
+def main_measure(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description="Tier 0 targeting metrics (recorded, non-gating)")
+    ap.add_argument("--artifacts", default=str(Path(__file__).parent / "artifacts"))
+    ap.add_argument("--flags", default=str(FLAGS_PATH))
+    ap.add_argument(
+        "--out",
+        default=None,
+        help="optional JSON path; canonical store is artifacts/layer2_bundle.json (orchestrator)",
+    )
+    ap.add_argument("--no-sasa", action="store_true")
+    args = ap.parse_args(argv)
+
+    flags = load_flags(Path(args.flags))
+    root = Path(args.artifacts)
+    results: dict[str, dict] = {}
+    errors: dict[str, str] = {}
+
+    for d in sorted(p for p in root.iterdir() if p.is_dir() and p.name.startswith("pres_")):
+        cif = d / f"{d.name}_predicted.cif"
+        if not cif.exists():
+            errors[d.name] = "missing _predicted.cif"
+            continue
+        try:
+            results[d.name] = analyse_design(
+                d.name, cif, flags, with_sasa=not args.no_sasa
+            )
+        except Exception as e:  # noqa: BLE001 - record, do not mask
+            errors[d.name] = f"{type(e).__name__}: {e}"
+
+    payload = manifest_payload(flags, Path(args.flags), results, errors)
     text = json.dumps(payload, indent=1, sort_keys=True)
     if args.out:
         Path(args.out).write_text(text)

@@ -1,7 +1,8 @@
 # Run one — interface contact analysis (docking site, not specificity)
 
 Local geometry over the mirrored run-one artifacts. No API calls, no spend. Produced by
-`run-one/contact_analysis.py`; full numbers in `run-one/contact_analysis_results.json`.
+`run-one/contact_analysis.py` (standalone) or `run-one/layer2_orchestrator.py` (canonical);
+per-design numbers in `run-one/artifacts/layer2_bundle.json` → `designs[].contact_site`.
 
 ## The question this answers, and the one it does not
 
@@ -109,7 +110,7 @@ threshold. The geometry and the confidence agree that this one is doubtful.
 
 **Proof** (measured from the mirrored coordinates, reproducible): all contact counts,
 per-position and per-region breakdowns, contact fractions, buried areas and buried fractions
-in the table and in `contact_analysis_results.json`.
+in the table and in `layer2_bundle.json` (`designs[].contact_site`).
 
 **Inference** (judgement on top of those numbers): that this footprint constitutes
 "peptide-directed" engagement, the thresholds separating peptide-directed from mixed, and the
