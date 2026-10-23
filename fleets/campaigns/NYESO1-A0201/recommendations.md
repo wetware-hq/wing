@@ -84,7 +84,7 @@ Re-run and escalation priority for **this fleet**:
 ## 7. Decision gates / next actions
 
 - [x] Resolve placeholders against `UPGRADES.md` §10, `FLEET.toml`, `CASE.md` (this document)
-- [ ] Implement `UPGRADES.md` §10 WP-A–C (L2 orchestrator, optional buried-anchor policy, item 10 docking)
+- [x] Implement `UPGRADES.md` §10 WP-A–C (L2 orchestrator, optional buried-anchor policy, item 10 docking)
 - [ ] OD-3: ten decoy peptide sequences (blocks specificity margin)
 - [ ] OD-2: negative-design panel in submit body
 - [ ] P1–P4 owner sign-off (`UPGRADES.md` §9)

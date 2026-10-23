@@ -1,0 +1,1258 @@
+{
+ "campaign": "NYESO1-A0201",
+ "designs": {
+  "pres_2SOqXG5xbTO4FD4yB5so": {
+   "ipsae": {
+    "complex_plddt_metrics_json": 0.9401872158050537,
+    "has_cif": true,
+    "has_metrics": true,
+    "has_pae": true,
+    "iptm": 0.8471744656562805,
+    "parse_error": "ImportError: bindi.ipsae unavailable in this environment",
+    "score_error": "ImportError: bindi.ipsae unavailable in this environment"
+   },
+   "item10_docking": {
+    "complementarity_contact_fraction_delta": 0.12585,
+    "complementarity_contact_fraction_designed": 0.08333,
+    "complementarity_contact_fraction_rederived": 0.20918,
+    "method": "Fibonacci-sphere rigid-body search (72 rotations), contact cutoff 4.0 \u00c5; not affinity evidence",
+    "pose_agreement_ca_rmsd_angstrom": 0.0,
+    "search_best_contact_fraction": 0.20918,
+    "status": "RECORDED-NON-GATING"
+   },
+   "item1_shell_reporting": {
+    "10.0": {
+     "epitope_shell_size_by_chain": {
+      "A": 62,
+      "B": 0,
+      "C": 9
+     },
+     "epitope_shell_size_total": 71,
+     "item_1_off_epitope_contact_fraction": 0.05263,
+     "reporting_shell_angstrom": 10.0
+    },
+    "5.0": {
+     "epitope_shell_size_by_chain": {
+      "A": 15,
+      "B": 0,
+      "C": 8
+     },
+     "epitope_shell_size_total": 23,
+     "item_1_off_epitope_contact_fraction": 0.31579,
+     "reporting_shell_angstrom": 5.0
+    }
+   },
+   "policy": {
+    "item_3_buried_anchors_zero": "skipped",
+    "item_5_pose_agreement": "skipped",
+    "item_6_complementarity_delta": "skipped"
+   },
+   "provenance": {
+    "artifact_paths": {
+     "metrics_json": "pres_2SOqXG5xbTO4FD4yB5so/metrics.json",
+     "pae_npz": "pres_2SOqXG5xbTO4FD4yB5so/pae.npz",
+     "predicted_cif": "pres_2SOqXG5xbTO4FD4yB5so/pres_2SOqXG5xbTO4FD4yB5so_predicted.cif"
+    },
+    "design_id": "pres_2SOqXG5xbTO4FD4yB5so",
+    "display_alias": "NYESO1-pres_2SOqXG5xbTO4FD4yB5so",
+    "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+    "pins": {
+     "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+     "binder_chain": "D",
+     "contact_cutoff_angstrom": 4.0,
+     "worker_commit": "70b6c6c",
+     "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+     "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+    }
+   },
+   "tier0": {
+    "cif": "pres_2SOqXG5xbTO4FD4yB5so_predicted.cif",
+    "counts": {
+     "buried_anchor_residues_contacted": [],
+     "coldspots_contacted": 0,
+     "coldspots_contacted_by_chain": {},
+     "coldspots_declared": 215,
+     "contacted_by_chain": {
+      "A": [
+       19,
+       62,
+       65,
+       68,
+       69,
+       72,
+       73,
+       75,
+       76,
+       79,
+       80,
+       146,
+       152,
+       155
+      ],
+      "B": [],
+      "C": [
+       4,
+       5,
+       6,
+       7,
+       8
+      ]
+     },
+     "contacted_in_epitope_shell": 18,
+     "contacted_off_epitope_shell": 1,
+     "contacted_target_residues": 19,
+     "epitope_shell_size_by_chain": {
+      "A": 62,
+      "B": 0,
+      "C": 9
+     },
+     "hotspots_contacted": 5,
+     "hotspots_declared": 5
+    },
+    "design_id": "pres_2SOqXG5xbTO4FD4yB5so",
+    "hotspot_contact_fraction": 1.0,
+    "item_1_off_epitope_contact_fraction": 0.05263,
+    "item_2_coldspot_contact_fraction": 0.0,
+    "item_3_buried_anchor_contact_count": 0
+   }
+  },
+  "pres_B8eqLRLyLSgzkVbLyC7C": {
+   "ipsae": {
+    "complex_plddt_metrics_json": 0.9237126111984253,
+    "has_cif": true,
+    "has_metrics": true,
+    "has_pae": true,
+    "iptm": 0.9032978415489197,
+    "parse_error": "ImportError: bindi.ipsae unavailable in this environment",
+    "score_error": "ImportError: bindi.ipsae unavailable in this environment"
+   },
+   "item10_docking": {
+    "complementarity_contact_fraction_delta": 0.27032,
+    "complementarity_contact_fraction_designed": 0.09011,
+    "complementarity_contact_fraction_rederived": 0.36042,
+    "method": "Fibonacci-sphere rigid-body search (72 rotations), contact cutoff 4.0 \u00c5; not affinity evidence",
+    "pose_agreement_ca_rmsd_angstrom": 0.0,
+    "search_best_contact_fraction": 0.36042,
+    "status": "RECORDED-NON-GATING"
+   },
+   "item1_shell_reporting": {
+    "10.0": {
+     "epitope_shell_size_by_chain": {
+      "A": 62,
+      "B": 0,
+      "C": 9
+     },
+     "epitope_shell_size_total": 71,
+     "item_1_off_epitope_contact_fraction": 0.05,
+     "reporting_shell_angstrom": 10.0
+    },
+    "5.0": {
+     "epitope_shell_size_by_chain": {
+      "A": 14,
+      "B": 0,
+      "C": 8
+     },
+     "epitope_shell_size_total": 22,
+     "item_1_off_epitope_contact_fraction": 0.4,
+     "reporting_shell_angstrom": 5.0
+    }
+   },
+   "policy": {
+    "item_3_buried_anchors_zero": "skipped",
+    "item_5_pose_agreement": "skipped",
+    "item_6_complementarity_delta": "skipped"
+   },
+   "provenance": {
+    "artifact_paths": {
+     "metrics_json": "pres_B8eqLRLyLSgzkVbLyC7C/metrics.json",
+     "pae_npz": "pres_B8eqLRLyLSgzkVbLyC7C/pae.npz",
+     "predicted_cif": "pres_B8eqLRLyLSgzkVbLyC7C/pres_B8eqLRLyLSgzkVbLyC7C_predicted.cif"
+    },
+    "design_id": "pres_B8eqLRLyLSgzkVbLyC7C",
+    "display_alias": "NYESO1-pres_B8eqLRLyLSgzkVbLyC7C",
+    "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+    "pins": {
+     "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+     "binder_chain": "D",
+     "contact_cutoff_angstrom": 4.0,
+     "worker_commit": "70b6c6c",
+     "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+     "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+    }
+   },
+   "tier0": {
+    "cif": "pres_B8eqLRLyLSgzkVbLyC7C_predicted.cif",
+    "counts": {
+     "buried_anchor_residues_contacted": [],
+     "coldspots_contacted": 1,
+     "coldspots_contacted_by_chain": {
+      "A": [
+       83
+      ]
+     },
+     "coldspots_declared": 217,
+     "contacted_by_chain": {
+      "A": [
+       65,
+       69,
+       72,
+       73,
+       76,
+       80,
+       83,
+       84,
+       142,
+       145,
+       146,
+       149,
+       152,
+       155
+      ],
+      "B": [],
+      "C": [
+       3,
+       4,
+       5,
+       6,
+       7,
+       8
+      ]
+     },
+     "contacted_in_epitope_shell": 19,
+     "contacted_off_epitope_shell": 1,
+     "contacted_target_residues": 20,
+     "epitope_shell_size_by_chain": {
+      "A": 62,
+      "B": 0,
+      "C": 9
+     },
+     "hotspots_contacted": 5,
+     "hotspots_declared": 5
+    },
+    "design_id": "pres_B8eqLRLyLSgzkVbLyC7C",
+    "hotspot_contact_fraction": 1.0,
+    "item_1_off_epitope_contact_fraction": 0.05,
+    "item_2_coldspot_contact_fraction": 0.00461,
+    "item_3_buried_anchor_contact_count": 0
+   }
+  },
+  "pres_Bw8vknhmXJUg72L6CGAw": {
+   "ipsae": {
+    "complex_plddt_metrics_json": 0.9737222194671631,
+    "has_cif": true,
+    "has_metrics": true,
+    "has_pae": true,
+    "iptm": 0.9626621007919312,
+    "parse_error": "ImportError: bindi.ipsae unavailable in this environment",
+    "score_error": "ImportError: bindi.ipsae unavailable in this environment"
+   },
+   "item10_docking": {
+    "complementarity_contact_fraction_delta": 0.24101,
+    "complementarity_contact_fraction_designed": 0.06655,
+    "complementarity_contact_fraction_rederived": 0.30755,
+    "method": "Fibonacci-sphere rigid-body search (72 rotations), contact cutoff 4.0 \u00c5; not affinity evidence",
+    "pose_agreement_ca_rmsd_angstrom": 0.0,
+    "search_best_contact_fraction": 0.30755,
+    "status": "RECORDED-NON-GATING"
+   },
+   "item1_shell_reporting": {
+    "10.0": {
+     "epitope_shell_size_by_chain": {
+      "A": 62,
+      "B": 0,
+      "C": 9
+     },
+     "epitope_shell_size_total": 71,
+     "item_1_off_epitope_contact_fraction": 0.11111,
+     "reporting_shell_angstrom": 10.0
+    },
+    "5.0": {
+     "epitope_shell_size_by_chain": {
+      "A": 15,
+      "B": 0,
+      "C": 8
+     },
+     "epitope_shell_size_total": 23,
+     "item_1_off_epitope_contact_fraction": 0.38889,
+     "reporting_shell_angstrom": 5.0
+    }
+   },
+   "policy": {
+    "item_3_buried_anchors_zero": "skipped",
+    "item_5_pose_agreement": "skipped",
+    "item_6_complementarity_delta": "skipped"
+   },
+   "provenance": {
+    "artifact_paths": {
+     "metrics_json": "pres_Bw8vknhmXJUg72L6CGAw/metrics.json",
+     "pae_npz": "pres_Bw8vknhmXJUg72L6CGAw/pae.npz",
+     "predicted_cif": "pres_Bw8vknhmXJUg72L6CGAw/pres_Bw8vknhmXJUg72L6CGAw_predicted.cif"
+    },
+    "design_id": "pres_Bw8vknhmXJUg72L6CGAw",
+    "display_alias": "NYESO1-pres_Bw8vknhmXJUg72L6CGAw",
+    "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+    "pins": {
+     "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+     "binder_chain": "D",
+     "contact_cutoff_angstrom": 4.0,
+     "worker_commit": "70b6c6c",
+     "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+     "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+    }
+   },
+   "tier0": {
+    "cif": "pres_Bw8vknhmXJUg72L6CGAw_predicted.cif",
+    "counts": {
+     "buried_anchor_residues_contacted": [],
+     "coldspots_contacted": 0,
+     "coldspots_contacted_by_chain": {},
+     "coldspots_declared": 213,
+     "contacted_by_chain": {
+      "A": [
+       36,
+       43,
+       62,
+       65,
+       66,
+       68,
+       69,
+       71,
+       72,
+       73,
+       75,
+       76,
+       155,
+       158
+      ],
+      "B": [],
+      "C": [
+       4,
+       5,
+       6,
+       8
+      ]
+     },
+     "contacted_in_epitope_shell": 16,
+     "contacted_off_epitope_shell": 2,
+     "contacted_target_residues": 18,
+     "epitope_shell_size_by_chain": {
+      "A": 62,
+      "B": 0,
+      "C": 9
+     },
+     "hotspots_contacted": 4,
+     "hotspots_declared": 5
+    },
+    "design_id": "pres_Bw8vknhmXJUg72L6CGAw",
+    "hotspot_contact_fraction": 0.8,
+    "item_1_off_epitope_contact_fraction": 0.11111,
+    "item_2_coldspot_contact_fraction": 0.0,
+    "item_3_buried_anchor_contact_count": 0
+   }
+  },
+  "pres_G3ZfGGLFJXddOc0vhQwO": {
+   "ipsae": {
+    "complex_plddt_metrics_json": 0.9129552245140076,
+    "has_cif": true,
+    "has_metrics": true,
+    "has_pae": true,
+    "iptm": 0.8731725811958313,
+    "parse_error": "ImportError: bindi.ipsae unavailable in this environment",
+    "score_error": "ImportError: bindi.ipsae unavailable in this environment"
+   },
+   "item10_docking": {
+    "complementarity_contact_fraction_delta": 0.17162,
+    "complementarity_contact_fraction_designed": 0.09901,
+    "complementarity_contact_fraction_rederived": 0.27063,
+    "method": "Fibonacci-sphere rigid-body search (72 rotations), contact cutoff 4.0 \u00c5; not affinity evidence",
+    "pose_agreement_ca_rmsd_angstrom": 0.0,
+    "search_best_contact_fraction": 0.27063,
+    "status": "RECORDED-NON-GATING"
+   },
+   "item1_shell_reporting": {
+    "10.0": {
+     "epitope_shell_size_by_chain": {
+      "A": 64,
+      "B": 0,
+      "C": 9
+     },
+     "epitope_shell_size_total": 73,
+     "item_1_off_epitope_contact_fraction": 0.05263,
+     "reporting_shell_angstrom": 10.0
+    },
+    "5.0": {
+     "epitope_shell_size_by_chain": {
+      "A": 14,
+      "B": 0,
+      "C": 8
+     },
+     "epitope_shell_size_total": 22,
+     "item_1_off_epitope_contact_fraction": 0.47368,
+     "reporting_shell_angstrom": 5.0
+    }
+   },
+   "policy": {
+    "item_3_buried_anchors_zero": "skipped",
+    "item_5_pose_agreement": "skipped",
+    "item_6_complementarity_delta": "skipped"
+   },
+   "provenance": {
+    "artifact_paths": {
+     "metrics_json": "pres_G3ZfGGLFJXddOc0vhQwO/metrics.json",
+     "pae_npz": "pres_G3ZfGGLFJXddOc0vhQwO/pae.npz",
+     "predicted_cif": "pres_G3ZfGGLFJXddOc0vhQwO/pres_G3ZfGGLFJXddOc0vhQwO_predicted.cif"
+    },
+    "design_id": "pres_G3ZfGGLFJXddOc0vhQwO",
+    "display_alias": "NYESO1-pres_G3ZfGGLFJXddOc0vhQwO",
+    "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+    "pins": {
+     "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+     "binder_chain": "D",
+     "contact_cutoff_angstrom": 4.0,
+     "worker_commit": "70b6c6c",
+     "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+     "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+    }
+   },
+   "tier0": {
+    "cif": "pres_G3ZfGGLFJXddOc0vhQwO_predicted.cif",
+    "counts": {
+     "buried_anchor_residues_contacted": [],
+     "coldspots_contacted": 1,
+     "coldspots_contacted_by_chain": {
+      "A": [
+       82
+      ]
+     },
+     "coldspots_declared": 215,
+     "contacted_by_chain": {
+      "A": [
+       65,
+       69,
+       72,
+       73,
+       75,
+       76,
+       79,
+       80,
+       82,
+       142,
+       146,
+       150,
+       151,
+       154,
+       155
+      ],
+      "B": [],
+      "C": [
+       3,
+       4,
+       5,
+       8
+      ]
+     },
+     "contacted_in_epitope_shell": 18,
+     "contacted_off_epitope_shell": 1,
+     "contacted_target_residues": 19,
+     "epitope_shell_size_by_chain": {
+      "A": 64,
+      "B": 0,
+      "C": 9
+     },
+     "hotspots_contacted": 3,
+     "hotspots_declared": 5
+    },
+    "design_id": "pres_G3ZfGGLFJXddOc0vhQwO",
+    "hotspot_contact_fraction": 0.6,
+    "item_1_off_epitope_contact_fraction": 0.05263,
+    "item_2_coldspot_contact_fraction": 0.00465,
+    "item_3_buried_anchor_contact_count": 0
+   }
+  },
+  "pres_JA4idjMYaE8EsQKrcb6K": {
+   "ipsae": {
+    "complex_plddt_metrics_json": 0.9280332326889038,
+    "has_cif": true,
+    "has_metrics": true,
+    "has_pae": true,
+    "iptm": 0.924859881401062,
+    "parse_error": "ImportError: bindi.ipsae unavailable in this environment",
+    "score_error": "ImportError: bindi.ipsae unavailable in this environment"
+   },
+   "item10_docking": {
+    "complementarity_contact_fraction_delta": 0.10795,
+    "complementarity_contact_fraction_designed": 0.08712,
+    "complementarity_contact_fraction_rederived": 0.19508,
+    "method": "Fibonacci-sphere rigid-body search (72 rotations), contact cutoff 4.0 \u00c5; not affinity evidence",
+    "pose_agreement_ca_rmsd_angstrom": 0.0,
+    "search_best_contact_fraction": 0.19508,
+    "status": "RECORDED-NON-GATING"
+   },
+   "item1_shell_reporting": {
+    "10.0": {
+     "epitope_shell_size_by_chain": {
+      "A": 59,
+      "B": 0,
+      "C": 9
+     },
+     "epitope_shell_size_total": 68,
+     "item_1_off_epitope_contact_fraction": 0.0,
+     "reporting_shell_angstrom": 10.0
+    },
+    "5.0": {
+     "epitope_shell_size_by_chain": {
+      "A": 13,
+      "B": 0,
+      "C": 8
+     },
+     "epitope_shell_size_total": 21,
+     "item_1_off_epitope_contact_fraction": 0.26667,
+     "reporting_shell_angstrom": 5.0
+    }
+   },
+   "policy": {
+    "item_3_buried_anchors_zero": "skipped",
+    "item_5_pose_agreement": "skipped",
+    "item_6_complementarity_delta": "skipped"
+   },
+   "provenance": {
+    "artifact_paths": {
+     "metrics_json": "pres_JA4idjMYaE8EsQKrcb6K/metrics.json",
+     "pae_npz": "pres_JA4idjMYaE8EsQKrcb6K/pae.npz",
+     "predicted_cif": "pres_JA4idjMYaE8EsQKrcb6K/pres_JA4idjMYaE8EsQKrcb6K_predicted.cif"
+    },
+    "design_id": "pres_JA4idjMYaE8EsQKrcb6K",
+    "display_alias": "NYESO1-pres_JA4idjMYaE8EsQKrcb6K",
+    "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+    "pins": {
+     "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+     "binder_chain": "D",
+     "contact_cutoff_angstrom": 4.0,
+     "worker_commit": "70b6c6c",
+     "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+     "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+    }
+   },
+   "tier0": {
+    "cif": "pres_JA4idjMYaE8EsQKrcb6K_predicted.cif",
+    "counts": {
+     "buried_anchor_residues_contacted": [],
+     "coldspots_contacted": 0,
+     "coldspots_contacted_by_chain": {},
+     "coldspots_declared": 217,
+     "contacted_by_chain": {
+      "A": [
+       69,
+       72,
+       73,
+       75,
+       76,
+       146,
+       150,
+       151,
+       155,
+       158
+      ],
+      "B": [],
+      "C": [
+       4,
+       5,
+       6,
+       7,
+       8
+      ]
+     },
+     "contacted_in_epitope_shell": 15,
+     "contacted_off_epitope_shell": 0,
+     "contacted_target_residues": 15,
+     "epitope_shell_size_by_chain": {
+      "A": 59,
+      "B": 0,
+      "C": 9
+     },
+     "hotspots_contacted": 5,
+     "hotspots_declared": 5
+    },
+    "design_id": "pres_JA4idjMYaE8EsQKrcb6K",
+    "hotspot_contact_fraction": 1.0,
+    "item_1_off_epitope_contact_fraction": 0.0,
+    "item_2_coldspot_contact_fraction": 0.0,
+    "item_3_buried_anchor_contact_count": 0
+   }
+  },
+  "pres_KvvXtVa6yakB17EmB1Ge": {
+   "ipsae": {
+    "complex_plddt_metrics_json": 0.9399970769882202,
+    "has_cif": true,
+    "has_metrics": true,
+    "has_pae": true,
+    "iptm": 0.9825169444084167,
+    "parse_error": "ImportError: bindi.ipsae unavailable in this environment",
+    "score_error": "ImportError: bindi.ipsae unavailable in this environment"
+   },
+   "item10_docking": {
+    "complementarity_contact_fraction_delta": 0.16821,
+    "complementarity_contact_fraction_designed": 0.08872,
+    "complementarity_contact_fraction_rederived": 0.25693,
+    "method": "Fibonacci-sphere rigid-body search (72 rotations), contact cutoff 4.0 \u00c5; not affinity evidence",
+    "pose_agreement_ca_rmsd_angstrom": 0.0,
+    "search_best_contact_fraction": 0.25693,
+    "status": "RECORDED-NON-GATING"
+   },
+   "item1_shell_reporting": {
+    "10.0": {
+     "epitope_shell_size_by_chain": {
+      "A": 57,
+      "B": 0,
+      "C": 9
+     },
+     "epitope_shell_size_total": 66,
+     "item_1_off_epitope_contact_fraction": 0.0,
+     "reporting_shell_angstrom": 10.0
+    },
+    "5.0": {
+     "epitope_shell_size_by_chain": {
+      "A": 13,
+      "B": 0,
+      "C": 8
+     },
+     "epitope_shell_size_total": 21,
+     "item_1_off_epitope_contact_fraction": 0.31579,
+     "reporting_shell_angstrom": 5.0
+    }
+   },
+   "policy": {
+    "item_3_buried_anchors_zero": "skipped",
+    "item_5_pose_agreement": "skipped",
+    "item_6_complementarity_delta": "skipped"
+   },
+   "provenance": {
+    "artifact_paths": {
+     "metrics_json": "pres_KvvXtVa6yakB17EmB1Ge/metrics.json",
+     "pae_npz": "pres_KvvXtVa6yakB17EmB1Ge/pae.npz",
+     "predicted_cif": "pres_KvvXtVa6yakB17EmB1Ge/pres_KvvXtVa6yakB17EmB1Ge_predicted.cif"
+    },
+    "design_id": "pres_KvvXtVa6yakB17EmB1Ge",
+    "display_alias": "NYESO1-pres_KvvXtVa6yakB17EmB1Ge",
+    "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+    "pins": {
+     "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+     "binder_chain": "D",
+     "contact_cutoff_angstrom": 4.0,
+     "worker_commit": "70b6c6c",
+     "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+     "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+    }
+   },
+   "tier0": {
+    "cif": "pres_KvvXtVa6yakB17EmB1Ge_predicted.cif",
+    "counts": {
+     "buried_anchor_residues_contacted": [],
+     "coldspots_contacted": 0,
+     "coldspots_contacted_by_chain": {},
+     "coldspots_declared": 218,
+     "contacted_by_chain": {
+      "A": [
+       65,
+       66,
+       68,
+       69,
+       72,
+       73,
+       146,
+       149,
+       150,
+       151,
+       152,
+       155,
+       158
+      ],
+      "B": [],
+      "C": [
+       3,
+       4,
+       5,
+       6,
+       7,
+       8
+      ]
+     },
+     "contacted_in_epitope_shell": 19,
+     "contacted_off_epitope_shell": 0,
+     "contacted_target_residues": 19,
+     "epitope_shell_size_by_chain": {
+      "A": 57,
+      "B": 0,
+      "C": 9
+     },
+     "hotspots_contacted": 5,
+     "hotspots_declared": 5
+    },
+    "design_id": "pres_KvvXtVa6yakB17EmB1Ge",
+    "hotspot_contact_fraction": 1.0,
+    "item_1_off_epitope_contact_fraction": 0.0,
+    "item_2_coldspot_contact_fraction": 0.0,
+    "item_3_buried_anchor_contact_count": 0
+   }
+  },
+  "pres_PfYJkQdsLag9x1R5Pt6L": {
+   "ipsae": {
+    "complex_plddt_metrics_json": 0.9586915373802185,
+    "has_cif": true,
+    "has_metrics": true,
+    "has_pae": true,
+    "iptm": 0.7876076698303223,
+    "parse_error": "ImportError: bindi.ipsae unavailable in this environment",
+    "score_error": "ImportError: bindi.ipsae unavailable in this environment"
+   },
+   "item10_docking": {
+    "complementarity_contact_fraction_delta": 0.16998,
+    "complementarity_contact_fraction_designed": 0.07233,
+    "complementarity_contact_fraction_rederived": 0.24231,
+    "method": "Fibonacci-sphere rigid-body search (72 rotations), contact cutoff 4.0 \u00c5; not affinity evidence",
+    "pose_agreement_ca_rmsd_angstrom": 0.0,
+    "search_best_contact_fraction": 0.24231,
+    "status": "RECORDED-NON-GATING"
+   },
+   "item1_shell_reporting": {
+    "10.0": {
+     "epitope_shell_size_by_chain": {
+      "A": 60,
+      "B": 0,
+      "C": 9
+     },
+     "epitope_shell_size_total": 69,
+     "item_1_off_epitope_contact_fraction": 0.0625,
+     "reporting_shell_angstrom": 10.0
+    },
+    "5.0": {
+     "epitope_shell_size_by_chain": {
+      "A": 13,
+      "B": 0,
+      "C": 8
+     },
+     "epitope_shell_size_total": 21,
+     "item_1_off_epitope_contact_fraction": 0.3125,
+     "reporting_shell_angstrom": 5.0
+    }
+   },
+   "policy": {
+    "item_3_buried_anchors_zero": "skipped",
+    "item_5_pose_agreement": "skipped",
+    "item_6_complementarity_delta": "skipped"
+   },
+   "provenance": {
+    "artifact_paths": {
+     "metrics_json": "pres_PfYJkQdsLag9x1R5Pt6L/metrics.json",
+     "pae_npz": "pres_PfYJkQdsLag9x1R5Pt6L/pae.npz",
+     "predicted_cif": "pres_PfYJkQdsLag9x1R5Pt6L/pres_PfYJkQdsLag9x1R5Pt6L_predicted.cif"
+    },
+    "design_id": "pres_PfYJkQdsLag9x1R5Pt6L",
+    "display_alias": "NYESO1-pres_PfYJkQdsLag9x1R5Pt6L",
+    "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+    "pins": {
+     "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+     "binder_chain": "D",
+     "contact_cutoff_angstrom": 4.0,
+     "worker_commit": "70b6c6c",
+     "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+     "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+    }
+   },
+   "tier0": {
+    "cif": "pres_PfYJkQdsLag9x1R5Pt6L_predicted.cif",
+    "counts": {
+     "buried_anchor_residues_contacted": [],
+     "coldspots_contacted": 0,
+     "coldspots_contacted_by_chain": {},
+     "coldspots_declared": 216,
+     "contacted_by_chain": {
+      "A": [
+       19,
+       62,
+       65,
+       66,
+       68,
+       69,
+       72,
+       73,
+       75,
+       152,
+       155
+      ],
+      "B": [],
+      "C": [
+       4,
+       5,
+       6,
+       7,
+       8
+      ]
+     },
+     "contacted_in_epitope_shell": 15,
+     "contacted_off_epitope_shell": 1,
+     "contacted_target_residues": 16,
+     "epitope_shell_size_by_chain": {
+      "A": 60,
+      "B": 0,
+      "C": 9
+     },
+     "hotspots_contacted": 5,
+     "hotspots_declared": 5
+    },
+    "design_id": "pres_PfYJkQdsLag9x1R5Pt6L",
+    "hotspot_contact_fraction": 1.0,
+    "item_1_off_epitope_contact_fraction": 0.0625,
+    "item_2_coldspot_contact_fraction": 0.0,
+    "item_3_buried_anchor_contact_count": 0
+   }
+  },
+  "pres_lppWP1t4ozGyw5s4gq3P": {
+   "ipsae": {
+    "complex_plddt_metrics_json": 0.9438439607620239,
+    "has_cif": true,
+    "has_metrics": true,
+    "has_pae": true,
+    "iptm": 0.8387652039527893,
+    "parse_error": "ImportError: bindi.ipsae unavailable in this environment",
+    "score_error": "ImportError: bindi.ipsae unavailable in this environment"
+   },
+   "item10_docking": {
+    "complementarity_contact_fraction_delta": 0.15128,
+    "complementarity_contact_fraction_designed": 0.0943,
+    "complementarity_contact_fraction_rederived": 0.24558,
+    "method": "Fibonacci-sphere rigid-body search (72 rotations), contact cutoff 4.0 \u00c5; not affinity evidence",
+    "pose_agreement_ca_rmsd_angstrom": 0.0,
+    "search_best_contact_fraction": 0.24558,
+    "status": "RECORDED-NON-GATING"
+   },
+   "item1_shell_reporting": {
+    "10.0": {
+     "epitope_shell_size_by_chain": {
+      "A": 64,
+      "B": 0,
+      "C": 9
+     },
+     "epitope_shell_size_total": 73,
+     "item_1_off_epitope_contact_fraction": 0.0,
+     "reporting_shell_angstrom": 10.0
+    },
+    "5.0": {
+     "epitope_shell_size_by_chain": {
+      "A": 14,
+      "B": 0,
+      "C": 8
+     },
+     "epitope_shell_size_total": 22,
+     "item_1_off_epitope_contact_fraction": 0.4,
+     "reporting_shell_angstrom": 5.0
+    }
+   },
+   "policy": {
+    "item_3_buried_anchors_zero": "skipped",
+    "item_5_pose_agreement": "skipped",
+    "item_6_complementarity_delta": "skipped"
+   },
+   "provenance": {
+    "artifact_paths": {
+     "metrics_json": "pres_lppWP1t4ozGyw5s4gq3P/metrics.json",
+     "pae_npz": "pres_lppWP1t4ozGyw5s4gq3P/pae.npz",
+     "predicted_cif": "pres_lppWP1t4ozGyw5s4gq3P/pres_lppWP1t4ozGyw5s4gq3P_predicted.cif"
+    },
+    "design_id": "pres_lppWP1t4ozGyw5s4gq3P",
+    "display_alias": "NYESO1-pres_lppWP1t4ozGyw5s4gq3P",
+    "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+    "pins": {
+     "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+     "binder_chain": "D",
+     "contact_cutoff_angstrom": 4.0,
+     "worker_commit": "70b6c6c",
+     "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+     "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+    }
+   },
+   "tier0": {
+    "cif": "pres_lppWP1t4ozGyw5s4gq3P_predicted.cif",
+    "counts": {
+     "buried_anchor_residues_contacted": [],
+     "coldspots_contacted": 0,
+     "coldspots_contacted_by_chain": {},
+     "coldspots_declared": 215,
+     "contacted_by_chain": {
+      "A": [
+       65,
+       69,
+       72,
+       75,
+       76,
+       150,
+       151,
+       152,
+       155,
+       158,
+       163
+      ],
+      "B": [],
+      "C": [
+       4,
+       5,
+       7,
+       8
+      ]
+     },
+     "contacted_in_epitope_shell": 15,
+     "contacted_off_epitope_shell": 0,
+     "contacted_target_residues": 15,
+     "epitope_shell_size_by_chain": {
+      "A": 64,
+      "B": 0,
+      "C": 9
+     },
+     "hotspots_contacted": 4,
+     "hotspots_declared": 5
+    },
+    "design_id": "pres_lppWP1t4ozGyw5s4gq3P",
+    "hotspot_contact_fraction": 0.8,
+    "item_1_off_epitope_contact_fraction": 0.0,
+    "item_2_coldspot_contact_fraction": 0.0,
+    "item_3_buried_anchor_contact_count": 0
+   }
+  },
+  "pres_rIVnI2qWY81pul3zHRrN": {
+   "ipsae": {
+    "complex_plddt_metrics_json": 0.909974992275238,
+    "has_cif": true,
+    "has_metrics": true,
+    "has_pae": true,
+    "iptm": 0.9355947971343994,
+    "parse_error": "ImportError: bindi.ipsae unavailable in this environment",
+    "score_error": "ImportError: bindi.ipsae unavailable in this environment"
+   },
+   "item10_docking": {
+    "complementarity_contact_fraction_delta": 0.13569,
+    "complementarity_contact_fraction_designed": 0.08364,
+    "complementarity_contact_fraction_rederived": 0.21933,
+    "method": "Fibonacci-sphere rigid-body search (72 rotations), contact cutoff 4.0 \u00c5; not affinity evidence",
+    "pose_agreement_ca_rmsd_angstrom": 0.0,
+    "search_best_contact_fraction": 0.21933,
+    "status": "RECORDED-NON-GATING"
+   },
+   "item1_shell_reporting": {
+    "10.0": {
+     "epitope_shell_size_by_chain": {
+      "A": 63,
+      "B": 0,
+      "C": 9
+     },
+     "epitope_shell_size_total": 72,
+     "item_1_off_epitope_contact_fraction": 0.0,
+     "reporting_shell_angstrom": 10.0
+    },
+    "5.0": {
+     "epitope_shell_size_by_chain": {
+      "A": 15,
+      "B": 0,
+      "C": 8
+     },
+     "epitope_shell_size_total": 23,
+     "item_1_off_epitope_contact_fraction": 0.25,
+     "reporting_shell_angstrom": 5.0
+    }
+   },
+   "policy": {
+    "item_3_buried_anchors_zero": "skipped",
+    "item_5_pose_agreement": "skipped",
+    "item_6_complementarity_delta": "skipped"
+   },
+   "provenance": {
+    "artifact_paths": {
+     "metrics_json": "pres_rIVnI2qWY81pul3zHRrN/metrics.json",
+     "pae_npz": "pres_rIVnI2qWY81pul3zHRrN/pae.npz",
+     "predicted_cif": "pres_rIVnI2qWY81pul3zHRrN/pres_rIVnI2qWY81pul3zHRrN_predicted.cif"
+    },
+    "design_id": "pres_rIVnI2qWY81pul3zHRrN",
+    "display_alias": "NYESO1-pres_rIVnI2qWY81pul3zHRrN",
+    "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+    "pins": {
+     "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+     "binder_chain": "D",
+     "contact_cutoff_angstrom": 4.0,
+     "worker_commit": "70b6c6c",
+     "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+     "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+    }
+   },
+   "tier0": {
+    "cif": "pres_rIVnI2qWY81pul3zHRrN_predicted.cif",
+    "counts": {
+     "buried_anchor_residues_contacted": [],
+     "coldspots_contacted": 0,
+     "coldspots_contacted_by_chain": {},
+     "coldspots_declared": 212,
+     "contacted_by_chain": {
+      "A": [
+       65,
+       66,
+       69,
+       73,
+       146,
+       149,
+       150,
+       151,
+       152,
+       154,
+       155
+      ],
+      "B": [],
+      "C": [
+       4,
+       5,
+       6,
+       7,
+       8
+      ]
+     },
+     "contacted_in_epitope_shell": 16,
+     "contacted_off_epitope_shell": 0,
+     "contacted_target_residues": 16,
+     "epitope_shell_size_by_chain": {
+      "A": 63,
+      "B": 0,
+      "C": 9
+     },
+     "hotspots_contacted": 5,
+     "hotspots_declared": 5
+    },
+    "design_id": "pres_rIVnI2qWY81pul3zHRrN",
+    "hotspot_contact_fraction": 1.0,
+    "item_1_off_epitope_contact_fraction": 0.0,
+    "item_2_coldspot_contact_fraction": 0.0,
+    "item_3_buried_anchor_contact_count": 0
+   }
+  },
+  "pres_xpto8wJvfrJQhLVH4Mvz": {
+   "ipsae": {
+    "complex_plddt_metrics_json": 0.9358863830566406,
+    "has_cif": true,
+    "has_metrics": true,
+    "has_pae": true,
+    "iptm": 0.5105286836624146,
+    "parse_error": "ImportError: bindi.ipsae unavailable in this environment",
+    "score_error": "ImportError: bindi.ipsae unavailable in this environment"
+   },
+   "item10_docking": {
+    "complementarity_contact_fraction_delta": 0.04991,
+    "complementarity_contact_fraction_designed": 0.04635,
+    "complementarity_contact_fraction_rederived": 0.09626,
+    "method": "Fibonacci-sphere rigid-body search (72 rotations), contact cutoff 4.0 \u00c5; not affinity evidence",
+    "pose_agreement_ca_rmsd_angstrom": 0.0,
+    "search_best_contact_fraction": 0.09626,
+    "status": "RECORDED-NON-GATING"
+   },
+   "item1_shell_reporting": {
+    "10.0": {
+     "epitope_shell_size_by_chain": {
+      "A": 60,
+      "B": 0,
+      "C": 9
+     },
+     "epitope_shell_size_total": 69,
+     "item_1_off_epitope_contact_fraction": 0.0,
+     "reporting_shell_angstrom": 10.0
+    },
+    "5.0": {
+     "epitope_shell_size_by_chain": {
+      "A": 13,
+      "B": 0,
+      "C": 8
+     },
+     "epitope_shell_size_total": 21,
+     "item_1_off_epitope_contact_fraction": 0.125,
+     "reporting_shell_angstrom": 5.0
+    }
+   },
+   "policy": {
+    "item_3_buried_anchors_zero": "skipped",
+    "item_5_pose_agreement": "skipped",
+    "item_6_complementarity_delta": "skipped"
+   },
+   "provenance": {
+    "artifact_paths": {
+     "metrics_json": "pres_xpto8wJvfrJQhLVH4Mvz/metrics.json",
+     "pae_npz": "pres_xpto8wJvfrJQhLVH4Mvz/pae.npz",
+     "predicted_cif": "pres_xpto8wJvfrJQhLVH4Mvz/pres_xpto8wJvfrJQhLVH4Mvz_predicted.cif"
+    },
+    "design_id": "pres_xpto8wJvfrJQhLVH4Mvz",
+    "display_alias": "NYESO1-pres_xpto8wJvfrJQhLVH4Mvz",
+    "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+    "pins": {
+     "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+     "binder_chain": "D",
+     "contact_cutoff_angstrom": 4.0,
+     "worker_commit": "70b6c6c",
+     "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+     "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+    }
+   },
+   "tier0": {
+    "cif": "pres_xpto8wJvfrJQhLVH4Mvz_predicted.cif",
+    "counts": {
+     "buried_anchor_residues_contacted": [],
+     "coldspots_contacted": 0,
+     "coldspots_contacted_by_chain": {},
+     "coldspots_declared": 215,
+     "contacted_by_chain": {
+      "A": [
+       69,
+       76,
+       155
+      ],
+      "B": [],
+      "C": [
+       4,
+       5,
+       6,
+       7,
+       8
+      ]
+     },
+     "contacted_in_epitope_shell": 8,
+     "contacted_off_epitope_shell": 0,
+     "contacted_target_residues": 8,
+     "epitope_shell_size_by_chain": {
+      "A": 60,
+      "B": 0,
+      "C": 9
+     },
+     "hotspots_contacted": 5,
+     "hotspots_declared": 5
+    },
+    "design_id": "pres_xpto8wJvfrJQhLVH4Mvz",
+    "hotspot_contact_fraction": 1.0,
+    "item_1_off_epitope_contact_fraction": 0.0,
+    "item_2_coldspot_contact_fraction": 0.0,
+    "item_3_buried_anchor_contact_count": 0
+   }
+  }
+ },
+ "errors": {},
+ "gating_warning": "FLEET.toml gating remains iptm and plddt only. All Tier 0, item 10, and policy results here are recorded or optional CLI policy \u2014 not fleet gates.",
+ "item10_docking_artifact": {
+  "designs": {
+   "pres_2SOqXG5xbTO4FD4yB5so": {
+    "complementarity_contact_fraction_delta": 0.12585,
+    "complementarity_contact_fraction_designed": 0.08333,
+    "complementarity_contact_fraction_rederived": 0.20918,
+    "method": "Fibonacci-sphere rigid-body search (72 rotations), contact cutoff 4.0 \u00c5; not affinity evidence",
+    "pose_agreement_ca_rmsd_angstrom": 0.0,
+    "search_best_contact_fraction": 0.20918,
+    "status": "RECORDED-NON-GATING"
+   },
+   "pres_B8eqLRLyLSgzkVbLyC7C": {
+    "complementarity_contact_fraction_delta": 0.27032,
+    "complementarity_contact_fraction_designed": 0.09011,
+    "complementarity_contact_fraction_rederived": 0.36042,
+    "method": "Fibonacci-sphere rigid-body search (72 rotations), contact cutoff 4.0 \u00c5; not affinity evidence",
+    "pose_agreement_ca_rmsd_angstrom": 0.0,
+    "search_best_contact_fraction": 0.36042,
+    "status": "RECORDED-NON-GATING"
+   },
+   "pres_Bw8vknhmXJUg72L6CGAw": {
+    "complementarity_contact_fraction_delta": 0.24101,
+    "complementarity_contact_fraction_designed": 0.06655,
+    "complementarity_contact_fraction_rederived": 0.30755,
+    "method": "Fibonacci-sphere rigid-body search (72 rotations), contact cutoff 4.0 \u00c5; not affinity evidence",
+    "pose_agreement_ca_rmsd_angstrom": 0.0,
+    "search_best_contact_fraction": 0.30755,
+    "status": "RECORDED-NON-GATING"
+   },
+   "pres_G3ZfGGLFJXddOc0vhQwO": {
+    "complementarity_contact_fraction_delta": 0.17162,
+    "complementarity_contact_fraction_designed": 0.09901,
+    "complementarity_contact_fraction_rederived": 0.27063,
+    "method": "Fibonacci-sphere rigid-body search (72 rotations), contact cutoff 4.0 \u00c5; not affinity evidence",
+    "pose_agreement_ca_rmsd_angstrom": 0.0,
+    "search_best_contact_fraction": 0.27063,
+    "status": "RECORDED-NON-GATING"
+   },
+   "pres_JA4idjMYaE8EsQKrcb6K": {
+    "complementarity_contact_fraction_delta": 0.10795,
+    "complementarity_contact_fraction_designed": 0.08712,
+    "complementarity_contact_fraction_rederived": 0.19508,
+    "method": "Fibonacci-sphere rigid-body search (72 rotations), contact cutoff 4.0 \u00c5; not affinity evidence",
+    "pose_agreement_ca_rmsd_angstrom": 0.0,
+    "search_best_contact_fraction": 0.19508,
+    "status": "RECORDED-NON-GATING"
+   },
+   "pres_KvvXtVa6yakB17EmB1Ge": {
+    "complementarity_contact_fraction_delta": 0.16821,
+    "complementarity_contact_fraction_designed": 0.08872,
+    "complementarity_contact_fraction_rederived": 0.25693,
+    "method": "Fibonacci-sphere rigid-body search (72 rotations), contact cutoff 4.0 \u00c5; not affinity evidence",
+    "pose_agreement_ca_rmsd_angstrom": 0.0,
+    "search_best_contact_fraction": 0.25693,
+    "status": "RECORDED-NON-GATING"
+   },
+   "pres_PfYJkQdsLag9x1R5Pt6L": {
+    "complementarity_contact_fraction_delta": 0.16998,
+    "complementarity_contact_fraction_designed": 0.07233,
+    "complementarity_contact_fraction_rederived": 0.24231,
+    "method": "Fibonacci-sphere rigid-body search (72 rotations), contact cutoff 4.0 \u00c5; not affinity evidence",
+    "pose_agreement_ca_rmsd_angstrom": 0.0,
+    "search_best_contact_fraction": 0.24231,
+    "status": "RECORDED-NON-GATING"
+   },
+   "pres_lppWP1t4ozGyw5s4gq3P": {
+    "complementarity_contact_fraction_delta": 0.15128,
+    "complementarity_contact_fraction_designed": 0.0943,
+    "complementarity_contact_fraction_rederived": 0.24558,
+    "method": "Fibonacci-sphere rigid-body search (72 rotations), contact cutoff 4.0 \u00c5; not affinity evidence",
+    "pose_agreement_ca_rmsd_angstrom": 0.0,
+    "search_best_contact_fraction": 0.24558,
+    "status": "RECORDED-NON-GATING"
+   },
+   "pres_rIVnI2qWY81pul3zHRrN": {
+    "complementarity_contact_fraction_delta": 0.13569,
+    "complementarity_contact_fraction_designed": 0.08364,
+    "complementarity_contact_fraction_rederived": 0.21933,
+    "method": "Fibonacci-sphere rigid-body search (72 rotations), contact cutoff 4.0 \u00c5; not affinity evidence",
+    "pose_agreement_ca_rmsd_angstrom": 0.0,
+    "search_best_contact_fraction": 0.21933,
+    "status": "RECORDED-NON-GATING"
+   },
+   "pres_xpto8wJvfrJQhLVH4Mvz": {
+    "complementarity_contact_fraction_delta": 0.04991,
+    "complementarity_contact_fraction_designed": 0.04635,
+    "complementarity_contact_fraction_rederived": 0.09626,
+    "method": "Fibonacci-sphere rigid-body search (72 rotations), contact cutoff 4.0 \u00c5; not affinity evidence",
+    "pose_agreement_ca_rmsd_angstrom": 0.0,
+    "search_best_contact_fraction": 0.09626,
+    "status": "RECORDED-NON-GATING"
+   }
+  },
+  "errors": {},
+  "spec": "UPGRADES.md v1.0 section 4 item 10",
+  "status": "RECORDED-NON-GATING"
+ },
+ "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+ "parameters": {
+  "contact_cutoff_angstrom": 4.0,
+  "epitope_shell_cutoff_angstrom": 10.0,
+  "flags_file": "targeting_flags.json",
+  "flags_sha256": "cd838fac35f07599f36d54ede536bbcff9379efa36c4f4520c312e9f312b7171",
+  "item1_reporting_shells_angstrom": [
+   10.0,
+   5.0
+  ]
+ },
+ "pins": {
+  "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+  "binder_chain": "D",
+  "contact_cutoff_angstrom": 4.0,
+  "worker_commit": "70b6c6c",
+  "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+  "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+ },
+ "schema_version": "1.0.0",
+ "status": "RECORDED-NON-GATING"
+}

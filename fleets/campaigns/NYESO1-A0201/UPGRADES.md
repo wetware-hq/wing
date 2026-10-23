@@ -716,8 +716,8 @@ lab) — see `recommendations.md` §0.
 | Shell sweep | **Done** — F1 (10 Å vacuous). |
 | HECTOR G1/G3 | **Rejected**. |
 | Post-hoc `Sc` gate | **Rejected**; no `sc_results.json`. |
-| Item 10 docking | **Not implemented** — Tier 2 priority (section 4). |
-| L2 integration | **Fragmented** — unify per `recommendations.md` §3.7 / WP-A below. |
+| Item 10 docking | **Implemented** — `run-one/item10_docking.py` + `artifacts/item10_docking_results.json`. |
+| L2 integration | **Unified** — `run-one/layer2_orchestrator.py` + `layer2_bundle.json` (WP-A–F). |
 
 | ID | Decision | In code today |
 |---|---|---|
@@ -831,12 +831,12 @@ python3 -c "import ast; ast.parse(open('fleets/campaigns/NYESO1-A0201/modal_laye
 
 ### 10.11 Deliverables checklist
 
-- [ ] WP-A unified L2 orchestrator (local + Modal)
-- [ ] WP-A dual shell 5.0 Å + 10.0 Å reporting
-- [ ] WP-B `--policy buried-anchors-zero`
-- [ ] WP-C item 10 docking + results JSON
-- [ ] WP-F provenance in bundle
-- [ ] Tests green
+- [x] WP-A unified L2 orchestrator (local + Modal-shared `layer2_core`)
+- [x] WP-A dual shell 5.0 Å + 10.0 Å reporting
+- [x] WP-B `--policy buried-anchors-zero`
+- [x] WP-C item 10 docking + results JSON
+- [x] WP-F provenance in bundle
+- [x] Tests green (`tests/test_layer2_orchestrator.py`)
 
 ### 10.12 Return protocol (A2A)
 

@@ -278,6 +278,17 @@ def analyse_design(design_id: str, cif_path: Path, flags: dict, with_sasa: bool 
 DEFAULT_SWEEP_CUTOFFS = (4.0, 5.0, 6.0, 7.0, 8.0, 10.0, 12.0)
 
 
+def item1_reporting_at_shell(cif_path: Path, flags: dict, shell_angstrom: float) -> dict:
+    """Item 1 off-epitope fraction at an explicit shell (P1 dual reporting; not a gate)."""
+    row = sweep_design(cif_path, flags, (shell_angstrom,))["by_cutoff"][f"{shell_angstrom:.1f}"]
+    return {
+        "reporting_shell_angstrom": shell_angstrom,
+        "item_1_off_epitope_contact_fraction": row["off_epitope_contact_fraction"],
+        "epitope_shell_size_by_chain": row["shell_size_by_chain"],
+        "epitope_shell_size_total": row["shell_size_total"],
+    }
+
+
 def sweep_design(cif_path: Path, flags: dict, cutoffs=DEFAULT_SWEEP_CUTOFFS) -> dict:
     """Off-epitope contact fraction at each shell cutoff. Diagnostic only — not a gate."""
     chains = load_chains(cif_path)
