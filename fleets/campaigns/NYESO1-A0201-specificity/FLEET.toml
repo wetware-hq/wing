@@ -1,0 +1,162 @@
+# FLEET.toml — specificity / decoy-screen campaign (sibling to NYESO1-A0201 run-one)
+# Clinical context: ../NYESO1-A0201/CASE.md · Margin definition: SPECIFICITY.md
+# Status: staged, not submitted. No L1B spend until APPR + OD-3 decoy sequences.
+
+[fleet]
+target_id        = "NYESO1-A0201"
+campaign_id      = "NYESO1-A0201-specificity"
+version          = "0.1.0"
+date             = "2026-10-23"
+status           = "staged, not submitted"
+parent_manifest  = "../NYESO1-A0201/FLEET.toml"
+case_file        = "../NYESO1-A0201/CASE.md"
+specificity_doc  = "SPECIFICITY.md"
+provenance_doc   = "PROVENANCE.md"
+layers           = ["boltz", "interface"]
+primary_endpoint = "specificity_margin"
+scope            = "in_silico_decoy_screen"
+
+[survivors]
+source           = "survivor_panel.yaml"
+run_one_job_id   = "prot_des_TY6KzyxULq8mACflXbhn"
+run_one_artifacts = "../NYESO1-A0201/run-one/artifacts/"
+
+[decoy_panel]
+file             = "decoy_panel.yaml"
+cognate_peptide  = "SLLMWITQC"
+panel_ready      = false   # OD-3 outstanding
+
+[negative_design]
+panel            = "targeted"   # OD-2 default; conservative | targeted | aggressive
+applied_in       = "L1B"        # run-one L1A had no negative design
+
+# ---------------------------------------------------------------- agents (unchanged roles)
+
+[[agents]]
+name     = "BIO Scientist"
+role     = "descriptor stack, margin computation, survivor selection"
+
+[[agents]]
+name     = "BIO Physician"
+role     = "decoy and self-peptide panels, in-vitro bar"
+
+[[agents]]
+name     = "BIO Engineer"
+role     = "artifact mirroring, Modal L2 host if n scales"
+
+[[agents]]
+name     = "Mathew"
+role     = "APPR spend authority"
+
+# ---------------------------------------------------------------- graph
+
+[[nodes]]
+id    = "CFG"
+kind  = "manifest"
+label = "survivor_panel.yaml + decoy_panel.yaml + this file"
+
+[[nodes]]
+id            = "APPR"
+kind          = "human_gate"
+approver      = "Mathew"
+spend_cap_usd = 14.50
+on_deny       = "HALT"
+note          = "Remaining budget under original $15.00 after run-one $0.50"
+
+[[nodes]]
+id    = "HALT"
+kind  = "terminal"
+
+[[nodes]]
+id       = "L1B"
+kind     = "predict"
+layer    = "boltz"
+label    = "survivors × decoy panel refold, same HLA"
+provider = "boltz_hosted_predict_api"
+builder  = "l1b_request_builder.py"
+note     = "Prediction endpoint with fixed binder sequence; NOT legacy design body"
+
+[[nodes]]
+id    = "ART"
+kind  = "artifact_store"
+files = ["_predicted.cif", "metrics.json", "pae.npz"]
+
+[[nodes]]
+id    = "L2"
+kind  = "score"
+layer = "interface"
+runner = "../NYESO1-A0201/run-one/layer2_orchestrator.py"
+host  = "pure CPU; ghcr bindi-fleet-env; optional Modal nyeso1-a0201-layer2"
+
+[[nodes]]
+id    = "MARGIN"
+kind  = "compute"
+label = "specificity_margin = on_target_rank - best_decoy_rank"
+module = "specificity_margin.py"
+
+[[nodes]]
+id    = "PANEL"
+kind  = "terminal"
+label = "ranked_panel.json + transport T1 payload"
+
+[graph]
+edges = [
+  ["CFG",   "APPR"],
+  ["APPR",  "HALT",  "deny"],
+  ["APPR",  "L1B",   "approve"],
+  ["L1B",   "ART"],
+  ["ART",   "L2"],
+  ["L2",    "MARGIN"],
+  ["MARGIN","PANEL"],
+  ["PANEL", "handoff:BIO Physician"],
+]
+
+[descriptors]
+stack    = ["complex_iplddt", "shape_complementarity", "plddt", "min_ipsae", "ipsae", "iptm", "pae_interaction"]
+combination_rule = "rank_average"
+
+[platform]
+design_endpoint   = "POST https://api.boltz.bio/compute/v1/protein/design"
+predict_endpoint  = "POST https://api.boltz.bio/compute/v1/protein/predict"
+design_request_shape = "LEGACY REQUIRED for L1A (not re-run here)"
+api_contract_version = "v2026-03-01"
+prediction_model = "boltz-2.1"
+
+[provenance]
+image_digest = "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6"
+bindi_wheel_sha256 = "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+bindi_version = "0.2.0"
+details = "PROVENANCE.md"
+
+[costs]
+run_one_spent_usd = 0.50
+spend_cap_usd     = 14.50
+per_predict_usd   = 0.05
+note = "Fan-out: n_survivors × n_peptides predictions; estimate before APPR"
+
+[[open_decisions]]
+id = "OD-1"
+owner = "Mathew"
+question = "threshold recalibration on this run vs transferred values"
+recommendation = "recalibrate after full decoy panel"
+
+[[open_decisions]]
+id = "OD-2"
+owner = "Mathew with BIO Physician"
+question = "negative-design panel for L1B conditioning"
+recommendation = "targeted"
+
+[[open_decisions]]
+id = "OD-3"
+owner = "BIO Physician"
+question = "ten exact SLLMWITQC mutant decoy sequences"
+blocks = "L1B submit"
+
+[[open_decisions]]
+id = "OD-4"
+owner = "BIO Physician"
+question = "self-peptide / proteome-near-neighbour extension panel"
+
+[transport]
+payload = "artifacts/transport_t1.json"
+rule = "top ≤ 3 designs by specificity_margin with decoy ranks and provenance"
