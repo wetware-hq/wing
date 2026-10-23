@@ -309,8 +309,9 @@ cpu_cores      = 1.0
 memory_mib     = 2048
 timeout_s      = 300
 retries        = 0        # scoring is deterministic; a retry would recur identically
-max_containers = 10       # one per design
-deployed       = false    # specified only; no modal deploy, no modal run
+max_containers = 2        # matches modal_layer2_app.py (pool + cold-start tradeoff)
+deployed       = true     # redeployed 2026-10-23; app nyeso1-a0201-layer2 on wetwarehq
+modal_run      = "2026-10-23: modal run ::main, 10/10 score_one via starmap, ~8.7 s wall; artifacts run-one/artifacts/layer2_results_modal.json; run ap-HPPAF8OwXnpUdNvYrxaB6s"
 docs_fetched_2026_10_21 = [
   "https://modal.com/docs/reference/modal.Image",
   "https://modal.com/docs/reference/modal.App",
@@ -499,6 +500,16 @@ non_gating   = ["ipsae", "min_ipsae"]
 token_align  = "483 PAE tokens == 483 polymer residues for all 10 (A 275 + B 99 + C 9 + D 73); one token per residue, no ligand"
 binder_len   = 73
 tests        = "bindi suite on box: 130 passed, 11 skipped (unchanged code)"
+
+[run_one.result.layer2_modal]
+run_how      = "modal deploy + modal run modal_layer2_app.py::main; ghcr base by digest + bindi-0.2.0 wheel layer; score_one.starmap over run-one/artifacts/pres_*"
+completed_at = "2026-10-23T05:22Z"
+modal_app    = "nyeso1-a0201-layer2"
+modal_run_id = "ap-HPPAF8OwXnpUdNvYrxaB6s"
+designs      = 10
+token_errors = 0
+results_json = "run-one/artifacts/layer2_results_modal.json"
+reconcile    = "10/10 scored without TokenAlignmentError; pair = weakest binder-containing interface (8x C|D, 2x B|D). layer2_bundle.json ipsae blocks still show box ImportError stubs — use this file or FLEET per_design rows for numeric ipSAE"
 
 # NON-GATING observation worth recording, not a verdict: chain-D ipSAE is far higher against the
 # HLA heavy chain (A|D 0.017-0.878) than against the peptide (C|D 0.006-0.697) for every design.

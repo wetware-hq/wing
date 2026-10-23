@@ -671,7 +671,7 @@
   },
   "layer_2_modal_cpu_host": {
     "role": "OPTIONAL parallel execution host for layer 2 (CPU interface scoring). The box remains the default host; Modal is the 'scale handoff' path in arch.mermaid.",
-    "status": "specified + ready-to-deploy; NOT deployed, NOT run. MODAL_TOKEN_ID/SECRET stay inert.",
+    "status": "deployed 2026-10-23; run-one 10-design starmap completed (ap-HPPAF8OwXnpUdNvYrxaB6s); results in run-one/artifacts/layer2_results_modal.json",
     "image": {
       "modal_api": "modal.Image.from_registry(tag, secret=...)",
       "tag_pinned_by_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
