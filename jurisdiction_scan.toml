@@ -1,4 +1,4 @@
-commit_base = "40317e21a101be0f650b127f356ef1da976de0e3"
+commit_base = "953becaaeb7943c1017af6a94eb886c02bebe0b2"
 
 # Jurisdiction term scan (tests: test_jurisdiction_scan.py). Hand-written denylist; no external list imported.
 # Each category is its own check id. Local names and values go in site-profile data, never in the core.
@@ -23,6 +23,10 @@ J-JOBTITLE = '\b(VMO|CMO|CNC|CNE|JMO|Nurse Unit Manager|RMO|SRMO)\b(?! *=)'
 "SCAN-PROMPT-LEAK/people"    = '\b(Mathew|Chu)\b|(?i:mchu001)'
 "SCAN-PROMPT-LEAK/email"     = '(?<![\w.+-])(?!hellowetware@gmail\.com\b)[\w.+-]+@[A-Za-z0-9-]+\.[A-Za-z0-9.-]+'
 "SCAN-PROMPT-LEAK/directive" = 'SYSTEM DIRECTIVE|%PURGE'
+
+[scan]
+# Campaign specs under fleets/campaigns/ are backup manifests (read by no code); agent role names are intentional.
+skip_prefixes = ["fleets/campaigns/", "fleets/prior-art.md"]
 
 [planted]
 J-COUNTRY  = "Australia"

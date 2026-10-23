@@ -692,10 +692,10 @@
         "returns": "ipsae, min_ipsae (both chain orderings when reported), complex_plddt, plddt.present - all NON-GATING, recorded only. Gating stays iptm and plddt.",
         "guard": "TokenAlignmentError raised in-image is re-raised, never swallowed",
         "cpu": "1.0 physical core - ipSAE is O(n^2) numpy on a ~256x256 PAE plus one gemmi parse, sub-second to low-seconds, single-threaded; more cores buy nothing, and 1.0 stops the gemmi parse being throttled under the 0.125 default",
-        "memory_mib": "2048 - arrays are tiny (~0.26 MiB); the footprint is importing numpy+scipy+gemmi+biopython. 2 GiB gives headroom with an OOM backstop; the 128 MiB default risks OOM on import alone",
-        "timeout_s": "300 - a design scores in seconds; 300 s is a loud bound that trips a hang rather than tolerating it. Image pull and cold start are not counted against it",
+        "memory_mib": "512 - measured peak RSS ~60 MiB at 890 tokens; 512 MiB request matches modal_layer2_app.py",
+        "timeout_s": "120 - measured wall ~0.58 s per design; 120 s is a loud hang tripwire; image pull not counted",
         "retries": "0 - scoring is a pure deterministic function of (cif, pae); every failure mode here (TokenAlignmentError, bad CIF, absent pLDDT) is deterministic and recurs identically, so input-retries only delay the loud failure. Container-crash reschedule (OOM, host loss) is Modal's separate mechanism, orthogonal to input retries",
-        "max_containers": "10 - one per design; bounds the concurrent billable core-second burst",
+        "max_containers": "2 - small pool to avoid ten cold starts on a 6 s burst; matches modal_layer2_app.py",
         "docs": [
           "https://modal.com/docs/reference/modal.App",
           "https://modal.com/docs/guide/resources",
