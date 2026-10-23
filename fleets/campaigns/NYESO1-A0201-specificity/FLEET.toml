@@ -7,7 +7,7 @@ target_id        = "NYESO1-A0201"
 campaign_id      = "NYESO1-A0201-specificity"
 version          = "1.0"
 date             = "2026-10-23"
-status           = "modal_l2_launched"
+status           = "l1b_complete_l2_scored"
 parent_manifest  = "../NYESO1-A0201/FLEET.toml"
 case_file        = "../NYESO1-A0201/CASE.md"
 specificity_doc  = "SPECIFICITY.md"
@@ -172,7 +172,7 @@ worker_wheel   = "bindi-0.2.0"
 worker_wheel_sha256 = "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
 last_modal_run_id   = "ap-IshjN3qkaWX2kvCezJbqeM"
 last_modal_run_at   = "2026-10-23"
-last_modal_note     = "Cognate-only L2 starmap (10 survivors); specificity margins still pending L1B decoy refolds"
+last_modal_note     = "Cognate-only L2 starmap (10 survivors); L1B 100/100 decoy refolds complete 2026-10-23"
 
 # ----------------------------------------------------------------- costs
 

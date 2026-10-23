@@ -83,9 +83,9 @@ def test_specificity_bundle_on_run_one(spec_mod):
         assert rec.get("binder_sequence")
         status = rec["specificity"]["margin_status"]
         if has_bindi:
-            assert status == "pending_l1b"
+            assert status in ("pending_l1b", "computed")
         else:
-            assert status in ("pending_l1b", "missing_on_target_score")
+            assert status in ("pending_l1b", "missing_on_target_score", "computed")
         assert "pass" in rec["liability_filters"]
         if not rec["liability_filters"]["pass"]:
             assert rec["gates"]["hard_pass"] is False

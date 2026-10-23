@@ -44,6 +44,45 @@ def non_binding_residues_for_panel(panel: dict[str, Any]) -> dict[str, list[int]
     return nb
 
 
+def build_structure_and_binding_input(
+    *,
+    binder_sequence: str,
+    peptide_sequence: str,
+) -> dict[str, Any]:
+    """Input body for POST /compute/v1/predictions/structure-and-binding (live API 2026-10-23).
+
+    The prediction API rejects ``non_binding_residues`` / ``epitope_residues`` on entities.
+    Negative-design intent for L1B is recorded in campaign manifest only until the predict
+    API accepts the same annotations as design.
+    """
+    entities: list[dict[str, Any]] = [
+        {"type": "protein", "chain_ids": ["A"], "value": HLA_A_SEQ},
+        {"type": "protein", "chain_ids": ["B"], "value": B2M_SEQ},
+        {"type": "protein", "chain_ids": ["C"], "value": peptide_sequence},
+        {"type": "protein", "chain_ids": ["D"], "value": binder_sequence},
+    ]
+    return {
+        "entities": entities,
+        "binding": {"type": "protein_protein_binding", "binder_chain_ids": ["D"]},
+        "num_samples": 1,
+    }
+
+
+def build_structure_and_binding_payload(
+    *,
+    binder_sequence: str,
+    peptide_sequence: str,
+    model: str = "boltz-2.1",
+) -> dict[str, Any]:
+    return {
+        "model": model,
+        "input": build_structure_and_binding_input(
+            binder_sequence=binder_sequence,
+            peptide_sequence=peptide_sequence,
+        ),
+    }
+
+
 def build_predict_request(
     *,
     binder_sequence: str,
@@ -51,41 +90,21 @@ def build_predict_request(
     negative_design_panel: str = "targeted",
     model: str = "boltz-2.1",
 ) -> dict[str, Any]:
-    """POST https://api.boltz.bio/compute/v1/protein/predict (structure + binding, fixed sequences)."""
-    if negative_design_panel != "targeted":
-        raise ValueError("only targeted panel is encoded; override via manifest for other panels")
-    nb = non_binding_residues_for_panel(TARGETED_PANEL)
-    entities: list[dict[str, Any]] = [
-        {"type": "protein", "chain_ids": ["A"], "value": HLA_A_SEQ},
-        {"type": "protein", "chain_ids": ["B"], "value": B2M_SEQ},
-        {
-            "type": "protein",
-            "chain_ids": ["C"],
-            "value": peptide_sequence,
-            "epitope_residues": list(range(9)),
-        },
-        {"type": "protein", "chain_ids": ["D"], "value": binder_sequence},
-    ]
-    # non_binding_residues apply to target chains A/B per run-one probe convention
-    entities[0]["non_binding_residues"] = nb.get("A", [])
-    entities[1]["non_binding_residues"] = nb.get("B", [])
-
-    return {
-        "model": model,
-        "input": {
-            "entities": entities,
-        },
-        "_meta": {
-            "campaign": "NYESO1-A0201-specificity",
-            "node": "L1B",
-            "negative_design_panel": negative_design_panel,
-            "api_contract_version": "v2026-03-01",
-            "note": (
-                "Prediction endpoint for decoy refold; design endpoint legacy shape is NOT used here. "
-                "Verify body against live docs before spend."
-            ),
-        },
+    """Legacy manifest wrapper; wire payload uses structure-and-binding API."""
+    del negative_design_panel  # manifest-only until predict API accepts annotations
+    payload = build_structure_and_binding_payload(
+        binder_sequence=binder_sequence,
+        peptide_sequence=peptide_sequence,
+        model=model,
+    )
+    payload["_meta"] = {
+        "campaign": "NYESO1-A0201-specificity",
+        "node": "L1B",
+        "api_path": "/compute/v1/predictions/structure-and-binding",
+        "api_contract_version": "v2026-03-01",
+        "negative_design_panel_note": "targeted panel in FLEET; not sent on predict API (validation)",
     }
+    return payload
 
 
 def write_l1b_manifest(
