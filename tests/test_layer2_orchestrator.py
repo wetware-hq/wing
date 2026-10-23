@@ -27,6 +27,7 @@ def _load(name: str):
 
 def _load_all():
     _load("contact_analysis")
+    _load("specificity_scoring")
     return _load("layer2_core"), _load("tier0_targeting"), _load("layer2_orchestrator")
 
 

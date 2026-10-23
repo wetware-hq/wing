@@ -1,70 +1,97 @@
-# Decoy and on-target peptide panel for campaign NYESO1-A0201-specificity.
-# Sequences marked PLACEHOLDER must be supplied by BIO Physician (OD-3, OD-4) before L1B submit.
+# Decoy peptide panel for campaign NYESO1-A0201-specificity (L1B refold input).
+# Cognate: SLLMWITQC (NY-ESO-1 157-165 / HLA-A*02:01). Focus: TCR-facing P4-P8.
 
 schema_version: "1.0"
 campaign_id: NYESO1-A0201-specificity
 owner: BIO Physician
-status: draft_pending_OD-3
+status: OD-3_proposals
+panel_ready_for_l1b: false  # true only after BIO Physician signs sequences (replaces proposal flag)
 
 cognate:
   peptide_id: cognate_SLLMWITQC
   sequence: SLLMWITQC
   role: on_target
-  positions_mutated: []
-  rationale: NY-ESO-1 157-165 epitope on HLA-A*02:01 (campaign reference peptide)
+  hla: HLA-A*02:01
+  focus_positions_p1_p9: [4, 5, 6, 7, 8]
 
-decoys:
-  _note: |
-    Ten peptide mutants of SLLMWITQC (nine single/double, one quadruple) per reproduction
-    target 10.1101/2024.11.27.624796. Mutations should focus on TCR-facing P4-P8 (0-based
-    indices 3-7 on chain C). DO NOT run L1B with placeholder sequences.
-  entries:
-    - peptide_id: decoy_01_PLACEHOLDER
-      sequence: null
-      positions_mutated: [TBD]
-      rationale: OD-3 — exact mutant from paper supplement
-    - peptide_id: decoy_02_PLACEHOLDER
-      sequence: null
-      positions_mutated: [TBD]
-      rationale: OD-3
-    - peptide_id: decoy_03_PLACEHOLDER
-      sequence: null
-      positions_mutated: [TBD]
-      rationale: OD-3
-    - peptide_id: decoy_04_PLACEHOLDER
-      sequence: null
-      positions_mutated: [TBD]
-      rationale: OD-3
-    - peptide_id: decoy_05_PLACEHOLDER
-      sequence: null
-      positions_mutated: [TBD]
-      rationale: OD-3
-    - peptide_id: decoy_06_PLACEHOLDER
-      sequence: null
-      positions_mutated: [TBD]
-      rationale: OD-3
-    - peptide_id: decoy_07_PLACEHOLDER
-      sequence: null
-      positions_mutated: [TBD]
-      rationale: OD-3
-    - peptide_id: decoy_08_PLACEHOLDER
-      sequence: null
-      positions_mutated: [TBD]
-      rationale: OD-3
-    - peptide_id: decoy_09_PLACEHOLDER
-      sequence: null
-      positions_mutated: [TBD]
-      rationale: OD-3
-    - peptide_id: decoy_10_PLACEHOLDER
-      sequence: null
-      positions_mutated: [TBD]
-      rationale: OD-3 — quadruple mutant slot
+negative_design_panel: targeted  # OD-2 default
+
+composition:
+  single: 7
+  double: 2
+  quadruple: 1
+  total: 10
 
 self_peptides:
   _note: OD-4 — clinical proteome-near-neighbour and self-peptide panel (optional extension)
   entries: []
 
-panel_ready_for_l1b: false
+note: >
+  Exact sequences from the reproduction paper supplement remain OUTSTANDING (OD-3).
+  The mutants below are concrete BIO Physician proposals for TCR-facing P4-P8 edits
+  until signed sequences arrive. Do not treat proposal sequences as signed for L1B submit.
+
+mutants:
+  - id: decoy_p4_m_to_v
+    class: single
+    positions_p1_p9: [4]
+    sequence: SLLVWITQC
+    proposal: true
+
+  - id: decoy_p4_m_to_a
+    class: single
+    positions_p1_p9: [4]
+    sequence: SLLAWITQC
+    proposal: true
+
+  - id: decoy_p5_w_to_a
+    class: single
+    positions_p1_p9: [5]
+    sequence: SLLMAITQC
+    proposal: true
+
+  - id: decoy_p5_w_to_f
+    class: single
+    positions_p1_p9: [5]
+    sequence: SLLMFITQC
+    proposal: true
+
+  - id: decoy_p6_i_to_a
+    class: single
+    positions_p1_p9: [6]
+    sequence: SLLMWATQC
+    proposal: true
+
+  - id: decoy_p7_t_to_a
+    class: single
+    positions_p1_p9: [7]
+    sequence: SLLMWIAQC
+    proposal: true
+
+  - id: decoy_p8_q_to_a
+    class: single
+    positions_p1_p9: [8]
+    sequence: SLLMWITAC
+    proposal: true
+
+  - id: decoy_p4v_p5a
+    class: double
+    positions_p1_p9: [4, 5]
+    sequence: SLLVAITQC
+    proposal: true
+
+  - id: decoy_p6a_p7a
+    class: double
+    positions_p1_p9: [6, 7]
+    sequence: SLLMWAAQC
+    proposal: true
+
+  - id: decoy_p4_p5_p6_p7_quad
+    class: quadruple
+    positions_p1_p9: [4, 5, 6, 7]
+    sequence: SLLAAAAQC
+    proposal: true
+
 open_decisions:
   - OD-3
   - OD-4

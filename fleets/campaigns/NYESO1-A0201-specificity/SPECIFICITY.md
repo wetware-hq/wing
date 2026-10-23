@@ -1,99 +1,140 @@
 # Specificity margin — NYESO1-A0201-specificity
 
 **Campaign id:** `NYESO1-A0201-specificity` · **Parent:** `NYESO1-A0201` · **Date:** 2026-10-23  
-**Primary endpoint:** `specificity_margin` (on-target rank − best-decoy rank)
+**Primary endpoint (manifest):** `specificity_margin` · **Ranking:** `margin_first`
 
-## Definition
+Two computation paths exist in this repository after merging main (#12) and the A2A Layer 2
+extension (#13). **Mathew / BIO Scientist must pick one primary gate before L1B submit** — see
+[Conflicting intents](#conflicting-intents-reconciled-in-docs-not-in-code-yet).
 
-For each survivor binder (fixed chain D sequence from run-one), Boltz refolds the **same**
-HLA-A*02:01 + β2m complex with:
+---
 
-1. The **cognate** peptide `SLLMWITQC` (on-target).
-2. Each **decoy** peptide from the panel (OD-3; P4–P8-focused mutants).
+## Path A — ipSAE score margin (Layer 2 `--specificity-campaign`) **primary for A2A gates**
 
-Layer 2 scores every refold with the existing pure-CPU path (`layer2_orchestrator.py` in
-`../NYESO1-A0201/run-one/`, `bindi` ipSAE + contact geometry + recorded Tier-0 / item-10).
+Implemented in `../NYESO1-A0201/run-one/specificity_scoring.py` and
+`layer2_orchestrator.py --specificity-campaign`.
 
-Within one survivor, each peptide receives a **rank_average** over the descriptor stack declared
-in `FLEET.toml`:
+For each survivor design *d*:
 
-| Descriptor | Source (L2) | Direction |
-|---|---|---|
-| `complex_iplddt` | `metrics.json` | higher better |
-| `shape_complementarity` | item-10 `complementarity_contact_fraction_delta` | higher better |
-| `plddt` | chain D mean from ipSAE parse | higher better |
-| `min_ipsae` | ipSAE pairs | higher better |
-| `ipsae` | C\|D ipSAE | higher better |
-| `iptm` | `metrics.json` | higher better |
-| `pae_interaction` | `min_interaction_pae` in `metrics.json` | **lower** better |
+1. **On-target score** — chain C|D min ipSAE on the cognate complex (run-one `pres_*` or L1B cognate refold).
+2. **Decoy scores** — same metric on each decoy under `artifacts/decoy_refolds/<design_id>/<decoy_id>/`.
+3. **Score margin (hard gate in `FLEET.toml`):**
+   ```text
+   specificity_margin = on_target_ipsae_cd − max(decoy_ipsae_cd)
+   ```
+   Hard gate: `specificity_margin >= 0.15` (not calibrated on pMHC).
 
-Peptides are ordinally ranked by ascending `rank_average` (rank **1** = best).
+4. **Rank audit fields:** peptides sorted by descending ipSAE; `rank_margin = best_decoy_rank − on_target_rank`.
+
+**Also on this path:** pure-CPU **liability filters** (motif scan, Cys, M/W proxy, SAP placeholder),
+**developability_score** (secondary rank key), **buried_anchor_contacts == 0**, soft iptm / chain-D pLDDT.
+
+Until L1B decoy artifacts exist, margin is `null` with `margin_status: pending_l1b`.
+
+### Path A artifact layout
 
 ```
+../NYESO1-A0201/run-one/artifacts/
+  pres_<design_id>/                 # cognate (run-one)
+  decoy_refolds/
+    <design_id>/
+      <decoy_id>/
+        *_predicted.cif
+        metrics.json
+        pae.npz
+```
+
+### Path A command
+
+```bash
+cd ../NYESO1-A0201/run-one
+python3 layer2_orchestrator.py --specificity-campaign \
+  --decoy-panel ../../NYESO1-A0201-specificity/decoy_panel.yaml
+```
+
+Outputs: `artifacts/panel.json` (ranked PANEL + top ≤3 hand-off).
+
+---
+
+## Path B — rank_average rank margin (#12 stub)
+
+Implemented in `specificity_margin.py` and `specificity_orchestrator.py`.
+
+Boltz refolds each survivor against cognate + decoys (see `FLEET.toml` L1B / `l1b_request_builder.py`).
+Layer 2 scores each peptide; descriptors are combined with **rank_average** over the stack in
+`FLEET.toml` `[descriptors]`. Within one survivor:
+
+```text
 specificity_margin = on_target_rank − best_decoy_rank
 ```
 
-**Interpretation (rank 1 = best):** negative or zero margin means the cognate ranks at least as
-well as the strongest decoy — the in-silico **draft** pass rule for hand-off is
-`specificity_margin <= 0`. Positive margin means a decoy outranks the cognate (specificity failure
-under this stack).
+(rank **1** = best = lowest rank_average). Draft pass rule in #12: `specificity_margin <= 0` when
+cognate beats decoys. **This sign and threshold contradict Path A’s `>= 0.15` ipSAE gate.**
 
-`iptm` and binder `plddt` alone are **not** the ranking key; they enter only as terms in
-`rank_average`.
-
-## Artifact layout (post-L1B)
+### Path B artifact layout (post-L1B)
 
 ```
 artifacts/
-  <design_id>/                    # e.g. pres_KvvXtVa6yakB17EmB1Ge
+  <design_id>/
     cognate_SLLMWITQC/
-      <job>_predicted.cif
-      metrics.json
-      pae.npz
+      ...
     decoy_01_.../
       ...
 ```
 
-Run-one cognate-only mirrors remain valid for calibration:
-
-```
-../NYESO1-A0201/run-one/artifacts/<design_id>/
-```
-
-## Execution graph (this campaign)
-
-See `FLEET.toml`: **CFG → APPR → L1B → ART → L2 → MARGIN → PANEL**. L1A is skipped; survivors
-are listed in `survivor_panel.yaml`.
-
-## Pass / hand-off to in vitro (BIO Physician)
-
-| Stage | Criterion | Owner |
-|---|---|---|
-| In silico (this campaign) | Margin computed with full decoy panel; top designs by margin (not iptm) | BIO Scientist |
-| Draft in-silico bar | `specificity_margin <= 0` + contact geometry recorded on cognate refold | BIO Scientist |
-| In vitro | SPR/BLI, decoy/self counter-screen, multimer + Jurkat-NFAT (OD-5) | BIO Physician |
-
-Thresholds remain **transferred** until OD-1 recalibration on this run completes.
-
-## Commands
+### Path B commands
 
 ```bash
-# Ranked panel stub (run-one cognate only; margin incomplete until OD-3 + L1B)
 python3 fleets/campaigns/NYESO1-A0201-specificity/specificity_orchestrator.py
-
-# Full L2 rescore per peptide directory tree
 python3 fleets/campaigns/NYESO1-A0201-specificity/specificity_orchestrator.py --score
-
-# L1B request manifest (after decoy_panel.yaml sequences are filled)
 python3 fleets/campaigns/NYESO1-A0201-specificity/specificity_orchestrator.py \
   --write-l1b-manifest fleets/campaigns/NYESO1-A0201-specificity/artifacts/l1b_manifest.json
 ```
 
-## Open decisions (must stay visible)
+---
+
+## Execution graph
+
+`FLEET.toml`: **CFG → APPR → L1B → ART → L2 → MARGIN → PANEL**. L1A is skipped; survivors are
+in `survivor_panel.yaml`.
+
+---
+
+## Decoy panel
+
+`decoy_panel.yaml` — ten **OD-3 proposals** (7/2/1 on P4–P8). `panel_ready_for_l1b: false` until
+BIO Physician signs sequences. `self_peptides` empty (OD-4).
+
+---
+
+## Open decisions
 
 | Id | Question | Default |
 |---|---|---|
-| OD-1 | Recalibrate thresholds on this run vs keep transferred | Recalibrate (Mathew) |
+| OD-1 | Recalibrate thresholds on this run vs transferred | Recalibrate (Mathew) |
 | OD-2 | Negative-design panel | **targeted** |
-| OD-3 | Ten decoy sequences | BIO Physician |
-| OD-4 | Self / proteome-near-neighbour panel | BIO Physician |
+| OD-3 | Ten decoy sequences | BIO Physician (blocks L1B) |
+| OD-4 | Self / proteome panel | BIO Physician |
+
+---
+
+## Conflicting intents (reconciled in docs, not in code yet)
+
+| Topic | Path A (A2A / #13) | Path B (main #12) |
+|---|---|---|
+| Margin definition | ipSAE C|D score difference | Ordinal rank from rank_average stack |
+| Pass direction | Higher margin better; gate **≥ 0.15** | Rank margin; draft pass **≤ 0** |
+| L1B API | Decoy refolds (layout above); parent **LEGACY design** unchanged | **`/protein/predict`** via `l1b_request_builder.py` |
+| Hand-off ranking | margin → developability → iptm | rank margin on descriptor stack |
+
+**Human action:** choose Path A or B (or define a single merged formula) before spend on full L1B fan-out.
+
+---
+
+## Validation checklist
+
+- Token alignment: bindi `TokenAlignmentError` unchanged.
+- Deterministic JSON: `sort_keys=True` on panel outputs.
+- Layer 2: pure CPU; no GPU in scoring path.
+- APPR: `$14.50` spend cap.
+- Hand-off: ≤ 3 designs when margin is computable on the chosen path.

@@ -15,9 +15,11 @@ from pathlib import Path
 
 import contact_analysis
 import layer2_core
+import specificity_scoring
 import tier0_targeting
 
-BUNDLE_VERSION = "1.1.0"
+BUNDLE_VERSION = "1.2.0"
+SPECIFICITY_CAMPAIGN_ID = "NYESO1-A0201-specificity"
 REPORTING_SHELLS = (10.0, 5.0)
 
 
@@ -33,6 +35,9 @@ def score_design(
     with_sasa: bool,
     with_docking: bool,
     with_contact_site: bool,
+    *,
+    decoy_panel: dict | None = None,
+    with_specificity: bool = False,
 ) -> dict:
     paths = layer2_core.design_paths(design_dir)
     block: dict = {
@@ -60,6 +65,29 @@ def score_design(
             block["item10_docking"] = layer2_core.measure_item10_docking(paths["cif"])
         if with_contact_site:
             block["contact_site"] = contact_analysis.analyse_design(design_id, paths["cif"])
+        if with_specificity and paths["cif"]:
+            seq = specificity_scoring.binder_sequence_from_cif(paths["cif"])
+            block["binder_sequence"] = seq
+            block["liability_filters"] = specificity_scoring.liability_filters(seq)
+            on_target = specificity_scoring.peptide_binder_ipsae(block.get("ipsae") or {})
+            decoy_scores: dict[str, float | None] = {}
+            if decoy_panel:
+                for mut in decoy_panel.get("mutants", []):
+                    did = mut["id"]
+                    scored = specificity_scoring.score_decoy_complex(
+                        design_id,
+                        did,
+                        artifacts_root,
+                        layer2_core.score_ipsae_record,
+                    )
+                    decoy_scores[did] = scored.get("ipsae_cd")
+            block["specificity"] = specificity_scoring.compute_margin(on_target, decoy_scores)
+            block["gates"] = specificity_scoring.evaluate_gates(
+                block["specificity"],
+                block["liability_filters"],
+                block.get("tier0") or {},
+                block.get("ipsae") or {},
+            )
     return block
 
 
@@ -71,8 +99,14 @@ def run_bundle(
     with_docking: bool = True,
     with_contact_site: bool = True,
     policies: tuple[str, ...] = (),
+    decoy_panel_path: Path | None = None,
+    with_specificity: bool = False,
+    campaign_id: str = "NYESO1-A0201",
 ) -> dict:
     flags = tier0_targeting.load_flags(flags_path)
+    decoy_panel = (
+        specificity_scoring.load_decoy_panel(decoy_panel_path) if decoy_panel_path else None
+    )
     designs: dict[str, dict] = {}
     errors: dict[str, str] = {}
     tier0_rows: dict[str, dict] = {}
@@ -88,6 +122,8 @@ def run_bundle(
                 with_sasa,
                 with_docking,
                 with_contact_site,
+                decoy_panel=decoy_panel,
+                with_specificity=with_specificity,
             )
             rec["policy"] = layer2_core.evaluate_l2_policies(rec.get("tier0", {}), policies)
             designs[d.name] = rec
@@ -98,9 +134,9 @@ def run_bundle(
         except Exception as e:  # noqa: BLE001
             errors[d.name] = f"{type(e).__name__}: {e}"
 
-    return {
+    payload = {
         "schema_version": BUNDLE_VERSION,
-        "campaign": "NYESO1-A0201",
+        "campaign": campaign_id,
         "status": "RECORDED-NON-GATING",
         "gating_warning": (
             "FLEET.toml gating remains iptm and plddt only. Tier 0, item 10, contact site, "
@@ -129,6 +165,15 @@ def run_bundle(
         "designs": designs,
         "errors": errors,
     }
+    if with_specificity:
+        payload["status"] = "SPECIFICITY-PANEL"
+        payload["primary_endpoint"] = "specificity_margin"
+        payload["gating_warning"] = (
+            "Specificity campaign: hard gates include specificity_margin >= 0.15, "
+            "buried_anchor_contacts == 0, liability_filters.pass (see SPECIFICITY.md)."
+        )
+        payload["panel"] = specificity_scoring.build_panel_payload(payload)
+    return payload
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -152,6 +197,21 @@ def main(argv: list[str] | None = None) -> int:
         default=[],
         help="Optional policies, e.g. buried-anchors-zero (UPGRADES P2; not FLEET.toml)",
     )
+    ap.add_argument(
+        "--specificity-campaign",
+        action="store_true",
+        help="Enable specificity margin + liability filters + ranked PANEL JSON",
+    )
+    ap.add_argument(
+        "--decoy-panel",
+        default=None,
+        help="Path to decoy_panel.yaml (default: NYESO1-A0201-specificity/decoy_panel.yaml)",
+    )
+    ap.add_argument(
+        "--panel-out",
+        default=None,
+        help="Ranked PANEL JSON path (default: <artifacts>/panel.json)",
+    )
     args = ap.parse_args(argv)
 
     artifacts = Path(args.artifacts)
@@ -163,6 +223,14 @@ def main(argv: list[str] | None = None) -> int:
 
     flags_path = Path(args.flags)
     bundle_path = Path(args.bundle_out or artifacts / "layer2_bundle.json")
+    decoy_path: Path | None = None
+    if args.specificity_campaign:
+        default_decoy = (
+            run_dir.parent.parent
+            / "NYESO1-A0201-specificity"
+            / "decoy_panel.yaml"
+        )
+        decoy_path = Path(args.decoy_panel or default_decoy)
 
     payload = run_bundle(
         artifacts,
@@ -171,8 +239,16 @@ def main(argv: list[str] | None = None) -> int:
         with_docking=not args.no_docking,
         with_contact_site=not args.no_contact_site,
         policies=tuple(args.policy),
+        decoy_panel_path=decoy_path,
+        with_specificity=args.specificity_campaign,
+        campaign_id=SPECIFICITY_CAMPAIGN_ID if args.specificity_campaign else "NYESO1-A0201",
     )
     bundle_path.write_text(json.dumps(payload, indent=1, sort_keys=True))
+
+    if args.specificity_campaign and payload.get("panel"):
+        panel_path = Path(args.panel_out or artifacts / "panel.json")
+        panel_path.write_text(json.dumps(payload["panel"], indent=1, sort_keys=True))
+        print(f"WROTE {panel_path} (ranked PANEL)")
 
     legacy_path = Path(args.legacy_out or artifacts / "layer2_results.json")
     legacy_path.write_text(

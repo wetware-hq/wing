@@ -1,0 +1,1596 @@
+{
+ "campaign_id": "NYESO1-A0201-specificity",
+ "designs": [
+  {
+   "binder_sequence": "SLEEAVEFAGRALDKIFAGEALSEEERRRLEEALRLARATVERLGGALDEEGRLAAEAENLARTTLAAEALRA",
+   "chain_D_plddt_mean": null,
+   "contact_site": null,
+   "design_id": "pres_Bw8vknhmXJUg72L6CGAw",
+   "developability_score": 1.0,
+   "gates": {
+    "fail_reasons": [
+     "specificity_margin:pending"
+    ],
+    "hard_pass": false,
+    "soft_pass": false
+   },
+   "iptm": 0.9626621007919312,
+   "liability_filters": {
+    "allow": "none",
+    "developability_score": 1.0,
+    "exposed_oxidation": {
+     "hard_fail": false,
+     "residue_counts": {
+      "M": 0,
+      "W": 0
+     },
+     "sequence_proxy": true,
+     "threshold": 1
+    },
+    "motif_hits": [],
+    "pass": true,
+    "sap_patch": {
+     "mode": "soft",
+     "soft_fail": false,
+     "status": "skipped_no_sap"
+    },
+    "unpaired_cys": {
+     "count": 0,
+     "hard_fail": false
+    }
+   },
+   "provenance": {
+    "artifact_paths": {
+     "metrics_json": "pres_Bw8vknhmXJUg72L6CGAw/metrics.json",
+     "pae_npz": "pres_Bw8vknhmXJUg72L6CGAw/pae.npz",
+     "predicted_cif": "pres_Bw8vknhmXJUg72L6CGAw/pres_Bw8vknhmXJUg72L6CGAw_predicted.cif"
+    },
+    "design_id": "pres_Bw8vknhmXJUg72L6CGAw",
+    "display_alias": "NYESO1-pres_Bw8vknhmXJUg72L6CGAw",
+    "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+    "pins": {
+     "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+     "binder_chain": "D",
+     "contact_cutoff_angstrom": 4.0,
+     "worker_commit": "70b6c6c",
+     "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+     "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+    }
+   },
+   "rank": 1,
+   "specificity": {
+    "best_decoy_ipsae_cd": null,
+    "best_decoy_rank": null,
+    "margin_status": "missing_on_target_score",
+    "on_target_ipsae_cd": null,
+    "on_target_rank": null,
+    "rank_margin": null,
+    "specificity_margin": null
+   },
+   "tier0": {
+    "cif": "pres_Bw8vknhmXJUg72L6CGAw_predicted.cif",
+    "counts": {
+     "buried_anchor_residues_contacted": [],
+     "coldspots_contacted": 0,
+     "coldspots_contacted_by_chain": {},
+     "coldspots_declared": 213,
+     "contacted_by_chain": {
+      "A": [
+       36,
+       43,
+       62,
+       65,
+       66,
+       68,
+       69,
+       71,
+       72,
+       73,
+       75,
+       76,
+       155,
+       158
+      ],
+      "B": [],
+      "C": [
+       4,
+       5,
+       6,
+       8
+      ]
+     },
+     "contacted_in_epitope_shell": 16,
+     "contacted_off_epitope_shell": 2,
+     "contacted_target_residues": 18,
+     "epitope_shell_size_by_chain": {
+      "A": 62,
+      "B": 0,
+      "C": 9
+     },
+     "hotspots_contacted": 4,
+     "hotspots_declared": 5
+    },
+    "design_id": "pres_Bw8vknhmXJUg72L6CGAw",
+    "hotspot_contact_fraction": 0.8,
+    "item_1_off_epitope_contact_fraction": 0.11111,
+    "item_2_coldspot_contact_fraction": 0.0,
+    "item_3_buried_anchor_contact_count": 0
+   }
+  },
+  {
+   "binder_sequence": "MEVRASGVIQNPETVKVGDRVSFALAGSKESLEGTVVSVTADEVVIETETGARIVAKYDPALNAAIGEGTVEL",
+   "chain_D_plddt_mean": null,
+   "contact_site": null,
+   "design_id": "pres_JA4idjMYaE8EsQKrcb6K",
+   "developability_score": 1.0,
+   "gates": {
+    "fail_reasons": [
+     "specificity_margin:pending",
+     "liability_filters:fail"
+    ],
+    "hard_pass": false,
+    "soft_pass": false
+   },
+   "iptm": 0.924859881401062,
+   "liability_filters": {
+    "allow": "none",
+    "developability_score": 1.0,
+    "exposed_oxidation": {
+     "hard_fail": true,
+     "residue_counts": {
+      "M": 1,
+      "W": 0
+     },
+     "sequence_proxy": true,
+     "threshold": 1
+    },
+    "motif_hits": [],
+    "pass": false,
+    "sap_patch": {
+     "mode": "soft",
+     "soft_fail": false,
+     "status": "skipped_no_sap"
+    },
+    "unpaired_cys": {
+     "count": 0,
+     "hard_fail": false
+    }
+   },
+   "provenance": {
+    "artifact_paths": {
+     "metrics_json": "pres_JA4idjMYaE8EsQKrcb6K/metrics.json",
+     "pae_npz": "pres_JA4idjMYaE8EsQKrcb6K/pae.npz",
+     "predicted_cif": "pres_JA4idjMYaE8EsQKrcb6K/pres_JA4idjMYaE8EsQKrcb6K_predicted.cif"
+    },
+    "design_id": "pres_JA4idjMYaE8EsQKrcb6K",
+    "display_alias": "NYESO1-pres_JA4idjMYaE8EsQKrcb6K",
+    "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+    "pins": {
+     "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+     "binder_chain": "D",
+     "contact_cutoff_angstrom": 4.0,
+     "worker_commit": "70b6c6c",
+     "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+     "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+    }
+   },
+   "rank": 2,
+   "specificity": {
+    "best_decoy_ipsae_cd": null,
+    "best_decoy_rank": null,
+    "margin_status": "missing_on_target_score",
+    "on_target_ipsae_cd": null,
+    "on_target_rank": null,
+    "rank_margin": null,
+    "specificity_margin": null
+   },
+   "tier0": {
+    "cif": "pres_JA4idjMYaE8EsQKrcb6K_predicted.cif",
+    "counts": {
+     "buried_anchor_residues_contacted": [],
+     "coldspots_contacted": 0,
+     "coldspots_contacted_by_chain": {},
+     "coldspots_declared": 217,
+     "contacted_by_chain": {
+      "A": [
+       69,
+       72,
+       73,
+       75,
+       76,
+       146,
+       150,
+       151,
+       155,
+       158
+      ],
+      "B": [],
+      "C": [
+       4,
+       5,
+       6,
+       7,
+       8
+      ]
+     },
+     "contacted_in_epitope_shell": 15,
+     "contacted_off_epitope_shell": 0,
+     "contacted_target_residues": 15,
+     "epitope_shell_size_by_chain": {
+      "A": 59,
+      "B": 0,
+      "C": 9
+     },
+     "hotspots_contacted": 5,
+     "hotspots_declared": 5
+    },
+    "design_id": "pres_JA4idjMYaE8EsQKrcb6K",
+    "hotspot_contact_fraction": 1.0,
+    "item_1_off_epitope_contact_fraction": 0.0,
+    "item_2_coldspot_contact_fraction": 0.0,
+    "item_3_buried_anchor_contact_count": 0
+   }
+  },
+  {
+   "binder_sequence": "MDEGARLYELTAAHPELQEEALRLLTEWEATHRLSMEQQLELTARMAEWLAETSDVEEFRERLREALEELLAR",
+   "chain_D_plddt_mean": null,
+   "contact_site": null,
+   "design_id": "pres_G3ZfGGLFJXddOc0vhQwO",
+   "developability_score": 1.0,
+   "gates": {
+    "fail_reasons": [
+     "specificity_margin:pending",
+     "liability_filters:fail"
+    ],
+    "hard_pass": false,
+    "soft_pass": false
+   },
+   "iptm": 0.8731725811958313,
+   "liability_filters": {
+    "allow": "none",
+    "developability_score": 1.0,
+    "exposed_oxidation": {
+     "hard_fail": true,
+     "residue_counts": {
+      "M": 3,
+      "W": 2
+     },
+     "sequence_proxy": true,
+     "threshold": 1
+    },
+    "motif_hits": [],
+    "pass": false,
+    "sap_patch": {
+     "mode": "soft",
+     "soft_fail": false,
+     "status": "skipped_no_sap"
+    },
+    "unpaired_cys": {
+     "count": 0,
+     "hard_fail": false
+    }
+   },
+   "provenance": {
+    "artifact_paths": {
+     "metrics_json": "pres_G3ZfGGLFJXddOc0vhQwO/metrics.json",
+     "pae_npz": "pres_G3ZfGGLFJXddOc0vhQwO/pae.npz",
+     "predicted_cif": "pres_G3ZfGGLFJXddOc0vhQwO/pres_G3ZfGGLFJXddOc0vhQwO_predicted.cif"
+    },
+    "design_id": "pres_G3ZfGGLFJXddOc0vhQwO",
+    "display_alias": "NYESO1-pres_G3ZfGGLFJXddOc0vhQwO",
+    "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+    "pins": {
+     "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+     "binder_chain": "D",
+     "contact_cutoff_angstrom": 4.0,
+     "worker_commit": "70b6c6c",
+     "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+     "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+    }
+   },
+   "rank": 3,
+   "specificity": {
+    "best_decoy_ipsae_cd": null,
+    "best_decoy_rank": null,
+    "margin_status": "missing_on_target_score",
+    "on_target_ipsae_cd": null,
+    "on_target_rank": null,
+    "rank_margin": null,
+    "specificity_margin": null
+   },
+   "tier0": {
+    "cif": "pres_G3ZfGGLFJXddOc0vhQwO_predicted.cif",
+    "counts": {
+     "buried_anchor_residues_contacted": [],
+     "coldspots_contacted": 1,
+     "coldspots_contacted_by_chain": {
+      "A": [
+       82
+      ]
+     },
+     "coldspots_declared": 215,
+     "contacted_by_chain": {
+      "A": [
+       65,
+       69,
+       72,
+       73,
+       75,
+       76,
+       79,
+       80,
+       82,
+       142,
+       146,
+       150,
+       151,
+       154,
+       155
+      ],
+      "B": [],
+      "C": [
+       3,
+       4,
+       5,
+       8
+      ]
+     },
+     "contacted_in_epitope_shell": 18,
+     "contacted_off_epitope_shell": 1,
+     "contacted_target_residues": 19,
+     "epitope_shell_size_by_chain": {
+      "A": 64,
+      "B": 0,
+      "C": 9
+     },
+     "hotspots_contacted": 3,
+     "hotspots_declared": 5
+    },
+    "design_id": "pres_G3ZfGGLFJXddOc0vhQwO",
+    "hotspot_contact_fraction": 0.6,
+    "item_1_off_epitope_contact_fraction": 0.05263,
+    "item_2_coldspot_contact_fraction": 0.00465,
+    "item_3_buried_anchor_contact_count": 0
+   }
+  },
+  {
+   "binder_sequence": "VEVLEENDETVKLYAKKGETLGEAEAKAKEIAASKGYDDAVITGVLEGDVPQDARLDDVLAVDAVLEFRFVSD",
+   "chain_D_plddt_mean": null,
+   "contact_site": null,
+   "design_id": "pres_PfYJkQdsLag9x1R5Pt6L",
+   "developability_score": 1.0,
+   "gates": {
+    "fail_reasons": [
+     "specificity_margin:pending"
+    ],
+    "hard_pass": false,
+    "soft_pass": false
+   },
+   "iptm": 0.7876076698303223,
+   "liability_filters": {
+    "allow": "none",
+    "developability_score": 1.0,
+    "exposed_oxidation": {
+     "hard_fail": false,
+     "residue_counts": {
+      "M": 0,
+      "W": 0
+     },
+     "sequence_proxy": true,
+     "threshold": 1
+    },
+    "motif_hits": [],
+    "pass": true,
+    "sap_patch": {
+     "mode": "soft",
+     "soft_fail": false,
+     "status": "skipped_no_sap"
+    },
+    "unpaired_cys": {
+     "count": 0,
+     "hard_fail": false
+    }
+   },
+   "provenance": {
+    "artifact_paths": {
+     "metrics_json": "pres_PfYJkQdsLag9x1R5Pt6L/metrics.json",
+     "pae_npz": "pres_PfYJkQdsLag9x1R5Pt6L/pae.npz",
+     "predicted_cif": "pres_PfYJkQdsLag9x1R5Pt6L/pres_PfYJkQdsLag9x1R5Pt6L_predicted.cif"
+    },
+    "design_id": "pres_PfYJkQdsLag9x1R5Pt6L",
+    "display_alias": "NYESO1-pres_PfYJkQdsLag9x1R5Pt6L",
+    "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+    "pins": {
+     "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+     "binder_chain": "D",
+     "contact_cutoff_angstrom": 4.0,
+     "worker_commit": "70b6c6c",
+     "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+     "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+    }
+   },
+   "rank": 4,
+   "specificity": {
+    "best_decoy_ipsae_cd": null,
+    "best_decoy_rank": null,
+    "margin_status": "missing_on_target_score",
+    "on_target_ipsae_cd": null,
+    "on_target_rank": null,
+    "rank_margin": null,
+    "specificity_margin": null
+   },
+   "tier0": {
+    "cif": "pres_PfYJkQdsLag9x1R5Pt6L_predicted.cif",
+    "counts": {
+     "buried_anchor_residues_contacted": [],
+     "coldspots_contacted": 0,
+     "coldspots_contacted_by_chain": {},
+     "coldspots_declared": 216,
+     "contacted_by_chain": {
+      "A": [
+       19,
+       62,
+       65,
+       66,
+       68,
+       69,
+       72,
+       73,
+       75,
+       152,
+       155
+      ],
+      "B": [],
+      "C": [
+       4,
+       5,
+       6,
+       7,
+       8
+      ]
+     },
+     "contacted_in_epitope_shell": 15,
+     "contacted_off_epitope_shell": 1,
+     "contacted_target_residues": 16,
+     "epitope_shell_size_by_chain": {
+      "A": 60,
+      "B": 0,
+      "C": 9
+     },
+     "hotspots_contacted": 5,
+     "hotspots_declared": 5
+    },
+    "design_id": "pres_PfYJkQdsLag9x1R5Pt6L",
+    "hotspot_contact_fraction": 1.0,
+    "item_1_off_epitope_contact_fraction": 0.0625,
+    "item_2_coldspot_contact_fraction": 0.0,
+    "item_3_buried_anchor_contact_count": 0
+   }
+  },
+  {
+   "binder_sequence": "SLPVYYAPVGGPDQGSALVEVPVRVGETREVTLDFSGAAPEGVHTLTIEAVSEEQALLTYPDGTVRTVPLYAD",
+   "chain_D_plddt_mean": null,
+   "contact_site": null,
+   "design_id": "pres_KvvXtVa6yakB17EmB1Ge",
+   "developability_score": 0.85,
+   "gates": {
+    "fail_reasons": [
+     "specificity_margin:pending",
+     "liability_filters:fail"
+    ],
+    "hard_pass": false,
+    "soft_pass": false
+   },
+   "iptm": 0.9825169444084167,
+   "liability_filters": {
+    "allow": "none",
+    "developability_score": 0.85,
+    "exposed_oxidation": {
+     "hard_fail": false,
+     "residue_counts": {
+      "M": 0,
+      "W": 0
+     },
+     "sequence_proxy": true,
+     "threshold": 1
+    },
+    "motif_hits": [
+     {
+      "match": "DG",
+      "motif": "DG",
+      "start": "61"
+     }
+    ],
+    "pass": false,
+    "sap_patch": {
+     "mode": "soft",
+     "soft_fail": false,
+     "status": "skipped_no_sap"
+    },
+    "unpaired_cys": {
+     "count": 0,
+     "hard_fail": false
+    }
+   },
+   "provenance": {
+    "artifact_paths": {
+     "metrics_json": "pres_KvvXtVa6yakB17EmB1Ge/metrics.json",
+     "pae_npz": "pres_KvvXtVa6yakB17EmB1Ge/pae.npz",
+     "predicted_cif": "pres_KvvXtVa6yakB17EmB1Ge/pres_KvvXtVa6yakB17EmB1Ge_predicted.cif"
+    },
+    "design_id": "pres_KvvXtVa6yakB17EmB1Ge",
+    "display_alias": "NYESO1-pres_KvvXtVa6yakB17EmB1Ge",
+    "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+    "pins": {
+     "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+     "binder_chain": "D",
+     "contact_cutoff_angstrom": 4.0,
+     "worker_commit": "70b6c6c",
+     "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+     "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+    }
+   },
+   "rank": 5,
+   "specificity": {
+    "best_decoy_ipsae_cd": null,
+    "best_decoy_rank": null,
+    "margin_status": "missing_on_target_score",
+    "on_target_ipsae_cd": null,
+    "on_target_rank": null,
+    "rank_margin": null,
+    "specificity_margin": null
+   },
+   "tier0": {
+    "cif": "pres_KvvXtVa6yakB17EmB1Ge_predicted.cif",
+    "counts": {
+     "buried_anchor_residues_contacted": [],
+     "coldspots_contacted": 0,
+     "coldspots_contacted_by_chain": {},
+     "coldspots_declared": 218,
+     "contacted_by_chain": {
+      "A": [
+       65,
+       66,
+       68,
+       69,
+       72,
+       73,
+       146,
+       149,
+       150,
+       151,
+       152,
+       155,
+       158
+      ],
+      "B": [],
+      "C": [
+       3,
+       4,
+       5,
+       6,
+       7,
+       8
+      ]
+     },
+     "contacted_in_epitope_shell": 19,
+     "contacted_off_epitope_shell": 0,
+     "contacted_target_residues": 19,
+     "epitope_shell_size_by_chain": {
+      "A": 57,
+      "B": 0,
+      "C": 9
+     },
+     "hotspots_contacted": 5,
+     "hotspots_declared": 5
+    },
+    "design_id": "pres_KvvXtVa6yakB17EmB1Ge",
+    "hotspot_contact_fraction": 1.0,
+    "item_1_off_epitope_contact_fraction": 0.0,
+    "item_2_coldspot_contact_fraction": 0.0,
+    "item_3_buried_anchor_contact_count": 0
+   }
+  },
+  {
+   "binder_sequence": "MVVLPDDPAFAEAVEAARKKLEEAEGFDDEELKEEIARIEAERDKAIEAGNSEEARKLNIVLNALRAVLGSRE",
+   "chain_D_plddt_mean": null,
+   "contact_site": null,
+   "design_id": "pres_B8eqLRLyLSgzkVbLyC7C",
+   "developability_score": 0.85,
+   "gates": {
+    "fail_reasons": [
+     "specificity_margin:pending",
+     "liability_filters:fail"
+    ],
+    "hard_pass": false,
+    "soft_pass": false
+   },
+   "iptm": 0.9032978415489197,
+   "liability_filters": {
+    "allow": "none",
+    "developability_score": 0.85,
+    "exposed_oxidation": {
+     "hard_fail": true,
+     "residue_counts": {
+      "M": 1,
+      "W": 0
+     },
+     "sequence_proxy": true,
+     "threshold": 1
+    },
+    "motif_hits": [
+     {
+      "match": "NS",
+      "motif": "NS",
+      "start": "50"
+     }
+    ],
+    "pass": false,
+    "sap_patch": {
+     "mode": "soft",
+     "soft_fail": false,
+     "status": "skipped_no_sap"
+    },
+    "unpaired_cys": {
+     "count": 0,
+     "hard_fail": false
+    }
+   },
+   "provenance": {
+    "artifact_paths": {
+     "metrics_json": "pres_B8eqLRLyLSgzkVbLyC7C/metrics.json",
+     "pae_npz": "pres_B8eqLRLyLSgzkVbLyC7C/pae.npz",
+     "predicted_cif": "pres_B8eqLRLyLSgzkVbLyC7C/pres_B8eqLRLyLSgzkVbLyC7C_predicted.cif"
+    },
+    "design_id": "pres_B8eqLRLyLSgzkVbLyC7C",
+    "display_alias": "NYESO1-pres_B8eqLRLyLSgzkVbLyC7C",
+    "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+    "pins": {
+     "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+     "binder_chain": "D",
+     "contact_cutoff_angstrom": 4.0,
+     "worker_commit": "70b6c6c",
+     "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+     "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+    }
+   },
+   "rank": 6,
+   "specificity": {
+    "best_decoy_ipsae_cd": null,
+    "best_decoy_rank": null,
+    "margin_status": "missing_on_target_score",
+    "on_target_ipsae_cd": null,
+    "on_target_rank": null,
+    "rank_margin": null,
+    "specificity_margin": null
+   },
+   "tier0": {
+    "cif": "pres_B8eqLRLyLSgzkVbLyC7C_predicted.cif",
+    "counts": {
+     "buried_anchor_residues_contacted": [],
+     "coldspots_contacted": 1,
+     "coldspots_contacted_by_chain": {
+      "A": [
+       83
+      ]
+     },
+     "coldspots_declared": 217,
+     "contacted_by_chain": {
+      "A": [
+       65,
+       69,
+       72,
+       73,
+       76,
+       80,
+       83,
+       84,
+       142,
+       145,
+       146,
+       149,
+       152,
+       155
+      ],
+      "B": [],
+      "C": [
+       3,
+       4,
+       5,
+       6,
+       7,
+       8
+      ]
+     },
+     "contacted_in_epitope_shell": 19,
+     "contacted_off_epitope_shell": 1,
+     "contacted_target_residues": 20,
+     "epitope_shell_size_by_chain": {
+      "A": 62,
+      "B": 0,
+      "C": 9
+     },
+     "hotspots_contacted": 5,
+     "hotspots_declared": 5
+    },
+    "design_id": "pres_B8eqLRLyLSgzkVbLyC7C",
+    "hotspot_contact_fraction": 1.0,
+    "item_1_off_epitope_contact_fraction": 0.05,
+    "item_2_coldspot_contact_fraction": 0.00461,
+    "item_3_buried_anchor_contact_count": 0
+   }
+  },
+  {
+   "binder_sequence": "SMELLEYGKELAKEVAERSGLSDEELEEVYKYLEENISDIRSKEDVLVHVHQAVGRIRPDNLAALDWLAEQIS",
+   "chain_D_plddt_mean": null,
+   "contact_site": null,
+   "design_id": "pres_2SOqXG5xbTO4FD4yB5so",
+   "developability_score": 0.85,
+   "gates": {
+    "fail_reasons": [
+     "specificity_margin:pending",
+     "liability_filters:fail"
+    ],
+    "hard_pass": false,
+    "soft_pass": false
+   },
+   "iptm": 0.8471744656562805,
+   "liability_filters": {
+    "allow": "none",
+    "developability_score": 0.85,
+    "exposed_oxidation": {
+     "hard_fail": true,
+     "residue_counts": {
+      "M": 1,
+      "W": 1
+     },
+     "sequence_proxy": true,
+     "threshold": 1
+    },
+    "motif_hits": [
+     {
+      "match": "NIS",
+      "motif": "N[^P][ST]",
+      "start": "35"
+     }
+    ],
+    "pass": false,
+    "sap_patch": {
+     "mode": "soft",
+     "soft_fail": false,
+     "status": "skipped_no_sap"
+    },
+    "unpaired_cys": {
+     "count": 0,
+     "hard_fail": false
+    }
+   },
+   "provenance": {
+    "artifact_paths": {
+     "metrics_json": "pres_2SOqXG5xbTO4FD4yB5so/metrics.json",
+     "pae_npz": "pres_2SOqXG5xbTO4FD4yB5so/pae.npz",
+     "predicted_cif": "pres_2SOqXG5xbTO4FD4yB5so/pres_2SOqXG5xbTO4FD4yB5so_predicted.cif"
+    },
+    "design_id": "pres_2SOqXG5xbTO4FD4yB5so",
+    "display_alias": "NYESO1-pres_2SOqXG5xbTO4FD4yB5so",
+    "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+    "pins": {
+     "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+     "binder_chain": "D",
+     "contact_cutoff_angstrom": 4.0,
+     "worker_commit": "70b6c6c",
+     "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+     "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+    }
+   },
+   "rank": 7,
+   "specificity": {
+    "best_decoy_ipsae_cd": null,
+    "best_decoy_rank": null,
+    "margin_status": "missing_on_target_score",
+    "on_target_ipsae_cd": null,
+    "on_target_rank": null,
+    "rank_margin": null,
+    "specificity_margin": null
+   },
+   "tier0": {
+    "cif": "pres_2SOqXG5xbTO4FD4yB5so_predicted.cif",
+    "counts": {
+     "buried_anchor_residues_contacted": [],
+     "coldspots_contacted": 0,
+     "coldspots_contacted_by_chain": {},
+     "coldspots_declared": 215,
+     "contacted_by_chain": {
+      "A": [
+       19,
+       62,
+       65,
+       68,
+       69,
+       72,
+       73,
+       75,
+       76,
+       79,
+       80,
+       146,
+       152,
+       155
+      ],
+      "B": [],
+      "C": [
+       4,
+       5,
+       6,
+       7,
+       8
+      ]
+     },
+     "contacted_in_epitope_shell": 18,
+     "contacted_off_epitope_shell": 1,
+     "contacted_target_residues": 19,
+     "epitope_shell_size_by_chain": {
+      "A": 62,
+      "B": 0,
+      "C": 9
+     },
+     "hotspots_contacted": 5,
+     "hotspots_declared": 5
+    },
+    "design_id": "pres_2SOqXG5xbTO4FD4yB5so",
+    "hotspot_contact_fraction": 1.0,
+    "item_1_off_epitope_contact_fraction": 0.05263,
+    "item_2_coldspot_contact_fraction": 0.0,
+    "item_3_buried_anchor_contact_count": 0
+   }
+  },
+  {
+   "binder_sequence": "AVRVTLSDGTVVEITVLGPNRVEVSGDFERAEIVEMDAETAVLRFTNAARREEVLVTLDMRTGEVLSVEVRPL",
+   "chain_D_plddt_mean": null,
+   "contact_site": null,
+   "design_id": "pres_xpto8wJvfrJQhLVH4Mvz",
+   "developability_score": 0.85,
+   "gates": {
+    "fail_reasons": [
+     "specificity_margin:pending",
+     "liability_filters:fail"
+    ],
+    "hard_pass": false,
+    "soft_pass": false
+   },
+   "iptm": 0.5105286836624146,
+   "liability_filters": {
+    "allow": "none",
+    "developability_score": 0.85,
+    "exposed_oxidation": {
+     "hard_fail": true,
+     "residue_counts": {
+      "M": 2,
+      "W": 0
+     },
+     "sequence_proxy": true,
+     "threshold": 1
+    },
+    "motif_hits": [
+     {
+      "match": "DG",
+      "motif": "DG",
+      "start": "7"
+     }
+    ],
+    "pass": false,
+    "sap_patch": {
+     "mode": "soft",
+     "soft_fail": false,
+     "status": "skipped_no_sap"
+    },
+    "unpaired_cys": {
+     "count": 0,
+     "hard_fail": false
+    }
+   },
+   "provenance": {
+    "artifact_paths": {
+     "metrics_json": "pres_xpto8wJvfrJQhLVH4Mvz/metrics.json",
+     "pae_npz": "pres_xpto8wJvfrJQhLVH4Mvz/pae.npz",
+     "predicted_cif": "pres_xpto8wJvfrJQhLVH4Mvz/pres_xpto8wJvfrJQhLVH4Mvz_predicted.cif"
+    },
+    "design_id": "pres_xpto8wJvfrJQhLVH4Mvz",
+    "display_alias": "NYESO1-pres_xpto8wJvfrJQhLVH4Mvz",
+    "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+    "pins": {
+     "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+     "binder_chain": "D",
+     "contact_cutoff_angstrom": 4.0,
+     "worker_commit": "70b6c6c",
+     "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+     "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+    }
+   },
+   "rank": 8,
+   "specificity": {
+    "best_decoy_ipsae_cd": null,
+    "best_decoy_rank": null,
+    "margin_status": "missing_on_target_score",
+    "on_target_ipsae_cd": null,
+    "on_target_rank": null,
+    "rank_margin": null,
+    "specificity_margin": null
+   },
+   "tier0": {
+    "cif": "pres_xpto8wJvfrJQhLVH4Mvz_predicted.cif",
+    "counts": {
+     "buried_anchor_residues_contacted": [],
+     "coldspots_contacted": 0,
+     "coldspots_contacted_by_chain": {},
+     "coldspots_declared": 215,
+     "contacted_by_chain": {
+      "A": [
+       69,
+       76,
+       155
+      ],
+      "B": [],
+      "C": [
+       4,
+       5,
+       6,
+       7,
+       8
+      ]
+     },
+     "contacted_in_epitope_shell": 8,
+     "contacted_off_epitope_shell": 0,
+     "contacted_target_residues": 8,
+     "epitope_shell_size_by_chain": {
+      "A": 60,
+      "B": 0,
+      "C": 9
+     },
+     "hotspots_contacted": 5,
+     "hotspots_declared": 5
+    },
+    "design_id": "pres_xpto8wJvfrJQhLVH4Mvz",
+    "hotspot_contact_fraction": 1.0,
+    "item_1_off_epitope_contact_fraction": 0.0,
+    "item_2_coldspot_contact_fraction": 0.0,
+    "item_3_buried_anchor_contact_count": 0
+   }
+  },
+  {
+   "binder_sequence": "MLPGVLELEDGSRAHVEVSYDAASGRLWGYVTSVEGDSGVQPGDLIVAEGDAASRESPAVVLSLDRRGTLRLL",
+   "chain_D_plddt_mean": null,
+   "contact_site": null,
+   "design_id": "pres_rIVnI2qWY81pul3zHRrN",
+   "developability_score": 0.7,
+   "gates": {
+    "fail_reasons": [
+     "specificity_margin:pending",
+     "liability_filters:fail"
+    ],
+    "hard_pass": false,
+    "soft_pass": false
+   },
+   "iptm": 0.9355947971343994,
+   "liability_filters": {
+    "allow": "none",
+    "developability_score": 0.7,
+    "exposed_oxidation": {
+     "hard_fail": true,
+     "residue_counts": {
+      "M": 1,
+      "W": 1
+     },
+     "sequence_proxy": true,
+     "threshold": 1
+    },
+    "motif_hits": [
+     {
+      "match": "DG",
+      "motif": "DG",
+      "start": "9"
+     },
+     {
+      "match": "DS",
+      "motif": "DS",
+      "start": "36"
+     }
+    ],
+    "pass": false,
+    "sap_patch": {
+     "mode": "soft",
+     "soft_fail": false,
+     "status": "skipped_no_sap"
+    },
+    "unpaired_cys": {
+     "count": 0,
+     "hard_fail": false
+    }
+   },
+   "provenance": {
+    "artifact_paths": {
+     "metrics_json": "pres_rIVnI2qWY81pul3zHRrN/metrics.json",
+     "pae_npz": "pres_rIVnI2qWY81pul3zHRrN/pae.npz",
+     "predicted_cif": "pres_rIVnI2qWY81pul3zHRrN/pres_rIVnI2qWY81pul3zHRrN_predicted.cif"
+    },
+    "design_id": "pres_rIVnI2qWY81pul3zHRrN",
+    "display_alias": "NYESO1-pres_rIVnI2qWY81pul3zHRrN",
+    "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+    "pins": {
+     "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+     "binder_chain": "D",
+     "contact_cutoff_angstrom": 4.0,
+     "worker_commit": "70b6c6c",
+     "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+     "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+    }
+   },
+   "rank": 9,
+   "specificity": {
+    "best_decoy_ipsae_cd": null,
+    "best_decoy_rank": null,
+    "margin_status": "missing_on_target_score",
+    "on_target_ipsae_cd": null,
+    "on_target_rank": null,
+    "rank_margin": null,
+    "specificity_margin": null
+   },
+   "tier0": {
+    "cif": "pres_rIVnI2qWY81pul3zHRrN_predicted.cif",
+    "counts": {
+     "buried_anchor_residues_contacted": [],
+     "coldspots_contacted": 0,
+     "coldspots_contacted_by_chain": {},
+     "coldspots_declared": 212,
+     "contacted_by_chain": {
+      "A": [
+       65,
+       66,
+       69,
+       73,
+       146,
+       149,
+       150,
+       151,
+       152,
+       154,
+       155
+      ],
+      "B": [],
+      "C": [
+       4,
+       5,
+       6,
+       7,
+       8
+      ]
+     },
+     "contacted_in_epitope_shell": 16,
+     "contacted_off_epitope_shell": 0,
+     "contacted_target_residues": 16,
+     "epitope_shell_size_by_chain": {
+      "A": 63,
+      "B": 0,
+      "C": 9
+     },
+     "hotspots_contacted": 5,
+     "hotspots_declared": 5
+    },
+    "design_id": "pres_rIVnI2qWY81pul3zHRrN",
+    "hotspot_contact_fraction": 1.0,
+    "item_1_off_epitope_contact_fraction": 0.0,
+    "item_2_coldspot_contact_fraction": 0.0,
+    "item_3_buried_anchor_contact_count": 0
+   }
+  },
+  {
+   "binder_sequence": "ALTVKPGTKVTVTLADGTTVEATVVRVVSDTEAVAMGTEDGSLVRITNLTETSGDAVALDLETGAEVAGTATF",
+   "chain_D_plddt_mean": null,
+   "contact_site": null,
+   "design_id": "pres_lppWP1t4ozGyw5s4gq3P",
+   "developability_score": 0.4,
+   "gates": {
+    "fail_reasons": [
+     "specificity_margin:pending",
+     "liability_filters:fail"
+    ],
+    "hard_pass": false,
+    "soft_pass": false
+   },
+   "iptm": 0.8387652039527893,
+   "liability_filters": {
+    "allow": "none",
+    "developability_score": 0.4,
+    "exposed_oxidation": {
+     "hard_fail": true,
+     "residue_counts": {
+      "M": 1,
+      "W": 0
+     },
+     "sequence_proxy": true,
+     "threshold": 1
+    },
+    "motif_hits": [
+     {
+      "match": "DG",
+      "motif": "DG",
+      "start": "15"
+     },
+     {
+      "match": "DG",
+      "motif": "DG",
+      "start": "39"
+     },
+     {
+      "match": "DT",
+      "motif": "DT",
+      "start": "29"
+     },
+     {
+      "match": "NLT",
+      "motif": "N[^P][ST]",
+      "start": "47"
+     }
+    ],
+    "pass": false,
+    "sap_patch": {
+     "mode": "soft",
+     "soft_fail": false,
+     "status": "skipped_no_sap"
+    },
+    "unpaired_cys": {
+     "count": 0,
+     "hard_fail": false
+    }
+   },
+   "provenance": {
+    "artifact_paths": {
+     "metrics_json": "pres_lppWP1t4ozGyw5s4gq3P/metrics.json",
+     "pae_npz": "pres_lppWP1t4ozGyw5s4gq3P/pae.npz",
+     "predicted_cif": "pres_lppWP1t4ozGyw5s4gq3P/pres_lppWP1t4ozGyw5s4gq3P_predicted.cif"
+    },
+    "design_id": "pres_lppWP1t4ozGyw5s4gq3P",
+    "display_alias": "NYESO1-pres_lppWP1t4ozGyw5s4gq3P",
+    "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+    "pins": {
+     "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+     "binder_chain": "D",
+     "contact_cutoff_angstrom": 4.0,
+     "worker_commit": "70b6c6c",
+     "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+     "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+    }
+   },
+   "rank": 10,
+   "specificity": {
+    "best_decoy_ipsae_cd": null,
+    "best_decoy_rank": null,
+    "margin_status": "missing_on_target_score",
+    "on_target_ipsae_cd": null,
+    "on_target_rank": null,
+    "rank_margin": null,
+    "specificity_margin": null
+   },
+   "tier0": {
+    "cif": "pres_lppWP1t4ozGyw5s4gq3P_predicted.cif",
+    "counts": {
+     "buried_anchor_residues_contacted": [],
+     "coldspots_contacted": 0,
+     "coldspots_contacted_by_chain": {},
+     "coldspots_declared": 215,
+     "contacted_by_chain": {
+      "A": [
+       65,
+       69,
+       72,
+       75,
+       76,
+       150,
+       151,
+       152,
+       155,
+       158,
+       163
+      ],
+      "B": [],
+      "C": [
+       4,
+       5,
+       7,
+       8
+      ]
+     },
+     "contacted_in_epitope_shell": 15,
+     "contacted_off_epitope_shell": 0,
+     "contacted_target_residues": 15,
+     "epitope_shell_size_by_chain": {
+      "A": 64,
+      "B": 0,
+      "C": 9
+     },
+     "hotspots_contacted": 4,
+     "hotspots_declared": 5
+    },
+    "design_id": "pres_lppWP1t4ozGyw5s4gq3P",
+    "hotspot_contact_fraction": 0.8,
+    "item_1_off_epitope_contact_fraction": 0.0,
+    "item_2_coldspot_contact_fraction": 0.0,
+    "item_3_buried_anchor_contact_count": 0
+   }
+  }
+ ],
+ "handoff": {
+  "designs": [
+   {
+    "binder_sequence": "SLEEAVEFAGRALDKIFAGEALSEEERRRLEEALRLARATVERLGGALDEEGRLAAEAENLARTTLAAEALRA",
+    "chain_D_plddt_mean": null,
+    "contact_site": null,
+    "design_id": "pres_Bw8vknhmXJUg72L6CGAw",
+    "developability_score": 1.0,
+    "gates": {
+     "fail_reasons": [
+      "specificity_margin:pending"
+     ],
+     "hard_pass": false,
+     "soft_pass": false
+    },
+    "iptm": 0.9626621007919312,
+    "liability_filters": {
+     "allow": "none",
+     "developability_score": 1.0,
+     "exposed_oxidation": {
+      "hard_fail": false,
+      "residue_counts": {
+       "M": 0,
+       "W": 0
+      },
+      "sequence_proxy": true,
+      "threshold": 1
+     },
+     "motif_hits": [],
+     "pass": true,
+     "sap_patch": {
+      "mode": "soft",
+      "soft_fail": false,
+      "status": "skipped_no_sap"
+     },
+     "unpaired_cys": {
+      "count": 0,
+      "hard_fail": false
+     }
+    },
+    "provenance": {
+     "artifact_paths": {
+      "metrics_json": "pres_Bw8vknhmXJUg72L6CGAw/metrics.json",
+      "pae_npz": "pres_Bw8vknhmXJUg72L6CGAw/pae.npz",
+      "predicted_cif": "pres_Bw8vknhmXJUg72L6CGAw/pres_Bw8vknhmXJUg72L6CGAw_predicted.cif"
+     },
+     "design_id": "pres_Bw8vknhmXJUg72L6CGAw",
+     "display_alias": "NYESO1-pres_Bw8vknhmXJUg72L6CGAw",
+     "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+     "pins": {
+      "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+      "binder_chain": "D",
+      "contact_cutoff_angstrom": 4.0,
+      "worker_commit": "70b6c6c",
+      "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+      "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+     }
+    },
+    "rank": 1,
+    "specificity": {
+     "best_decoy_ipsae_cd": null,
+     "best_decoy_rank": null,
+     "margin_status": "missing_on_target_score",
+     "on_target_ipsae_cd": null,
+     "on_target_rank": null,
+     "rank_margin": null,
+     "specificity_margin": null
+    },
+    "tier0": {
+     "cif": "pres_Bw8vknhmXJUg72L6CGAw_predicted.cif",
+     "counts": {
+      "buried_anchor_residues_contacted": [],
+      "coldspots_contacted": 0,
+      "coldspots_contacted_by_chain": {},
+      "coldspots_declared": 213,
+      "contacted_by_chain": {
+       "A": [
+        36,
+        43,
+        62,
+        65,
+        66,
+        68,
+        69,
+        71,
+        72,
+        73,
+        75,
+        76,
+        155,
+        158
+       ],
+       "B": [],
+       "C": [
+        4,
+        5,
+        6,
+        8
+       ]
+      },
+      "contacted_in_epitope_shell": 16,
+      "contacted_off_epitope_shell": 2,
+      "contacted_target_residues": 18,
+      "epitope_shell_size_by_chain": {
+       "A": 62,
+       "B": 0,
+       "C": 9
+      },
+      "hotspots_contacted": 4,
+      "hotspots_declared": 5
+     },
+     "design_id": "pres_Bw8vknhmXJUg72L6CGAw",
+     "hotspot_contact_fraction": 0.8,
+     "item_1_off_epitope_contact_fraction": 0.11111,
+     "item_2_coldspot_contact_fraction": 0.0,
+     "item_3_buried_anchor_contact_count": 0
+    }
+   },
+   {
+    "binder_sequence": "MEVRASGVIQNPETVKVGDRVSFALAGSKESLEGTVVSVTADEVVIETETGARIVAKYDPALNAAIGEGTVEL",
+    "chain_D_plddt_mean": null,
+    "contact_site": null,
+    "design_id": "pres_JA4idjMYaE8EsQKrcb6K",
+    "developability_score": 1.0,
+    "gates": {
+     "fail_reasons": [
+      "specificity_margin:pending",
+      "liability_filters:fail"
+     ],
+     "hard_pass": false,
+     "soft_pass": false
+    },
+    "iptm": 0.924859881401062,
+    "liability_filters": {
+     "allow": "none",
+     "developability_score": 1.0,
+     "exposed_oxidation": {
+      "hard_fail": true,
+      "residue_counts": {
+       "M": 1,
+       "W": 0
+      },
+      "sequence_proxy": true,
+      "threshold": 1
+     },
+     "motif_hits": [],
+     "pass": false,
+     "sap_patch": {
+      "mode": "soft",
+      "soft_fail": false,
+      "status": "skipped_no_sap"
+     },
+     "unpaired_cys": {
+      "count": 0,
+      "hard_fail": false
+     }
+    },
+    "provenance": {
+     "artifact_paths": {
+      "metrics_json": "pres_JA4idjMYaE8EsQKrcb6K/metrics.json",
+      "pae_npz": "pres_JA4idjMYaE8EsQKrcb6K/pae.npz",
+      "predicted_cif": "pres_JA4idjMYaE8EsQKrcb6K/pres_JA4idjMYaE8EsQKrcb6K_predicted.cif"
+     },
+     "design_id": "pres_JA4idjMYaE8EsQKrcb6K",
+     "display_alias": "NYESO1-pres_JA4idjMYaE8EsQKrcb6K",
+     "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+     "pins": {
+      "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+      "binder_chain": "D",
+      "contact_cutoff_angstrom": 4.0,
+      "worker_commit": "70b6c6c",
+      "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+      "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+     }
+    },
+    "rank": 2,
+    "specificity": {
+     "best_decoy_ipsae_cd": null,
+     "best_decoy_rank": null,
+     "margin_status": "missing_on_target_score",
+     "on_target_ipsae_cd": null,
+     "on_target_rank": null,
+     "rank_margin": null,
+     "specificity_margin": null
+    },
+    "tier0": {
+     "cif": "pres_JA4idjMYaE8EsQKrcb6K_predicted.cif",
+     "counts": {
+      "buried_anchor_residues_contacted": [],
+      "coldspots_contacted": 0,
+      "coldspots_contacted_by_chain": {},
+      "coldspots_declared": 217,
+      "contacted_by_chain": {
+       "A": [
+        69,
+        72,
+        73,
+        75,
+        76,
+        146,
+        150,
+        151,
+        155,
+        158
+       ],
+       "B": [],
+       "C": [
+        4,
+        5,
+        6,
+        7,
+        8
+       ]
+      },
+      "contacted_in_epitope_shell": 15,
+      "contacted_off_epitope_shell": 0,
+      "contacted_target_residues": 15,
+      "epitope_shell_size_by_chain": {
+       "A": 59,
+       "B": 0,
+       "C": 9
+      },
+      "hotspots_contacted": 5,
+      "hotspots_declared": 5
+     },
+     "design_id": "pres_JA4idjMYaE8EsQKrcb6K",
+     "hotspot_contact_fraction": 1.0,
+     "item_1_off_epitope_contact_fraction": 0.0,
+     "item_2_coldspot_contact_fraction": 0.0,
+     "item_3_buried_anchor_contact_count": 0
+    }
+   },
+   {
+    "binder_sequence": "MDEGARLYELTAAHPELQEEALRLLTEWEATHRLSMEQQLELTARMAEWLAETSDVEEFRERLREALEELLAR",
+    "chain_D_plddt_mean": null,
+    "contact_site": null,
+    "design_id": "pres_G3ZfGGLFJXddOc0vhQwO",
+    "developability_score": 1.0,
+    "gates": {
+     "fail_reasons": [
+      "specificity_margin:pending",
+      "liability_filters:fail"
+     ],
+     "hard_pass": false,
+     "soft_pass": false
+    },
+    "iptm": 0.8731725811958313,
+    "liability_filters": {
+     "allow": "none",
+     "developability_score": 1.0,
+     "exposed_oxidation": {
+      "hard_fail": true,
+      "residue_counts": {
+       "M": 3,
+       "W": 2
+      },
+      "sequence_proxy": true,
+      "threshold": 1
+     },
+     "motif_hits": [],
+     "pass": false,
+     "sap_patch": {
+      "mode": "soft",
+      "soft_fail": false,
+      "status": "skipped_no_sap"
+     },
+     "unpaired_cys": {
+      "count": 0,
+      "hard_fail": false
+     }
+    },
+    "provenance": {
+     "artifact_paths": {
+      "metrics_json": "pres_G3ZfGGLFJXddOc0vhQwO/metrics.json",
+      "pae_npz": "pres_G3ZfGGLFJXddOc0vhQwO/pae.npz",
+      "predicted_cif": "pres_G3ZfGGLFJXddOc0vhQwO/pres_G3ZfGGLFJXddOc0vhQwO_predicted.cif"
+     },
+     "design_id": "pres_G3ZfGGLFJXddOc0vhQwO",
+     "display_alias": "NYESO1-pres_G3ZfGGLFJXddOc0vhQwO",
+     "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+     "pins": {
+      "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+      "binder_chain": "D",
+      "contact_cutoff_angstrom": 4.0,
+      "worker_commit": "70b6c6c",
+      "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+      "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+     }
+    },
+    "rank": 3,
+    "specificity": {
+     "best_decoy_ipsae_cd": null,
+     "best_decoy_rank": null,
+     "margin_status": "missing_on_target_score",
+     "on_target_ipsae_cd": null,
+     "on_target_rank": null,
+     "rank_margin": null,
+     "specificity_margin": null
+    },
+    "tier0": {
+     "cif": "pres_G3ZfGGLFJXddOc0vhQwO_predicted.cif",
+     "counts": {
+      "buried_anchor_residues_contacted": [],
+      "coldspots_contacted": 1,
+      "coldspots_contacted_by_chain": {
+       "A": [
+        82
+       ]
+      },
+      "coldspots_declared": 215,
+      "contacted_by_chain": {
+       "A": [
+        65,
+        69,
+        72,
+        73,
+        75,
+        76,
+        79,
+        80,
+        82,
+        142,
+        146,
+        150,
+        151,
+        154,
+        155
+       ],
+       "B": [],
+       "C": [
+        3,
+        4,
+        5,
+        8
+       ]
+      },
+      "contacted_in_epitope_shell": 18,
+      "contacted_off_epitope_shell": 1,
+      "contacted_target_residues": 19,
+      "epitope_shell_size_by_chain": {
+       "A": 64,
+       "B": 0,
+       "C": 9
+      },
+      "hotspots_contacted": 3,
+      "hotspots_declared": 5
+     },
+     "design_id": "pres_G3ZfGGLFJXddOc0vhQwO",
+     "hotspot_contact_fraction": 0.6,
+     "item_1_off_epitope_contact_fraction": 0.05263,
+     "item_2_coldspot_contact_fraction": 0.00465,
+     "item_3_buried_anchor_contact_count": 0
+    }
+   }
+  ],
+  "recipient": "BIO Physician",
+  "top_n": 3
+ },
+ "pins": {
+  "api_contract_version": "v2026-03-01",
+  "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+  "binder_chain": "D",
+  "contact_cutoff_angstrom": 4.0,
+  "worker_commit": "70b6c6c",
+  "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+  "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+ },
+ "primary_endpoint": "specificity_margin",
+ "ranking": {
+  "primary": "specificity_margin",
+  "secondary": "developability_score",
+  "tertiary": "iptm"
+ },
+ "schema_version": "1.0.0"
+}

@@ -1,20 +1,30 @@
-# FLEET.toml — specificity / decoy-screen campaign (sibling to NYESO1-A0201 run-one)
-# Clinical context: ../NYESO1-A0201/CASE.md · Margin definition: SPECIFICITY.md
-# Status: staged, not submitted. No L1B spend until APPR + OD-3 decoy sequences.
+# FLEET.toml — specificity-margin campaign (NYESO1-A0201-specificity)
+# Parent run-one: ../NYESO1-A0201/ · Margin definitions: SPECIFICITY.md (two documented paths)
+# L1A skipped; survivors from survivor_panel.yaml. Not submitted until APPR + signed decoys.
 
 [fleet]
 target_id        = "NYESO1-A0201"
 campaign_id      = "NYESO1-A0201-specificity"
-version          = "0.1.0"
+version          = "1.0"
 date             = "2026-10-23"
-status           = "staged, not submitted"
+status           = "ready_to_launch"
 parent_manifest  = "../NYESO1-A0201/FLEET.toml"
 case_file        = "../NYESO1-A0201/CASE.md"
 specificity_doc  = "SPECIFICITY.md"
 provenance_doc   = "PROVENANCE.md"
+diagram          = "../NYESO1-A0201/arch.mermaid"
 layers           = ["boltz", "interface"]
 primary_endpoint = "specificity_margin"
 scope            = "in_silico_decoy_screen"
+ranking_rule     = "margin_first"
+negative_design_panel = "targeted"
+spend_cap_usd    = 14.50
+
+[ranking]
+primary   = "specificity_margin"
+secondary = "developability_score"
+tertiary  = "iptm"
+handoff_top_n = 3
 
 [survivors]
 source           = "survivor_panel.yaml"
@@ -23,30 +33,51 @@ run_one_artifacts = "../NYESO1-A0201/run-one/artifacts/"
 
 [decoy_panel]
 file             = "decoy_panel.yaml"
+manifest         = "decoy_panel.yaml"
 cognate_peptide  = "SLLMWITQC"
-panel_ready      = false   # OD-3 outstanding
+n_mutants        = 10
+focus            = "TCR-facing P4-P8"
+composition      = { single = 7, double = 2, quadruple = 1 }
+self_peptides    = []
+owner            = "BIO Physician"
+panel_ready      = false   # OD-3 outstanding / proposals unsigned
 
-[negative_design]
-panel            = "targeted"   # OD-2 default; conservative | targeted | aggressive
-applied_in       = "L1B"        # run-one L1A had no negative design
+[liability_filters]
+motif_scan = ["NG", "NS", "NT", "NH", "DG", "DS", "DT", "N[^P][ST]"]
+unpaired_cys = "hard_fail"
+exposed_oxidation = { residues = ["M", "W"], threshold = 1 }
+sap_patch = { threshold = 0.6, mode = "soft" }
+allow = "none"
 
-# ---------------------------------------------------------------- agents (unchanged roles)
+[gates]
+hard = ["specificity_margin >= 0.15", "buried_anchor_contacts == 0", "liability_filters.pass"]
+soft = ["iptm >= 0.60", "chain_D_plddt >= 80"]
+
+[descriptors]
+stack = ["complex_iplddt", "shape_complementarity", "plddt", "min_ipsae", "ipsae", "iptm", "pae_interaction"]
+combination_rule = "rank_average"
+
+# ---------------------------------------------------------------- agents
 
 [[agents]]
 name     = "BIO Scientist"
-role     = "descriptor stack, margin computation, survivor selection"
+role     = "owns the graph, the descriptors and the calibration argument"
+decides  = ["descriptor stack", "combination rule", "keep fraction", "panel construction"]
 
 [[agents]]
 name     = "BIO Physician"
-role     = "decoy and self-peptide panels, in-vitro bar"
+role     = "owns target biology and the in-vitro bar"
+decides  = ["decoy peptide panel", "self-peptide panel", "in-vitro reproduction bar", "residue-level sign-off on negative design"]
 
 [[agents]]
 name     = "BIO Engineer"
-role     = "artifact mirroring, Modal L2 host if n scales"
+role     = "owns parallelism and provenance, engaged only if n outgrows the hosted API"
+decides  = ["execution substrate above hosted-API scale"]
 
 [[agents]]
 name     = "Mathew"
-role     = "APPR spend authority"
+role     = "principal; sole authority for spend and submission"
+decides  = ["approval", "spend cap", "threshold policy", "which negative-design panel"]
 
 # ---------------------------------------------------------------- graph
 
@@ -54,11 +85,14 @@ role     = "APPR spend authority"
 id    = "CFG"
 kind  = "manifest"
 label = "survivor_panel.yaml + decoy_panel.yaml + this file"
+owner = "BIO Scientist"
 
 [[nodes]]
 id            = "APPR"
 kind          = "human_gate"
+label         = "approval + spend cap, inside the graph"
 approver      = "Mathew"
+human_input   = true
 spend_cap_usd = 14.50
 on_deny       = "HALT"
 note          = "Remaining budget under original $15.00 after run-one $0.50"
@@ -66,6 +100,7 @@ note          = "Remaining budget under original $15.00 after run-one $0.50"
 [[nodes]]
 id    = "HALT"
 kind  = "terminal"
+label = "halt at zero cost"
 
 [[nodes]]
 id       = "L1B"
@@ -74,30 +109,33 @@ layer    = "boltz"
 label    = "survivors × decoy panel refold, same HLA"
 provider = "boltz_hosted_predict_api"
 builder  = "l1b_request_builder.py"
-note     = "Prediction endpoint with fixed binder sequence; NOT legacy design body"
+note     = "Prediction endpoint with fixed binder sequence. Parent L1A LEGACY design body unchanged and verified live — see parent FLEET.toml [platform]."
 
 [[nodes]]
 id    = "ART"
 kind  = "artifact_store"
+label = "content-addressed artifacts, mirrored off-API immediately"
 files = ["_predicted.cif", "metrics.json", "pae.npz"]
 
 [[nodes]]
 id    = "L2"
 kind  = "score"
 layer = "interface"
-runner = "../NYESO1-A0201/run-one/layer2_orchestrator.py"
+label = "ipSAE + Tier 0 + liability filters + specificity margin (primary path)"
+runner = "../NYESO1-A0201/run-one/layer2_orchestrator.py --specificity-campaign"
 host  = "pure CPU; ghcr bindi-fleet-env; optional Modal nyeso1-a0201-layer2"
 
 [[nodes]]
 id    = "MARGIN"
 kind  = "compute"
-label = "specificity_margin = on_target_rank - best_decoy_rank"
+label = "rank_average peptide ranks → on_target_rank − best_decoy_rank (auxiliary / #12)"
 module = "specificity_margin.py"
+note = "Used by specificity_orchestrator.py; see SPECIFICITY.md path B. Not the A2A hard gate (>= 0.15 ipSAE margin)."
 
 [[nodes]]
 id    = "PANEL"
 kind  = "terminal"
-label = "ranked_panel.json + transport T1 payload"
+label = "ranked panel JSON + transport T1 (panel.json / transport_t1.json)"
 
 [graph]
 edges = [
@@ -111,52 +149,84 @@ edges = [
   ["PANEL", "handoff:BIO Physician"],
 ]
 
-[descriptors]
-stack    = ["complex_iplddt", "shape_complementarity", "plddt", "min_ipsae", "ipsae", "iptm", "pae_interaction"]
-combination_rule = "rank_average"
+# ---------------------------------------------------------------- platform
 
 [platform]
 design_endpoint   = "POST https://api.boltz.bio/compute/v1/protein/design"
 predict_endpoint  = "POST https://api.boltz.bio/compute/v1/protein/predict"
-design_request_shape = "LEGACY REQUIRED for L1A (not re-run here)"
+design_request_shape = "LEGACY REQUIRED for parent L1A / run-one (verified live 2026-10-21). Do not migrate design body."
 api_contract_version = "v2026-03-01"
 prediction_model = "boltz-2.1"
+retention_days = 7
+parent_manifest = "../NYESO1-A0201/FLEET.toml"
 
-[provenance]
-image_digest = "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6"
-bindi_wheel_sha256 = "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
-bindi_version = "0.2.0"
-details = "PROVENANCE.md"
+[platform.modal_layer2]
+in_scope       = "CPU execution host for layer 2 (optional fan-out)"
+image          = "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6"
+code           = "../NYESO1-A0201/modal_layer2_app.py"
+gpu            = "none"
+cpu_cores      = 1.0
+worker_wheel   = "bindi-0.2.0"
+worker_wheel_sha256 = "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+
+# ----------------------------------------------------------------- costs
 
 [costs]
 run_one_spent_usd = 0.50
 spend_cap_usd     = 14.50
 per_predict_usd   = 0.05
+per_design_usd    = 0.05
 note = "Fan-out: n_survivors × n_peptides predictions; estimate before APPR"
+cap_rule = "abort if projected (Boltz + Modal L2) > spend_cap_usd (14.50) at APPR"
+
+# ------------------------------------------------------------- provenance
+
+[provenance]
+content_address = ["api_version", "config_hash", "target_hash", "seed", "bindi_wheel_sha256", "base_image_digest"]
+image_digest = "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6"
+bindi_wheel_sha256 = "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+bindi_version = "0.2.0"
+layer2_pins_file = "../NYESO1-A0201/run-one/layer2_core.py"
+panel_schema     = "panel_schema.json"
+details = "PROVENANCE.md"
+
+[run_one_bridge]
+job_id     = "prot_des_TY6KzyxULq8mACflXbhn"
+artifacts  = "../NYESO1-A0201/run-one/artifacts/"
+caveat     = "Positive control only — primary ipSAE margin pending until L1B decoy_refolds/ populated"
+
+# -------------------------------------------------------- open decisions
 
 [[open_decisions]]
 id = "OD-1"
 owner = "Mathew"
-question = "threshold recalibration on this run vs transferred values"
-recommendation = "recalibrate after full decoy panel"
+question = "thresholds: Boltz-native recalibration, or reinstate AF2 initial guess"
+recommendation = "Boltz-native recalibration"
+reopen_trigger = "calibration / wet-lab bar"
 
 [[open_decisions]]
 id = "OD-2"
 owner = "Mathew with BIO Physician"
-question = "negative-design panel for L1B conditioning"
+question = "which negative-design panel for L1B conditioning"
 recommendation = "targeted"
 
 [[open_decisions]]
 id = "OD-3"
 owner = "BIO Physician"
 question = "ten exact SLLMWITQC mutant decoy sequences"
+note = "decoy_panel.yaml holds OD-3 proposals until signed"
 blocks = "L1B submit"
 
 [[open_decisions]]
 id = "OD-4"
 owner = "BIO Physician"
-question = "self-peptide / proteome-near-neighbour extension panel"
+question = "clinical proteome-near-neighbour and self-peptide panel"
 
 [transport]
+direction = "one-way for evidence"
 payload = "artifacts/transport_t1.json"
-rule = "top ≤ 3 designs by specificity_margin with decoy ranks and provenance"
+payloads = [
+  "T1 ranked panel - design id, sequence, specificity_margin, decoy ranks, developability_score, provenance hash",
+]
+rule = "top ≤ 3 designs by primary specificity_margin (path A) with decoy ranks and provenance"
+handoff_top_n = 3
