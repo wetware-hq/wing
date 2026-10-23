@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "NYESO1-A0201-specificity PANEL",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "campaign_id",
+    "primary_endpoint",
+    "ranking",
+    "pins",
+    "designs",
+    "handoff"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "campaign_id": { "const": "NYESO1-A0201-specificity" },
+    "primary_endpoint": { "const": "specificity_margin" },
+    "ranking": {
+      "type": "object",
+      "properties": {
+        "primary": { "const": "specificity_margin" },
+        "secondary": { "const": "developability_score" },
+        "tertiary": { "const": "iptm" }
+      }
+    },
+    "pins": {
+      "type": "object",
+      "properties": {
+        "base_image_digest": { "type": "string" },
+        "worker_wheel_sha256": { "type": "string" },
+        "api_contract_version": { "type": "string" }
+      }
+    },
+    "designs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["design_id", "provenance", "gates", "specificity"],
+        "properties": {
+          "design_id": { "type": "string" },
+          "binder_sequence": { "type": "string" },
+          "provenance": { "type": "object" },
+          "iptm": { "type": ["number", "null"] },
+          "chain_D_plddt_mean": { "type": ["number", "null"] },
+          "developability_score": { "type": "number" },
+          "liability_filters": { "type": "object" },
+          "specificity": {
+            "type": "object",
+            "properties": {
+              "on_target_ipsae_cd": { "type": ["number", "null"] },
+              "best_decoy_ipsae_cd": { "type": ["number", "null"] },
+              "specificity_margin": { "type": ["number", "null"] },
+              "on_target_rank": { "type": ["integer", "null"] },
+              "best_decoy_rank": { "type": ["integer", "null"] },
+              "rank_margin": { "type": ["integer", "null"] },
+              "margin_status": { "type": "string" },
+              "decoy_scores": { "type": "object" }
+            }
+          },
+          "tier0": { "type": "object" },
+          "contact_site": { "type": "object" },
+          "gates": {
+            "type": "object",
+            "properties": {
+              "hard_pass": { "type": "boolean" },
+              "soft_pass": { "type": "boolean" },
+              "fail_reasons": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "handoff": {
+      "type": "object",
+      "properties": {
+        "top_n": { "type": "integer" },
+        "recipient": { "const": "BIO Physician" },
+        "designs": { "type": "array" }
+      }
+    }
+  }
+}

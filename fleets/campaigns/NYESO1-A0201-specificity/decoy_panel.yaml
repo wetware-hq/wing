@@ -1,0 +1,87 @@
+# Decoy peptide panel for campaign NYESO1-A0201-specificity (L1B refold input).
+# Cognate on-target peptide: SLLMWITQC (NY-ESO-1 157-165 / HLA-A*02:01).
+# P4-P8 = MWITQ (TCR-facing strip per CASE.md / contact analysis).
+
+campaign_id: NYESO1-A0201-specificity
+cognate:
+  sequence: SLLMWITQC
+  hla: HLA-A*02:01
+  focus_positions_p1_p9: [4, 5, 6, 7, 8]
+  owner: BIO Physician
+
+negative_design_panel: targeted  # FLEET.toml [[negative_design_panels]] recommended=true
+
+composition:
+  single: 7
+  double: 2
+  quadruple: 1
+  total: 10
+
+self_peptides: []  # OD-4 placeholder — do not invent clinical self-peptides here
+
+status: OD-3_proposals
+note: >
+  Exact sequences from the reproduction paper supplement remain OUTSTANDING (OD-3).
+  The mutants below are concrete BIO Physician proposals for TCR-facing P4-P8 edits
+  until signed sequences arrive. Replace in place without renaming campaign_id.
+
+mutants:
+  - id: decoy_p4_m_to_v
+    class: single
+    positions_p1_p9: [4]
+    sequence: SLLVWITQC
+    proposal: true
+
+  - id: decoy_p4_m_to_a
+    class: single
+    positions_p1_p9: [4]
+    sequence: SLLAWITQC
+    proposal: true
+
+  - id: decoy_p5_w_to_a
+    class: single
+    positions_p1_p9: [5]
+    sequence: SLLMAITQC
+    proposal: true
+
+  - id: decoy_p5_w_to_f
+    class: single
+    positions_p1_p9: [5]
+    sequence: SLLMFITQC
+    proposal: true
+
+  - id: decoy_p6_i_to_a
+    class: single
+    positions_p1_p9: [6]
+    sequence: SLLMWATQC
+    proposal: true
+
+  - id: decoy_p7_t_to_a
+    class: single
+    positions_p1_p9: [7]
+    sequence: SLLMWIAQC
+    proposal: true
+
+  - id: decoy_p8_q_to_a
+    class: single
+    positions_p1_p9: [8]
+    sequence: SLLMWITAC
+    proposal: true
+
+  - id: decoy_p4v_p5a
+    class: double
+    positions_p1_p9: [4, 5]
+    sequence: SLLVAITQC
+    proposal: true
+
+  - id: decoy_p6a_p7a
+    class: double
+    positions_p1_p9: [6, 7]
+    sequence: SLLMWAAQC
+    proposal: true
+
+  - id: decoy_p4_p5_p6_p7_quad
+    class: quadruple
+    positions_p1_p9: [4, 5, 6, 7]
+    sequence: SLLAAAAQC
+    proposal: true
