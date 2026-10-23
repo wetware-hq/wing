@@ -1,0 +1,11 @@
+{
+  "approver": "Mathew",
+  "approved_at": "2026-10-23T09:47:00Z",
+  "campaign_id": "NYESO1-A0201-specificity",
+  "decision": "approve",
+  "gate": "APPR",
+  "note": "User message: APPROVE. Launch. L1B decoy refold fan-out authorized.",
+  "projected_boltz_usd": 5.5,
+  "projected_jobs": 110,
+  "spend_cap_usd": 14.5
+}

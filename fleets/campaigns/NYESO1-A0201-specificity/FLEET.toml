@@ -7,7 +7,7 @@ target_id        = "NYESO1-A0201"
 campaign_id      = "NYESO1-A0201-specificity"
 version          = "1.0"
 date             = "2026-10-23"
-status           = "modal_l2_launched"
+status           = "l1b_submit_pending_boltz_key"
 parent_manifest  = "../NYESO1-A0201/FLEET.toml"
 case_file        = "../NYESO1-A0201/CASE.md"
 specificity_doc  = "SPECIFICITY.md"
@@ -98,6 +98,8 @@ human_input   = true
 spend_cap_usd = 14.50
 on_deny       = "HALT"
 note          = "Remaining budget under original $15.00 after run-one $0.50"
+appr_record   = "APPR_2026-10-23.json"
+appr_status   = "approved"
 
 [[nodes]]
 id    = "HALT"
