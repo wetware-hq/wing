@@ -459,8 +459,8 @@
   "secrets_referenced_names_only": [
     "BOLTZ_API_KEY (x-api-key)",
     "GITHUB_PAT",
-    "MODAL_TOKEN_ID (inert)",
-    "MODAL_TOKEN_SECRET (inert)",
+    "modal_token_id -> MODAL_TOKEN_ID (Cursor Cloud Agent secret; local Modal CLI auth)",
+    "modal_token_secret -> MODAL_TOKEN_SECRET (Cursor Cloud Agent secret; local Modal CLI auth)",
     "ghcr-wetware-ro (Modal Secret: REGISTRY_USERNAME + REGISTRY_PASSWORD; GitHub token with read:packages; used only by modal_layer2_app.py for the private ghcr pull; NOT created this session)"
   ],
   "open_decisions_touching_infra": [

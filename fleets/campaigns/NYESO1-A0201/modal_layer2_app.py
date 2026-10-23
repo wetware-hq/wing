@@ -58,6 +58,8 @@ Modal APIs used, each with the doc URL fetched 2026-10-21 (Australia/Sydney):
 ------------------------------------------------------------------------------
 
 DEPLOY (when Mathew chooses to, under the APPR gate - do not run now):
+  0. Auth: source modal_cli_env.sh (maps Cloud secrets modal_token_id / modal_token_secret
+     to MODAL_TOKEN_ID / MODAL_TOKEN_SECRET), or run ./launch_modal_l2.sh.
   1. Create the ghcr read-only pull Secret on Modal (dashboard or CLI). ghcr package
      pulls need a GitHub token with `read:packages`:
          REGISTRY_USERNAME = <a GitHub username with read access to wetware-hq packages>
