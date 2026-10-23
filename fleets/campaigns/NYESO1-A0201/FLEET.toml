@@ -311,7 +311,7 @@ timeout_s      = 120    # matches modal_layer2_app.py
 retries        = 0        # scoring is deterministic; a retry would recur identically
 max_containers = 2        # matches modal_layer2_app.py (pool + cold-start tradeoff)
 deployed       = true     # redeployed 2026-10-23; app nyeso1-a0201-layer2 on wetwarehq
-modal_run      = "2026-10-23: modal run ::main, 10/10 score_one via starmap, ~10 s wall; artifacts run-one/artifacts/layer2_results_modal.json; run ap-IshjN3qkaWX2kvCezJbqeM (post physician sign-off launch)"
+modal_run      = "2026-10-23: modal run ::main via launch_modal_l2.sh + modal_token_* secrets; 10/10 starmap; run ap-559YLUghur2eVQTm3aMM9n"
 docs_fetched_2026_10_21 = [
   "https://modal.com/docs/reference/modal.Image",
   "https://modal.com/docs/reference/modal.App",

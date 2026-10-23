@@ -170,7 +170,7 @@ gpu            = "none"
 cpu_cores      = 1.0
 worker_wheel   = "bindi-0.2.0"
 worker_wheel_sha256 = "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
-last_modal_run_id   = "ap-IshjN3qkaWX2kvCezJbqeM"
+last_modal_run_id   = "ap-559YLUghur2eVQTm3aMM9n"
 last_modal_run_at   = "2026-10-23"
 last_modal_note     = "Cognate-only L2 starmap (10 survivors); specificity margins still pending L1B decoy refolds"
 
