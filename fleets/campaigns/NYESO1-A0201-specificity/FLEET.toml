@@ -37,10 +37,12 @@ manifest         = "decoy_panel.yaml"
 cognate_peptide  = "SLLMWITQC"
 n_mutants        = 10
 focus            = "TCR-facing P4-P8"
-composition      = { single = 7, double = 2, quadruple = 1 }
+composition      = { single = 7, double = 2, triple = 1 }
 self_peptides    = []
 owner            = "BIO Physician"
-panel_ready      = false   # OD-3 outstanding / proposals unsigned
+panel_ready      = true
+physician_signoff = "PHYSICIAN_SIGNOFF_2026-10-23.md"
+margin_primary_path = "path_a_ipsae_difference"  # Path B rank margin is audit-only
 
 [liability_filters]
 motif_scan = ["NG", "NS", "NT", "NH", "DG", "DS", "DT", "N[^P][ST]"]
@@ -201,26 +203,32 @@ caveat     = "Positive control only — primary ipSAE margin pending until L1B d
 id = "OD-1"
 owner = "Mathew"
 question = "thresholds: Boltz-native recalibration, or reinstate AF2 initial guess"
-recommendation = "Boltz-native recalibration"
+recommendation = "Boltz-native recalibration on this run"
+provisional_gates = "margin >= 0.15, buried_anchor_contacts == 0, liability_filters.pass"
 reopen_trigger = "calibration / wet-lab bar"
 
 [[open_decisions]]
 id = "OD-2"
 owner = "Mathew with BIO Physician"
 question = "which negative-design panel for L1B conditioning"
-recommendation = "targeted"
+resolution = "targeted"
+resolved = "2026-10-23"
+signoff = "PHYSICIAN_SIGNOFF_2026-10-23.md"
 
 [[open_decisions]]
 id = "OD-3"
 owner = "BIO Physician"
 question = "ten exact SLLMWITQC mutant decoy sequences"
-note = "decoy_panel.yaml holds OD-3 proposals until signed"
-blocks = "L1B submit"
+resolution = "signed in decoy_panel.yaml (triple multi-mutant SLLAAATQC)"
+resolved = "2026-10-23"
+signoff = "PHYSICIAN_SIGNOFF_2026-10-23.md"
 
 [[open_decisions]]
 id = "OD-4"
 owner = "BIO Physician"
 question = "clinical proteome-near-neighbour and self-peptide panel"
+resolution = "deferred for this computational screen"
+status = "deferred"
 
 [transport]
 direction = "one-way for evidence"

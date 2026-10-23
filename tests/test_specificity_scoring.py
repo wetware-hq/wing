@@ -99,4 +99,5 @@ def test_decoy_panel_has_ten_mutants(spec_mod):
     classes = [m["class"] for m in panel["mutants"]]
     assert classes.count("single") == 7
     assert classes.count("double") == 2
-    assert classes.count("quadruple") == 1
+    assert classes.count("triple") == 1
+    assert panel.get("panel_ready_for_l1b") is True

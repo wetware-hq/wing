@@ -4,12 +4,13 @@
 **Primary endpoint (manifest):** `specificity_margin` · **Ranking:** `margin_first`
 
 Two computation paths exist in this repository after merging main (#12) and the A2A Layer 2
-extension (#13). **Mathew / BIO Scientist must pick one primary gate before L1B submit** — see
-[Conflicting intents](#conflicting-intents-reconciled-in-docs-not-in-code-yet).
+extension (#13). **Path A is the primary hard gate** (physician sign-off 2026-10-23). Path B is
+computed and recorded in parallel when using `specificity_orchestrator.py` but does not gate L1B
+or hand-off.
 
 ---
 
-## Path A — ipSAE score margin (Layer 2 `--specificity-campaign`) **primary for A2A gates**
+## Path A — ipSAE score margin (Layer 2 `--specificity-campaign`) **primary**
 
 Implemented in `../NYESO1-A0201/run-one/specificity_scoring.py` and
 `layer2_orchestrator.py --specificity-campaign`.
@@ -22,7 +23,7 @@ For each survivor design *d*:
    ```text
    specificity_margin = on_target_ipsae_cd − max(decoy_ipsae_cd)
    ```
-   Hard gate: `specificity_margin >= 0.15` (not calibrated on pMHC).
+   Hard gate: `specificity_margin >= 0.15` (provisional; recalibrate on this run — OD-1).
 
 4. **Rank audit fields:** peptides sorted by descending ipSAE; `rank_margin = best_decoy_rank − on_target_rank`.
 
@@ -56,7 +57,7 @@ Outputs: `artifacts/panel.json` (ranked PANEL + top ≤3 hand-off).
 
 ---
 
-## Path B — rank_average rank margin (#12 stub)
+## Path B — rank_average rank margin (#12 stub, audit only)
 
 Implemented in `specificity_margin.py` and `specificity_orchestrator.py`.
 
@@ -68,8 +69,7 @@ Layer 2 scores each peptide; descriptors are combined with **rank_average** over
 specificity_margin = on_target_rank − best_decoy_rank
 ```
 
-(rank **1** = best = lowest rank_average). Draft pass rule in #12: `specificity_margin <= 0` when
-cognate beats decoys. **This sign and threshold contradict Path A’s `>= 0.15` ipSAE gate.**
+(rank **1** = best = lowest rank_average). **Not used as the campaign hard gate** (Path A ≥ 0.15 applies).
 
 ### Path B artifact layout (post-L1B)
 
@@ -102,32 +102,30 @@ in `survivor_panel.yaml`.
 
 ## Decoy panel
 
-`decoy_panel.yaml` — ten **OD-3 proposals** (7/2/1 on P4–P8). `panel_ready_for_l1b: false` until
-BIO Physician signs sequences. `self_peptides` empty (OD-4).
+`decoy_panel.yaml` — ten signed decoys (7 single / 2 double / 1 triple on P4–P8).
+`panel_ready_for_l1b: true` (BIO Physician 2026-10-23). `self_peptides` empty (OD-4 deferred).
 
 ---
 
 ## Open decisions
 
-| Id | Question | Default |
+| Id | Question | Status |
 |---|---|---|
-| OD-1 | Recalibrate thresholds on this run vs transferred | Recalibrate (Mathew) |
-| OD-2 | Negative-design panel | **targeted** |
-| OD-3 | Ten decoy sequences | BIO Physician (blocks L1B) |
-| OD-4 | Self / proteome panel | BIO Physician |
+| OD-1 | Recalibrate thresholds on this run vs transferred | Open — provisional gates in force |
+| OD-2 | Negative-design panel | **Resolved: targeted** |
+| OD-3 | Ten decoy sequences | **Resolved — signed panel** |
+| OD-4 | Self / proteome panel | **Deferred** |
 
 ---
 
-## Conflicting intents (reconciled in docs, not in code yet)
+## Path A vs Path B (reference)
 
-| Topic | Path A (A2A / #13) | Path B (main #12) |
+| Topic | Path A (primary) | Path B (parallel / audit) |
 |---|---|---|
 | Margin definition | ipSAE C|D score difference | Ordinal rank from rank_average stack |
 | Pass direction | Higher margin better; gate **≥ 0.15** | Rank margin; draft pass **≤ 0** |
 | L1B API | Decoy refolds (layout above); parent **LEGACY design** unchanged | **`/protein/predict`** via `l1b_request_builder.py` |
 | Hand-off ranking | margin → developability → iptm | rank margin on descriptor stack |
-
-**Human action:** choose Path A or B (or define a single merged formula) before spend on full L1B fan-out.
 
 ---
 
@@ -137,4 +135,4 @@ BIO Physician signs sequences. `self_peptides` empty (OD-4).
 - Deterministic JSON: `sort_keys=True` on panel outputs.
 - Layer 2: pure CPU; no GPU in scoring path.
 - APPR: `$14.50` spend cap.
-- Hand-off: ≤ 3 designs when margin is computable on the chosen path.
+- Hand-off: ≤ 3 designs when margin is computable on Path A.

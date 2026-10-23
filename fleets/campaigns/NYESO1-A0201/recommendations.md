@@ -85,8 +85,8 @@ Re-run and escalation priority for **this fleet**:
 
 - [x] Resolve placeholders against `UPGRADES.md` §10, `FLEET.toml`, `CASE.md` (this document)
 - [x] Implement `UPGRADES.md` §10 WP-A–C (L2 orchestrator, optional buried-anchor policy, item 10 docking)
-- [ ] OD-3: ten decoy peptide sequences (blocks specificity margin)
-- [ ] OD-2: negative-design panel in submit body
+- [x] OD-3: ten decoy peptide sequences (signed 2026-10-23; `panel_ready_for_l1b`)
+- [x] OD-2: negative-design panel — **targeted** (signed 2026-10-23)
 - [ ] P1–P4 owner sign-off (`UPGRADES.md` §9)
 - [ ] Phase-close: ≤3 designs to in vitro — **after** PANEL + Physician bar, not after run one
 

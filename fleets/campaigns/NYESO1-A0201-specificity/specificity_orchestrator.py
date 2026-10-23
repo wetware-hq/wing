@@ -42,6 +42,21 @@ def _manifest_hash(*paths: Path) -> str:
     return h.hexdigest()
 
 
+def decoy_peptide_entries(decoy_doc: dict) -> list[dict]:
+    """Normalize decoy_panel.yaml (mutants[]) or legacy decoys.entries."""
+    entries = (decoy_doc.get("decoys") or {}).get("entries")
+    if entries:
+        return entries
+    return [
+        {
+            "peptide_id": m["id"],
+            "sequence": m.get("sequence"),
+            **m,
+        }
+        for m in decoy_doc.get("mutants", [])
+    ]
+
+
 def collect_peptide_artifact_dirs(survivor_id: str, artifacts_root: Path) -> dict[str, Path]:
     """Map peptide_id -> directory with _predicted.cif / metrics / pae.
 
@@ -101,7 +116,8 @@ def build_ranked_panel(
     stack: tuple[str, ...],
 ) -> dict:
     cognate_id = decoy_doc["cognate"]["peptide_id"]
-    decoy_ids = [e["peptide_id"] for e in decoy_doc.get("decoys", {}).get("entries", [])]
+    decoy_entries = decoy_peptide_entries(decoy_doc)
+    decoy_ids = [e["peptide_id"] for e in decoy_entries]
     panel_ready = decoy_doc.get("panel_ready_for_l1b", False)
 
     designs_out: list[dict] = []
@@ -140,9 +156,16 @@ def build_ranked_panel(
             decoy_peptide_ids=decoy_ids,
             stack=stack,
         )
-        if not panel_ready and margin.get("status") == "incomplete":
-            margin["panel_ready"] = False
-            margin["note"] = "OD-3 decoy sequences outstanding; margin undefined until L1B completes"
+        if margin.get("status") == "incomplete":
+            margin["panel_ready"] = panel_ready
+            if panel_ready:
+                margin["note"] = (
+                    "Decoy panel signed; margin undefined until L1B decoy refolds complete"
+                )
+            else:
+                margin["note"] = (
+                    "OD-3 decoy sequences unsigned; margin undefined until L1B completes"
+                )
         entry["margin"] = margin
         designs_out.append(entry)
 
@@ -206,7 +229,8 @@ def transport_payload(ranked: dict, *, top_n: int = 3) -> dict:
             }
             for d in top
         ],
-        "open_decisions": ["OD-1", "OD-2", "OD-3", "OD-4"],
+        "open_decisions": ["OD-1", "OD-4"],
+        "resolved_decisions": ["OD-2", "OD-3"],
         "note": "In-vitro work is out of scope; BIO Physician owns the reproduction bar.",
     }
 
@@ -235,7 +259,7 @@ def main(argv: list[str] | None = None) -> int:
         from l1b_request_builder import write_l1b_manifest
 
         peptides = [decoy_doc["cognate"]] + [
-            e for e in decoy_doc["decoys"]["entries"] if e.get("sequence")
+            e for e in decoy_peptide_entries(decoy_doc) if e.get("sequence")
         ]
         write_l1b_manifest(
             survivors_doc["survivors"],

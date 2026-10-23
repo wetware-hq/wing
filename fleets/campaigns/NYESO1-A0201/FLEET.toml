@@ -195,7 +195,7 @@ over_marking      = "strict IMGT alpha-3 is author 183-274 (0-based 182-273); ev
 panel_costs       = "whether any of the three panels changes cost is UNVERIFIED - estimate-cost rejects the type:\"binder\" body (see PLATFORM.md)."
 honoured          = "whether the hosted BoltzGen honours non_binding_residues AT ALL is UNVERIFIED - see risk boltzgen_backend_version and OD-7."
 aggressive_cost   = "a ~9-residue epitope is a very small interface for a 60-100 aa binder; the aggressive panel may be geometrically unsatisfiable or yield designs that cannot express or fold. Published de novo pMHC binders DO contact helix. Treat it as an experiment, not a default."
-sign_off          = "panels built by BIO Scientist 2026-10-20, pending BIO Physician residue-level sign-off and Mathew's choice (OD-2). None submitted, nothing spent."
+sign_off          = "targeted panel signed BIO Physician 2026-10-23 (OD-2); specificity decoys signed in child campaign NYESO1-A0201-specificity. None submitted, nothing spent until APPR."
 source_note       = "this block absorbs nonbinding-panel-2026-10-20.md, consolidated away 2026-10-21; the panels themselves were already machine-readable above."
 
 # ------------------------------------------------------------- descriptors

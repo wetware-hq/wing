@@ -4,8 +4,12 @@
 schema_version: "1.0"
 campaign_id: NYESO1-A0201-specificity
 owner: BIO Physician
-status: OD-3_proposals
-panel_ready_for_l1b: false  # true only after BIO Physician signs sequences (replaces proposal flag)
+status: signed
+panel_ready_for_l1b: true
+physician_signoff:
+  date: "2026-10-23"
+  authority: BIO Physician
+  document: PHYSICIAN_SIGNOFF_2026-10-23.md
 
 cognate:
   peptide_id: cognate_SLLMWITQC
@@ -14,84 +18,84 @@ cognate:
   hla: HLA-A*02:01
   focus_positions_p1_p9: [4, 5, 6, 7, 8]
 
-negative_design_panel: targeted  # OD-2 default
+negative_design_panel: targeted  # OD-2 signed 2026-10-23
 
 composition:
   single: 7
   double: 2
-  quadruple: 1
+  triple: 1
   total: 10
 
 self_peptides:
-  _note: OD-4 — clinical proteome-near-neighbour and self-peptide panel (optional extension)
+  _note: OD-4 deferred — clinical proteome-near-neighbour panel not used for this computational screen
   entries: []
 
 note: >
-  Exact sequences from the reproduction paper supplement remain OUTSTANDING (OD-3).
-  The mutants below are concrete BIO Physician proposals for TCR-facing P4-P8 edits
-  until signed sequences arrive. Do not treat proposal sequences as signed for L1B submit.
+  Ten decoy sequences signed for L1B fan-out (OD-3). Multi-mutant slot uses triple SLLAAATQC
+  (P4/P5/P6 Ala) rather than quadruple SLLAAAAQC. Path A ipSAE margin is the primary hard gate.
 
 mutants:
   - id: decoy_p4_m_to_v
     class: single
     positions_p1_p9: [4]
     sequence: SLLVWITQC
-    proposal: true
+    proposal: false
 
   - id: decoy_p4_m_to_a
     class: single
     positions_p1_p9: [4]
     sequence: SLLAWITQC
-    proposal: true
+    proposal: false
 
   - id: decoy_p5_w_to_a
     class: single
     positions_p1_p9: [5]
     sequence: SLLMAITQC
-    proposal: true
+    proposal: false
 
   - id: decoy_p5_w_to_f
     class: single
     positions_p1_p9: [5]
     sequence: SLLMFITQC
-    proposal: true
+    proposal: false
 
   - id: decoy_p6_i_to_a
     class: single
     positions_p1_p9: [6]
     sequence: SLLMWATQC
-    proposal: true
+    proposal: false
 
   - id: decoy_p7_t_to_a
     class: single
     positions_p1_p9: [7]
     sequence: SLLMWIAQC
-    proposal: true
+    proposal: false
 
   - id: decoy_p8_q_to_a
     class: single
     positions_p1_p9: [8]
     sequence: SLLMWITAC
-    proposal: true
+    proposal: false
 
   - id: decoy_p4v_p5a
     class: double
     positions_p1_p9: [4, 5]
     sequence: SLLVAITQC
-    proposal: true
+    proposal: false
 
   - id: decoy_p6a_p7a
     class: double
     positions_p1_p9: [6, 7]
     sequence: SLLMWAAQC
-    proposal: true
+    proposal: false
 
-  - id: decoy_p4_p5_p6_p7_quad
-    class: quadruple
-    positions_p1_p9: [4, 5, 6, 7]
-    sequence: SLLAAAAQC
-    proposal: true
+  - id: decoy_p4_p5_p6_triple
+    class: triple
+    positions_p1_p9: [4, 5, 6]
+    sequence: SLLAAATQC
+    proposal: false
+    replaces: decoy_p4_p5_p6_p7_quad  # SLLAAAAQC not used (MHC-stability preference)
 
 open_decisions:
-  - OD-3
+  - OD-1
   - OD-4
