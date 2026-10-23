@@ -532,7 +532,7 @@ rows = [
 
 [run_one.deployment_ready_minset]
 item_1_appr    = "APPR approval at the rescoped $0.50 / 10-design level"
-item_2_api_key = "BOLTZ_API_KEY confirmed live in the execution env"
+item_2_api_key = "boltz_api_key in Cloud Agent secrets -> source boltz_cli_env.sh -> BOLTZ_API_KEY; auth/me live workspace (2026-10-23)"
 item_3_layer2  = "CLEARED 2026-10-21, with a correction: PR #14 merged (9e758a3); the ghcr image re-pulled by full digest and the worker re-proved in-image AFTER the box reset (12/12 tests/test_ipsae.py pass in-image; guard raises TokenAlignmentError; scorer returns ipsae both orderings, min_ipsae, and complex_plddt 83.33 with plddt.present true). CORRECTION: the image does NOT contain ipsae.py - it is an ENVIRONMENT image and the worker source must be mounted in; python -m bindi.ipsae off the bare image raises ModuleNotFoundError. See infra.json code_and_provenance.image_formal_verification_2026_10_21. Was: PR #14 merged + ghcr image pulled; needed only for the layer-2 half, without it G1-G3 can still pass on iptm alone with G4 recorded as 'layer 2 not run'"
 
 # ------------------------------------------------- run one: contact analysis

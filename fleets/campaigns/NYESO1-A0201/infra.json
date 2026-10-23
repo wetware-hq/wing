@@ -457,7 +457,7 @@
     ]
   },
   "secrets_referenced_names_only": [
-    "BOLTZ_API_KEY (x-api-key)",
+    "boltz_api_key -> BOLTZ_API_KEY (Cursor Cloud Agent secret; source boltz_cli_env.sh; x-api-key for hosted Boltz API)",
     "GITHUB_PAT",
     "modal_token_id -> MODAL_TOKEN_ID (Cursor Cloud Agent secret; local Modal CLI auth)",
     "modal_token_secret -> MODAL_TOKEN_SECRET (Cursor Cloud Agent secret; local Modal CLI auth)",
