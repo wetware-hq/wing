@@ -395,7 +395,7 @@ def build_panel_payload(
         "design_errors": errors,
         "handoff": {
             "top_n": handoff_top_n,
-            "recipient": "BIO Physician",
+            "recipient": "Clinical lead",
             "gate": "gates.hard_pass",
             "eligible_count": len(eligible),
             "designs": handoff,

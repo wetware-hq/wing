@@ -1,18 +1,18 @@
 {
-  "_comment": "infra.json - CONVERGED tool->stack map for NYESO1-A0201. Supersedes the two same-path drafts of 2026-10-20 (BIO Engineer's producer_map version and BIO Scientist's verified-field version); both kept beside this as infra.engineer-993b2f1.json and infra.scientist.json. Companion to FLEET.toml (graph), arch.mermaid (transport), CASE.md (clinical). Every entry carries 'verified' stating HOW it is known: on_box = observed on this machine today; docs = vendor documentation; reported = stated by another agent, not re-checked here; unverified = assumed/planned. | CONSOLIDATED 2026-10-21: this file is now the single infra map for NYESO1-A0201. infra.engineer-993b2f1.json (269 loc) and infra.scientist.json (141 loc) were merged in and deleted; 189 of the engineer file's lines were already byte-identical here. Everything either file held that was not already present is below, under its own key.",
+  "_comment": "infra.json - CONVERGED tool->stack map for NYESO1-A0201. Supersedes the two same-path drafts of 2026-10-20 (Engineering lead's producer_map version and Science lead's verified-field version); both kept beside this as infra.engineer-993b2f1.json and infra.scientist.json. Companion to FLEET.toml (graph), arch.mermaid (transport), CASE.md (clinical). Every entry carries 'verified' stating HOW it is known: on_box = observed on this machine today; docs = vendor documentation; reported = stated by another agent, not re-checked here; unverified = assumed/planned. | CONSOLIDATED 2026-10-21: this file is now the single infra map for NYESO1-A0201. infra.engineer-993b2f1.json (269 loc) and infra.scientist.json (141 loc) were merged in and deleted; 189 of the engineer file's lines were already byte-identical here. Everything either file held that was not already present is below, under its own key.",
   "meta": {
     "campaign": "NYESO1-A0201",
     "fleet_spec": "FLEET.toml",
     "fleet_spec_sha256_prefix": "ffb63dcf5af3",
     "generated": "2026-10-20T19:41+11:00",
-    "generated_by": "BIO Engineer (converged with BIO Scientist's provenance scheme); ghcr fleet-env digest wired 2026-10-20T20:08+11:00",
-    "governance": "No merge to main without green CI AND Mathew per-SHA sign-off (bindi#9). Nothing submitted to Boltz and nothing spent until the APPR human_gate approves.",
+    "generated_by": "Engineering lead (converged with Science lead's provenance scheme); ghcr fleet-env digest wired 2026-10-20T20:08+11:00",
+    "governance": "No merge to main without green CI AND Campaign approver per-SHA sign-off (bindi#9). Nothing submitted to Boltz and nothing spent until the APPR human_gate approves.",
     "status": "spec-level map; spend/submission status is authoritative in FLEET.toml (spent_to_date_usd, submitted_to_date) - not restated here",
     "verified": "on_box",
     "consolidated": "2026-10-21 (Australia/Sydney)",
     "supersedes": [
-      "infra.engineer-993b2f1.json (BIO Engineer, generated 2026-10-20)",
-      "infra.scientist.json (BIO Scientist, generated 2026-10-20T19:33+11:00)"
+      "infra.engineer-993b2f1.json (Engineering lead, generated 2026-10-20)",
+      "infra.scientist.json (Science lead, generated 2026-10-20T19:33+11:00)"
     ],
     "od8_conflict_resolution": {
       "conflict": "infra.engineer-993b2f1.json and this file disagreed about OD-8 (widen the content address beyond the four-tuple).",
@@ -40,16 +40,16 @@
       "runtime": "human-authored, version-controlled",
       "location": "git wetware-hq/bindi, mirrored to wetware-hq/wing fleets/",
       "cost_usd": 0.0,
-      "owner": "BIO Scientist",
+      "owner": "Science lead",
       "verified": "on_box"
     },
     {
       "node": "APPR",
       "kind": "human_gate",
       "tool": "in-graph approval + spend cap",
-      "runtime": "human decision (Mathew)",
+      "runtime": "human decision (Campaign approver)",
       "controls": {
-        "approver": "Mathew",
+        "approver": "Campaign approver",
         "spend_cap_usd": 15.0,
         "on_deny": "HALT"
       },
@@ -144,7 +144,7 @@
       "runtime": "CPU on box",
       "location": "bindi",
       "cost_usd": 0.0,
-      "note": "every row replayable from the manifest hash; hands off to BIO Physician and BIO Engineer",
+      "note": "every row replayable from the manifest hash; hands off to Clinical lead and Engineering lead",
       "verified": "on_box (module present)"
     }
   ],
@@ -266,7 +266,7 @@
         "python-dateutil==2.9.0.post0",
         "six==1.17.0"
       ],
-      "pin_rationale": "EXACT ==, not floors: the image digest IS the content address for descriptor numbers, so a >= would mean the address no longer determines the numbers (BIO Scientist).",
+      "pin_rationale": "EXACT ==, not floors: the image digest IS the content address for descriptor numbers, so a >= would mean the address no longer determines the numbers (Science lead).",
       "verified": "on_box (built under podman 5.4.2, import-checked, pushed, and re-pulled by digest; registry digest confirmed authoritative)",
       "digest_authoritative": "sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6 (registry/ghcr; resolves on pull)",
       "config_digest": "sha256:cf153c6899717e4d38f6a855ae40bfd2a4abec0c30d5a1e1f982698023adfdbb (= image id; identical across both manifest encodings, so content is bit-identical)",
@@ -308,7 +308,7 @@
       ],
       "origin": {
         "namespace": "wetwarehq",
-        "wing_status": "NOT present; 4 of 9 Origin repos are inbound GitHub mirrors, so the Origin leg is a mirror/create decision, not a second push - Mathew's call"
+        "wing_status": "NOT present; 4 of 9 Origin repos are inbound GitHub mirrors, so the Origin leg is a mirror/create decision, not a second push - Campaign approver's call"
       },
       "verified": "on_box"
     },
@@ -388,7 +388,7 @@
       "iptm": "Adaptyv Proteinbase column (ODC-BY); AUC TRANSFERRED, not recomputed under our implementation",
       "esmfold_plddt": "Adaptyv Proteinbase column (ODC-BY); AUC TRANSFERRED, not recomputed under our implementation",
       "pae_interaction": "Adaptyv Proteinbase column (ODC-BY); AUC TRANSFERRED, not recomputed under our implementation",
-      "shape_complementarity": "VALIDATED for implementation (BIO Scientist, 2026-10-20, in-image, $0.00, nothing submitted). Recomputed under shape-complementarity==0.2.0 / sc-rs befcc6c on n=1,028 Nipah glycoprotein-G complexes: Pearson r=0.999959, Spearman rho=0.999945, mean |delta| 2.9e-4 SC units, 100% within +/-0.01, no signed offset. ROC-AUC vs measured BLI binding (100 binders/928 non-binders): ours 0.6873 [95% boot CI 0.6224,0.7480] vs Adaptyv column 0.6878 [0.6229,0.7479]; paired dAUC -0.00044 [-0.00109,+0.00016] (straddles zero, 4 orders narrower than the AUC CI). So shape-complementarity==0.2.0 REPRODUCES Adaptyv's quantity to float noise -> the 0.688 transfer STANDS and SC keeps its rank_average weight unchanged. STILL transferred ACROSS TARGET CLASS: Proteinbase has no pMHC, so the threshold is validated for implementation only, not for pMHC; campaign one remains its own calibration experiment. Caveat: Adaptyv's own SC parameters are an INFERENCE (proteinbase_README.md defines no params for the shape_complimentarity column); 'sc-rs at defaults' is read off 1,028 complexes agreeing to 2.9e-4, not off a spec, and only on the Nipah subset (1,028 of 4,273 PPIs). Report: /workspace/wetware/binder-design/v3/sc-recompute-2026-10-20.md (sha256 3ed7ea12f000...90c8cdf0).",
+      "shape_complementarity": "VALIDATED for implementation (Science lead, 2026-10-20, in-image, $0.00, nothing submitted). Recomputed under shape-complementarity==0.2.0 / sc-rs befcc6c on n=1,028 Nipah glycoprotein-G complexes: Pearson r=0.999959, Spearman rho=0.999945, mean |delta| 2.9e-4 SC units, 100% within +/-0.01, no signed offset. ROC-AUC vs measured BLI binding (100 binders/928 non-binders): ours 0.6873 [95% boot CI 0.6224,0.7480] vs Adaptyv column 0.6878 [0.6229,0.7479]; paired dAUC -0.00044 [-0.00109,+0.00016] (straddles zero, 4 orders narrower than the AUC CI). So shape-complementarity==0.2.0 REPRODUCES Adaptyv's quantity to float noise -> the 0.688 transfer STANDS and SC keeps its rank_average weight unchanged. STILL transferred ACROSS TARGET CLASS: Proteinbase has no pMHC, so the threshold is validated for implementation only, not for pMHC; campaign one remains its own calibration experiment. Caveat: Adaptyv's own SC parameters are an INFERENCE (proteinbase_README.md defines no params for the shape_complimentarity column); 'sc-rs at defaults' is read off 1,028 complexes agreeing to 2.9e-4, not off a spec, and only on the Nipah subset (1,028 of 4,273 PPIs). Report: /workspace/wetware/binder-design/v3/sc-recompute-2026-10-20.md (sha256 3ed7ea12f000...90c8cdf0).",
       "pdockq": "excluded (AUC 0.500, constant column)",
       "pdockq2": "excluded (AUC 0.500, constant column)",
       "revision": "v2026-10-12",
@@ -415,7 +415,7 @@
   "excluded_tools": [
     {
       "tool": "BoltzGen self-hosted on Modal GPU",
-      "reason": "REJECTED by Mathew 2026-10-20 (not deferred); bindi PR #13 closed. Modal stub in src/bindi/structural_margin.py is inert.",
+      "reason": "REJECTED by Campaign approver 2026-10-20 (not deferred); bindi PR #13 closed. Modal stub in src/bindi/structural_margin.py is inert.",
       "verified": "on_box",
       "scope_clarified_2026_10_21": "This rejection is GPU DESIGN self-hosting on Modal and STANDS. It does NOT cover Modal as a pure-CPU execution host for layer-2 scoring, which is separately in scope (see modal_scope_note)."
     },
@@ -446,7 +446,7 @@
     }
   ],
   "licensing": {
-    "policy": "Wetware is NON-PROFIT, so non-commercial licences are in bounds by LICENCE; note this does not reopen tools Mathew rejected on other grounds (Modal self-hosting stays rejected).",
+    "policy": "Wetware is NON-PROFIT, so non-commercial licences are in bounds by LICENCE; note this does not reopen tools Campaign approver rejected on other grounds (Modal self-hosting stays rejected).",
     "af2_params": "CC BY 4.0 (permissive) if AF2 is reinstated",
     "af3": "params not available on usable terms",
     "verified": "docs",
@@ -459,19 +459,19 @@
   "secrets_referenced_names_only": [
     "boltz_api_key -> BOLTZ_API_KEY (Cursor Cloud Agent secret; source boltz_cli_env.sh; x-api-key for hosted Boltz API)",
     "GITHUB_PAT",
-    "modal_token_id -> MODAL_TOKEN_ID (Cursor Cloud Agent secret; local Modal CLI auth)",
-    "modal_token_secret -> MODAL_TOKEN_SECRET (Cursor Cloud Agent secret; local Modal CLI auth)",
+    "modal_token_id -> Modal CLI token id (Cursor Cloud Agent secret; local Modal CLI auth)",
+    "modal_token_secret -> Modal CLI token secret (Cursor Cloud Agent secret; local Modal CLI auth)",
     "ghcr-wetware-ro (Modal Secret: REGISTRY_USERNAME + REGISTRY_PASSWORD; GitHub token with read:packages; used only by modal_layer2_app.py for the private ghcr pull; NOT created this session)"
   ],
   "open_decisions_touching_infra": [
     "OD-8: content address includes the ghcr image digest, reconciled to the registry digest 7e8762ae (first half closed); remaining half is code/script hash (adopt Workflow RO-Crate eventually)",
-    "DONE: pinned bindi deps (gemmi/biopython/numpy floors + exact pins) and built the ghcr fleet-env image so the worker is reproducible from an image, not just PR #14 - BIO Engineer",
-    "Origin durability: mirror wing into Origin (recommended) vs create a deliberate Origin wing - Mathew's call",
+    "DONE: pinned bindi deps (gemmi/biopython/numpy floors + exact pins) and built the ghcr fleet-env image so the worker is reproducible from an image, not just PR #14 - Engineering lead",
+    "Origin durability: mirror wing into Origin (recommended) vs create a deliberate Origin wing - Campaign approver's call",
     "thresholds: Boltz-native recalibration vs reinstating AF2 initial-guess (re-adds a GPU layer)"
   ],
   "layer_1_boltz": {
     "role": "generator and decoy refolder; the only external dependency",
-    "self_hosting": "REJECTED by Mathew 2026-10-20; PR #13 closed, not merged, not deferred",
+    "self_hosting": "REJECTED by Campaign approver 2026-10-20; PR #13 closed, not merged, not deferred",
     "tools": [
       {
         "name": "Boltz hosted design API",
@@ -650,7 +650,7 @@
     }
   },
   "modal_scope_note": {
-    "in_scope_2026_10_21": "Modal as a pure-CPU EXECUTION HOST for LAYER 2 (the ipSAE interface-scoring worker, src/bindi/ipsae.py, today run in the pinned ghcr image on the box). Mathew's direction, 2026-10-21 (Australia/Sydney). gpu is set NOWHERE in the Modal app; it is CPU-only.",
+    "in_scope_2026_10_21": "Modal as a pure-CPU EXECUTION HOST for LAYER 2 (the ipSAE interface-scoring worker, src/bindi/ipsae.py, today run in the pinned ghcr image on the box). Campaign approver's direction, 2026-10-21 (Australia/Sydney). gpu is set NOWHERE in the Modal app; it is CPU-only.",
     "still_rejected": "Self-hosting a GPU DESIGN model (BoltzGen/Boltz) on Modal GPU. See excluded_tools[0], licensing.policy ('Modal self-hosting stays rejected'), and layer_1_boltz.self_hosting. Those records STAND and are not deleted.",
     "why_not_contradictory": "The rejection is about a GPU generator. A CPU scoring function on Modal does not reintroduce a GPU design layer; layer 1 stays on the Boltz hosted API (job prot_des_TY6KzyxULq8mACflXbhn), un-re-plumbed.",
     "code": "fleets/campaigns/NYESO1-A0201/modal_layer2_app.py",

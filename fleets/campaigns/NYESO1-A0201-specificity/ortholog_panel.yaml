@@ -4,7 +4,7 @@
 
 schema_version: "1.0"
 campaign_id: NYESO1-A0201-specificity
-owner: BIO Physician
+owner: Clinical lead
 status: deferred   # specified now; signed sequences pending (tracks OD-4)
 panel_ready_for_l1b: false
 

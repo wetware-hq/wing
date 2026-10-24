@@ -3,12 +3,12 @@
 
 schema_version: "1.0"
 campaign_id: NYESO1-A0201-specificity
-owner: BIO Physician
+owner: Clinical lead
 status: signed
 panel_ready_for_l1b: true
 physician_signoff:
   date: "2026-10-23"
-  authority: BIO Physician
+  authority: Clinical lead
   document: PHYSICIAN_SIGNOFF_2026-10-23.md
 
 cognate:

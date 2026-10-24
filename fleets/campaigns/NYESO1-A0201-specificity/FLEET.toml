@@ -44,7 +44,7 @@ n_mutants        = 10
 focus            = "TCR-facing P4-P8"
 composition      = { single = 7, double = 2, triple = 1 }
 self_peptides    = []
-owner            = "BIO Physician"
+owner            = "Clinical lead"
 panel_ready      = true
 physician_signoff = "PHYSICIAN_SIGNOFF_2026-10-23.md"
 margin_primary_path = "path_a_ipsae_difference"  # Path B rank margin is audit-only
@@ -131,22 +131,22 @@ combination_rule = "rank_average"
 # ---------------------------------------------------------------- agents
 
 [[agents]]
-name     = "BIO Scientist"
+name     = "Science lead"
 role     = "owns the graph, the descriptors and the calibration argument"
 decides  = ["descriptor stack", "combination rule", "keep fraction", "panel construction"]
 
 [[agents]]
-name     = "BIO Physician"
+name     = "Clinical lead"
 role     = "owns target biology and the in-vitro bar"
 decides  = ["decoy peptide panel", "self-peptide panel", "in-vitro reproduction bar", "residue-level sign-off on negative design"]
 
 [[agents]]
-name     = "BIO Engineer"
+name     = "Engineering lead"
 role     = "owns parallelism and provenance, engaged only if n outgrows the hosted API"
 decides  = ["execution substrate above hosted-API scale"]
 
 [[agents]]
-name     = "Mathew"
+name     = "Campaign approver"
 role     = "principal; sole authority for spend and submission"
 decides  = ["approval", "spend cap", "threshold policy", "which negative-design panel"]
 
@@ -156,13 +156,13 @@ decides  = ["approval", "spend cap", "threshold policy", "which negative-design 
 id    = "CFG"
 kind  = "manifest"
 label = "survivor_panel.yaml + decoy_panel.yaml + this file"
-owner = "BIO Scientist"
+owner = "Science lead"
 
 [[nodes]]
 id            = "APPR"
 kind          = "human_gate"
 label         = "approval + spend cap, inside the graph"
-approver      = "Mathew"
+approver      = "Campaign approver"
 human_input   = true
 spend_cap_usd = 14.50
 on_deny       = "HALT"
@@ -217,7 +217,7 @@ edges = [
   ["ART",   "L2"],
   ["L2",    "MARGIN"],
   ["MARGIN","PANEL"],
-  ["PANEL", "handoff:BIO Physician"],
+  ["PANEL", "handoff:Clinical lead"],
 ]
 
 # ---------------------------------------------------------------- platform
@@ -284,7 +284,7 @@ caveat     = "Positive control only — primary ipSAE margin pending until L1B d
 
 [[open_decisions]]
 id = "OD-1"
-owner = "Mathew"
+owner = "Campaign approver"
 question = "thresholds: Boltz-native recalibration, or reinstate AF2 initial guess"
 recommendation = "Boltz-native recalibration on this run"
 provisional_gates = "margin >= 0.15, buried_anchor_contacts == 0, liability_filters.pass"
@@ -292,7 +292,7 @@ reopen_trigger = "calibration / wet-lab bar"
 
 [[open_decisions]]
 id = "OD-2"
-owner = "Mathew with BIO Physician"
+owner = "Campaign approver with Clinical lead"
 question = "which negative-design panel for L1B conditioning"
 resolution = "targeted"
 resolved = "2026-10-23"
@@ -300,7 +300,7 @@ signoff = "PHYSICIAN_SIGNOFF_2026-10-23.md"
 
 [[open_decisions]]
 id = "OD-3"
-owner = "BIO Physician"
+owner = "Clinical lead"
 question = "ten exact SLLMWITQC mutant decoy sequences"
 resolution = "signed in decoy_panel.yaml (triple multi-mutant SLLAAATQC)"
 resolved = "2026-10-23"
@@ -308,14 +308,14 @@ signoff = "PHYSICIAN_SIGNOFF_2026-10-23.md"
 
 [[open_decisions]]
 id = "OD-4"
-owner = "BIO Physician"
+owner = "Clinical lead"
 question = "clinical proteome-near-neighbour and self-peptide panel"
 resolution = "deferred for this computational screen"
 status = "deferred"
 
 [[open_decisions]]
 id = "OD-5"
-owner = "Mathew"
+owner = "Campaign approver"
 opened = "2026-10-24"
 question = "how to gate a stochastic, unseeded quantity: pin and record a seed, replicate and gate on a confidence interval, or revisit the fixed 0.15 threshold"
 evidence = "[stochasticity.specificity_margin_dispersion]: mean abs difference 0.0637, max 0.1174, SD 0.0725 over n=10 designs across two runs with identical inputs, against a 0.15 threshold"

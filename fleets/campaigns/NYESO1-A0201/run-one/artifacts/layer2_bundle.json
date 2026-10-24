@@ -10164,7 +10164,7 @@
    ],
    "gate": "gates.hard_pass",
    "note": "handoff blocked: calibration, manufacturability, species_cross_reactivity have unpinned inputs and were never evaluated",
-   "recipient": "BIO Physician",
+   "recipient": "Clinical lead",
    "top_n": 3
   },
   "pins": {

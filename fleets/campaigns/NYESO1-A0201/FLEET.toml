@@ -17,22 +17,22 @@ scope            = "in_silico_design_and_screen"   # in vitro proof is downstrea
 # ---------------------------------------------------------------- agents
 
 [[agents]]
-name     = "BIO Scientist"
+name     = "Science lead"
 role     = "owns the graph, the descriptors and the calibration argument"
 decides  = ["descriptor stack", "combination rule", "keep fraction", "panel construction"]
 
 [[agents]]
-name     = "BIO Physician"
+name     = "Clinical lead"
 role     = "owns target biology and the in-vitro bar"
 decides  = ["decoy peptide panel", "self-peptide panel", "in-vitro reproduction bar", "residue-level sign-off on negative design"]
 
 [[agents]]
-name     = "BIO Engineer"
+name     = "Engineering lead"
 role     = "owns parallelism and provenance, engaged only if n outgrows the hosted API"
 decides  = ["execution substrate above hosted-API scale"]
 
 [[agents]]
-name     = "Mathew"
+name     = "Campaign approver"
 role     = "principal; sole authority for spend and submission"
 decides  = ["approval", "spend cap", "threshold policy", "which negative-design panel"]
 
@@ -42,13 +42,13 @@ decides  = ["approval", "spend cap", "threshold policy", "which negative-design 
 id    = "CFG"
 kind  = "manifest"
 label = "campaign manifest - the only human-authored artifact"
-owner = "BIO Scientist"
+owner = "Science lead"
 
 [[nodes]]
 id            = "APPR"
 kind          = "human_gate"
 label         = "approval + spend cap, inside the graph"
-approver      = "Mathew"
+approver      = "Campaign approver"
 human_input   = true
 spend_cap_usd = 15.00
 on_deny       = "HALT"
@@ -108,8 +108,8 @@ edges = [
   ["ART",   "L2"],
   ["L2",    "DIV"],
   ["DIV",   "PANEL"],
-  ["PANEL", "handoff:BIO Physician"],
-  ["PANEL", "handoff:BIO Engineer"],
+  ["PANEL", "handoff:Clinical lead"],
+  ["PANEL", "handoff:Engineering lead"],
 ]
 
 # ------------------------------------------------------- run one, submitted
@@ -154,7 +154,7 @@ num_proteins = 300
 # ---------------------------------------------------------- negative design
 
 # Three panels built and staged 2026-10-20 after finding the request carried none.
-# All three mark chain B (0-98) entirely. Awaiting Mathew + BIO Physician sign-off.
+# All three mark chain B (0-98) entirely. Awaiting Campaign approver + Clinical lead sign-off.
 
 [[negative_design_panels]]
 name            = "conservative"
@@ -195,7 +195,7 @@ over_marking      = "strict IMGT alpha-3 is author 183-274 (0-based 182-273); ev
 panel_costs       = "whether any of the three panels changes cost is UNVERIFIED - estimate-cost rejects the type:\"binder\" body (see PLATFORM.md)."
 honoured          = "whether the hosted BoltzGen honours non_binding_residues AT ALL is UNVERIFIED - see risk boltzgen_backend_version and OD-7."
 aggressive_cost   = "a ~9-residue epitope is a very small interface for a 60-100 aa binder; the aggressive panel may be geometrically unsatisfiable or yield designs that cannot express or fold. Published de novo pMHC binders DO contact helix. Treat it as an experiment, not a default."
-sign_off          = "targeted panel signed BIO Physician 2026-10-23 (OD-2); specificity decoys signed in child campaign NYESO1-A0201-specificity. None submitted, nothing spent until APPR."
+sign_off          = "targeted panel signed Clinical lead 2026-10-23 (OD-2); specificity decoys signed in child campaign NYESO1-A0201-specificity. None submitted, nothing spent until APPR."
 source_note       = "this block absorbs nonbinding-panel-2026-10-20.md, consolidated away 2026-10-21; the panels themselves were already machine-readable above."
 
 # ------------------------------------------------------------- descriptors
@@ -236,7 +236,7 @@ attribution = "This work used Proteinbase by Adaptyv Bio under ODC-BY license"
 [reproduction]
 paper     = "10.1101/2024.11.27.624796"
 companion = "10.1101/2024.11.28.625793"
-decoy_set = "ten peptide mutants of SLLMWITQC (nine single/double, one quadruple) - exact sequences OUTSTANDING from BIO Physician"
+decoy_set = "ten peptide mutants of SLLMWITQC (nine single/double, one quadruple) - exact sequences OUTSTANDING from Clinical lead"
 published_gates = "first pass ipAE <= 12 / pLDDT >= 88; after partial diffusion <= 7 / >= 92; cross-panel on-target ipAE < 10 vs off-target > 10; 44 binders selected"
 problem   = "those gates live on AF2 initial guess, which this two-layer stack does not contain; Boltz pae_interaction is not the same quantity"
 position  = "reproduce the paper's LOGIC, not its NUMBERS, with Boltz-native thresholds recalibrated on campaign one"
@@ -266,7 +266,7 @@ excluded_amino_acids    = "default [\"C\"] applies to the DESIGNED BINDER only; 
 id       = "boltzgen_backend_version"
 severity = "open, unresolved"
 statement = "Nothing the API returns identifies which BoltzGen version backs the design pipeline; run objects report only pipeline boltzprot, pipeline_version 1.0, api version v2026-03-01. BoltzGen v0.3.2's entire changelog is a fix for binding_types dropping 'binding' when combined with 'not_binding' - exactly the combination this campaign depends on. A pre-0.3.2 backend could SILENTLY DROP the negative design."
-action   = "emailed support@boltz.bio 2026-10-20 from mchu001.bio@gmail.com; no answer yet"
+action   = "emailed hosted-design vendor support 2026-10-20; no answer yet"
 
 [[risks]]
 id       = "no_independent_model"
@@ -286,13 +286,13 @@ statement = "The account holds a workspace LIVE key, so the free test environmen
 [[risks]]
 id       = "ipsae_worker_unvalidated_end_to_end"
 severity = "wiring-validated 2026-10-20, end-to-end pending"
-statement = "No fixture on the box carries real PAE and real pLDDT together, so the ipSAE/min_ipSAE worker cannot be validated end-to-end before campaign one. The boltz_des_* runs have pae.npz but a flat 100.0 B-factor placeholder and a protein+ligand complex whose PAE is (256,256) against 170 residues because Boltz tokenizes ligands PER-ATOM, i.e. PAE is per-TOKEN not per-residue. The boltz_run_* runs have real varying pLDDT but no pae.npz. Reported by BIO Engineer."
+statement = "No fixture on the box carries real PAE and real pLDDT together, so the ipSAE/min_ipSAE worker cannot be validated end-to-end before campaign one. The boltz_des_* runs have pae.npz but a flat 100.0 B-factor placeholder and a protein+ligand complex whose PAE is (256,256) against 170 residues because Boltz tokenizes ligands PER-ATOM, i.e. PAE is per-TOKEN not per-residue. The boltz_run_* runs have real varying pLDDT but no pae.npz. Reported by Engineering lead."
 mitigation = "worker must build an explicit token->residue map from the CIF and FAIL LOUDLY on mismatch rather than trust a length vector; a zero-variance pLDDT column is treated as ABSENT, not as a value. Campaign one's first batch is the first true end-to-end validation of this descriptor."
 
 [[risks]]
 id       = "plddt_scale_assumption"
 severity = "advisory, recorded 2026-10-20"
-statement = "The ipSAE worker performs NO 0-1 to 0-100 pLDDT rescale (the DunbrackLab reference multiplies by 100 iff max <= 1). This is safe for Boltz mmCIF, which is always 0-100, but a future 0-1 pLDDT source would read as ~0.5 and be mis-flagged as PRESENT rather than caught by the zero-variance absence test. Reported by BIO Engineer."
+statement = "The ipSAE worker performs NO 0-1 to 0-100 pLDDT rescale (the DunbrackLab reference multiplies by 100 iff max <= 1). This is safe for Boltz mmCIF, which is always 0-100, but a future 0-1 pLDDT source would read as ~0.5 and be mis-flagged as PRESENT rather than caught by the zero-variance absence test. Reported by Engineering lead."
 mitigation = "if a non-Boltz pLDDT source is ever added, the worker must assert the scale explicitly rather than infer it."
 
 # ---- Modal as an OPTIONAL CPU execution host for LAYER 2 (in scope 2026-10-21) ----
@@ -365,7 +365,7 @@ do_not_build_on = "IBM/BeeAI ACP - folded into A2A under the Linux Foundation, r
 
 [[open_decisions]]
 id = "OD-6"
-owner = "Mathew"
+owner = "Campaign approver"
 question = "submit the $15 / 300-design campaign"
 rescope = "run one rescoped to a $0.50 / 10-design positive control (num_proteins = 10); spend_cap_usd stays 15.00"
 
@@ -373,34 +373,34 @@ rescope = "run one rescoped to a $0.50 / 10-design positive control (num_protein
 
 [[open_decisions]]
 id = "OD-1"
-owner = "Mathew"
+owner = "Campaign approver"
 question = "thresholds: Boltz-native recalibration, or reinstate AF2 initial guess (which puts the GPU layer back)"
 recommendation = "Boltz-native recalibration"
 reopen_trigger = "run two (calibration / wet-lab bar)"
 
 [[open_decisions]]
 id = "OD-2"
-owner = "Mathew with BIO Physician"
+owner = "Campaign approver with Clinical lead"
 question = "which negative-design panel"
 recommendation = "targeted"
 reopen_trigger = "run two (specificity arm)"
 
 [[open_decisions]]
 id = "OD-3"
-owner = "BIO Physician"
+owner = "Clinical lead"
 question = "the ten exact SLLMWITQC mutant decoy sequences from the paper's supplement"
 note = "highest-value missing input"
 reopen_trigger = "run two (specificity arm)"
 
 [[open_decisions]]
 id = "OD-4"
-owner = "BIO Physician"
+owner = "Clinical lead"
 question = "clinical proteome-near-neighbour and self-peptide panel"
 reopen_trigger = "run two (specificity arm)"
 
 [[open_decisions]]
 id = "OD-5"
-owner = "BIO Physician"
+owner = "Clinical lead"
 question = "in-vitro reproduction bar: multimer + Jurkat-NFAT, or also co-culture cytotoxicity"
 reopen_trigger = "run two (calibration / wet-lab bar)"
 
@@ -412,7 +412,7 @@ reopen_trigger = "any request carrying non_binding_residues"
 
 [[open_decisions]]
 id = "OD-8"
-owner = "BIO Scientist with BIO Engineer"
+owner = "Science lead with Engineering lead"
 question = "re-express this spec as a Workflow RO-Crate over CWL/Nextflow with an approval profile, instead of a bespoke format"
 image_digest_half = "CLOSED - ghcr digest 7e8762ae is part of the content address; only the code/script-hash half remains open"
 reopen_trigger = "adopting the Nextflow input-list superset (code/script-hash provenance)"
@@ -438,7 +438,7 @@ rules = [
   "4 artifacts mirrored off-API before transport (7-day retention clock)",
   "5 return-path decisions re-enter ONLY via the manifest and the approval gate",
 ]
-validation_2026_10_20 = "BIO Engineer validated the worker against the box fixtures (PR #14, MERGED 2026-10-20 as 9e758a3): pLDDT read on the 0-100 scale with a flat placeholder flagged absent via std<1e-6 (scale-independent, real boltz_run pLDDT read as 90.16); label_asym_id parsed as real chain ids with no silent re-lettering, and a token/residue mismatch RAISES TokenAlignmentError (256 PAE tokens vs 169 residues) under two independent guards; per-direction ipsae_d0res agrees with DunbrackLab/IPSAE at SHA 6174cf9 to ~3e-7 on a real-PAE protein slice, with our min_ipSAE=min vs their aggregate max confirmed as an intentional difference on identical d0 math. This establishes the worker is wired correctly, NOT that the descriptor is validated on campaign-one geometry."
+validation_2026_10_20 = "Engineering lead validated the worker against the box fixtures (PR #14, MERGED 2026-10-20 as 9e758a3): pLDDT read on the 0-100 scale with a flat placeholder flagged absent via std<1e-6 (scale-independent, real boltz_run pLDDT read as 90.16); label_asym_id parsed as real chain ids with no silent re-lettering, and a token/residue mismatch RAISES TokenAlignmentError (256 PAE tokens vs 169 residues) under two independent guards; per-direction ipsae_d0res agrees with DunbrackLab/IPSAE at SHA 6174cf9 to ~3e-7 on a real-PAE protein slice, with our min_ipSAE=min vs their aggregate max confirmed as an intentional difference on identical d0 math. This establishes the worker is wired correctly, NOT that the descriptor is validated on campaign-one geometry."
 residual   = "No fixture carries real PAE and real pLDDT together and none has campaign-one geometry, so campaign one's first batch remains the first true end-to-end test of this descriptor."
 
 # ---- RUN ONE: minimum set (positive control, machine-checkable) ----

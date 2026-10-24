@@ -3,7 +3,7 @@
 **Campaign:** `NYESO1-A0201` — NY-ESO-1 157–165 / HLA-A\*02:01  
 **Author:** bioengineer (expert mode), reconciled to fleet documents  
 **Status:** DRAFT for fleet review  
-**Scope:** recommendations for **this repository's in-silico campaign** plus the **downstream in-vitro bar** owned by BIO Physician (`CASE.md`).  
+**Scope:** recommendations for **this repository's in-silico campaign** plus the **downstream in-vitro bar** owned by Clinical lead (`CASE.md`).  
 **Authority order:** `FLEET.toml` (graph, spend, gates) → `UPGRADES.md` (geometric methods + **§10 coding handover**) → this file (advisory).
 
 ---
@@ -23,9 +23,9 @@ Peptide in all submitted and mirrored structures: **`SLLMWITQC`** (9-mer), HLA-A
 
 ## 1. Antigen and epitope (in silico + refolding QC)
 
-1. **Single cognate epitope for campaign one.** Hold **`SLLMWITQC`** as the on-target peptide for L1A/L1B unless Mathew and BIO Physician open a **new campaign variant**. Anchor-modified peptides (e.g. 165Q→L) are **out of scope** for run one and run two unless explicitly added to the manifest; predicted binding gains do not replace **decoy-panel** specificity (`CASE.md`, OD-3).
+1. **Single cognate epitope for campaign one.** Hold **`SLLMWITQC`** as the on-target peptide for L1A/L1B unless Campaign approver and Clinical lead open a **new campaign variant**. Anchor-modified peptides (e.g. 165Q→L) are **out of scope** for run one and run two unless explicitly added to the manifest; predicted binding gains do not replace **decoy-panel** specificity (`CASE.md`, OD-3).
 2. **Epitope indexing.** All conditioning uses **0-based per-chain** indices on the sequence path (`PLATFORM.md`, verified live). Do not renumber when cropping the target (`FLEET.toml` `[run_one]` `cropping = "prohibited"`).
-3. **Self-antigen / CTAG family (downstream).** Before any primate or broad human-material work, BIO Physician owns a **proteome near-neighbour and self-peptide panel** (OD-4). In silico, the immediate analogue is **item 8** in `UPGRADES.md` (selectivity as a difference vs irrelevant peptide on the same HLA) — **proposed**, not implemented.
+3. **Self-antigen / CTAG family (downstream).** Before any primate or broad human-material work, Clinical lead owns a **proteome near-neighbour and self-peptide panel** (OD-4). In silico, the immediate analogue is **item 8** in `UPGRADES.md` (selectivity as a difference vs irrelevant peptide on the same HLA) — **proposed**, not implemented.
 
 ---
 
@@ -33,7 +33,7 @@ Peptide in all submitted and mirrored structures: **`SLLMWITQC`** (9-mer), HLA-A
 
 4. **Affinity ceiling (conceptual).** For pMHC, optimise **selectivity and footprint**, not maximal interface confidence. Treat high `iptm` with high invariant-surface fraction as **risk** (`UPGRADES.md` §6; run-one Spearman +0.636 vs item 4, n=10). Do not rank designs by `iptm` alone.
 5. **Allele exclusivity (in silico).** Decoy refolds (L1B) keep **the same HLA** and vary **peptide only** — the designed screen for cross-peptide behaviour. HLA-B/C panels are **wet-lab** (CASE handoff), not layer-1 today.
-6. **Negative design.** Three staged `non_binding_residues` panels exist in `FLEET.toml`; **none were applied in run one**. Default recommendation remains **`targeted`** panel pending Mathew + BIO Physician (OD-2). Aggressive panel may be **geometrically unsatisfiable** on a 9-residue epitope — treat as experiment, not default.
+6. **Negative design.** Three staged `non_binding_residues` panels exist in `FLEET.toml`; **none were applied in run one**. Default recommendation remains **`targeted`** panel pending Campaign approver + Clinical lead (OD-2). Aggressive panel may be **geometrically unsatisfiable** on a 9-residue epitope — treat as experiment, not default.
 
 ---
 
@@ -47,7 +47,7 @@ Re-run and escalation priority for **this fleet**:
 | 2 | L1B decoy refold on survivors | Specificity margin computable; sequences from OD-3 |
 | 3 | L2 descriptors + `UPGRADES.md` Tier 0–2 | Recorded metrics; **gating remains `iptm` + `plddt` only** until owner promotes heuristics |
 | 4 | Diversity (DIV) → ranked PANEL | Transport payloads T1–T5 (`FLEET.toml` `[transport]`) |
-| 5 | SPR/BLI, tetramer, Jurkat-NFAT, cytotoxicity | **BIO Physician** — see `CASE.md` downstream handoff (OD-5) |
+| 5 | SPR/BLI, tetramer, Jurkat-NFAT, cytotoxicity | **Clinical lead** — see `CASE.md` downstream handoff (OD-5) |
 
 7. **Unified protocol (in silico).** Before comparing run one to run two, fix one **layer-2 orchestrator** entrypoint and one **flags / shell reporting** convention (`UPGRADES.md` §10 WP-A, P1 dual 5.0 Å + 10.0 Å reporting). Use `layer2_orchestrator.py` only for cross-run rankings (replaces separate tier0/contact JSON exports).
 
@@ -73,7 +73,7 @@ Re-run and escalation priority for **this fleet**:
 
 | Draft § | Disposition | Handover / fleet action |
 |---------|-------------|-------------------------|
-| §1 dual-epitope / pMHC half-life | **Deferred** to BIO Physician / new manifest | Not WP for GLM-5.3 |
+| §1 dual-epitope / pMHC half-life | **Deferred** to Clinical lead / new manifest | Not WP for GLM-5.3 |
 | §2 TCR affinity / mispairing | **N/A** (binder modality) | Use §2 binder + UPGRADES G7 |
 | §3 wet-lab ladder | **CASE.md** only | Handover cites tier 1–4 in silico |
 | §5 construct naming | **Adopt** §5.8–5.9 | WP-F: bundle metadata |

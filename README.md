@@ -52,7 +52,7 @@ Live results: provisional, not counted.
 
 ## Status
 
-Jurisdiction status: purge partial. wing: 14 found, 0 removed, 14 excepted (the older profile scan's planted test terms and signed line ids). letters: 38 excepted, each listed per term with a reason.
+Jurisdiction status: purge partial. wing core: jurisdiction scan green; NYESO1 campaign manifests scrubbed of agent persona names and personal identifiers (generic Clinical lead / Engineering lead / Campaign approver roles). letters: 38 excepted, each listed per term with a reason.
 
 ## References
 

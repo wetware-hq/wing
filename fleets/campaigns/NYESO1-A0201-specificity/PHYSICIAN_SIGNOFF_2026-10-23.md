@@ -3,7 +3,7 @@
 **Campaign:** NYESO1-A0201-specificity  
 **Mode:** Physician scientist  
 **Date:** 2026-10-23  
-**Authority:** BIO Physician (residue-level and panel sign-off)
+**Authority:** Clinical lead (residue-level and panel sign-off)
 
 ## Resolved decisions
 
@@ -21,4 +21,4 @@ Quadruple **SLLAAAAQC** replaced with triple **SLLAAATQC** (P4/P5/P6 → Ala) pe
 
 ## L1B gate
 
-`decoy_panel.yaml`: `panel_ready_for_l1b: true` as of this sign-off. **APPR** (Mathew) remains required before spend.
+`decoy_panel.yaml`: `panel_ready_for_l1b: true` as of this sign-off. **APPR** (Campaign approver) remains required before spend.

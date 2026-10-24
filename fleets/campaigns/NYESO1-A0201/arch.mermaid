@@ -11,7 +11,7 @@ flowchart TD
     end
 
     subgraph FLEET["FLEET.toml — agentic execution graph (in silico)"]
-        APPR{{"APPR · human gate<br/>Mathew approves · spend_cap $15 · on_deny HALT"}}
+        APPR{{"APPR · human gate<br/>Campaign approver approves · spend_cap $15 · on_deny HALT"}}
         HALT["HALT · zero cost"]
         L1A["L1A · generate<br/>300 binders vs the real epitope<br/>Boltz hosted API · $15"]
         L1B["L1B · decoy refold<br/>survivors × decoy panel, same HLA"]
@@ -23,7 +23,7 @@ flowchart TD
 
     subgraph CASE["CASE.md — clinical half (in vitro only)"]
         MARGIN["specificity margin<br/>on-target rank − best-decoy rank<br/>(the product is specificity, not affinity)"]
-        INVITRO["in-vitro hand-off (BIO Physician)<br/>SPR/BLI · counter-screen · multimer + Jurkat-NFAT<br/>± co-culture cytotoxicity (OD-5)"]
+        INVITRO["in-vitro hand-off (Clinical lead)<br/>SPR/BLI · counter-screen · multimer + Jurkat-NFAT<br/>± co-culture cytotoxicity (OD-5)"]
         CLIN["clinical bet · resected high-TMB melanoma<br/>MRD / adjuvant window<br/>proves the pipeline, NOT personalisation"]
     end
 
@@ -54,7 +54,7 @@ flowchart TD
     INVITRO ==>|validated specific binders| CLIN
 
     %% scale handoff
-    PANEL -.->|only if n outgrows the hosted API| ENG["handoff · BIO Engineer<br/>parallelism & provenance"]
+    PANEL -.->|only if n outgrows the hosted API| ENG["handoff · Engineering lead<br/>parallelism & provenance"]
 
     classDef gate fill:#fde68a,stroke:#b45309,color:#111;
     classDef halt fill:#fecaca,stroke:#b91c1c,color:#111;

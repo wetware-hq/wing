@@ -820,14 +820,14 @@ python3 -c "import ast; ast.parse(open('fleets/campaigns/NYESO1-A0201/modal_laye
 
 | ID | Question | Owner |
 |---|---|---|
-| P1 | 5.0 Å reporting + `targeting_flags.json` | Mathew |
-| P2 | Item 3 → `FLEET.toml` gate | Mathew |
+| P1 | 5.0 Å reporting + `targeting_flags.json` | Campaign approver |
+| P2 | Item 3 → `FLEET.toml` gate | Campaign approver |
 | P3 | Section 6 operational line | User |
-| P4 | Rim residue list | User + BIO Physician |
+| P4 | Rim residue list | User + Clinical lead |
 | — | Items 5, 7, 8, 10 as fleet gates | User |
-| OD-2 | Negative-design panel | Mathew + BIO Physician |
-| OD-3 | Decoy sequences | BIO Physician |
-| OD-5 | In-vitro bar | BIO Physician |
+| OD-2 | Negative-design panel | Campaign approver + Clinical lead |
+| OD-3 | Decoy sequences | Clinical lead |
+| OD-5 | In-vitro bar | Clinical lead |
 
 ### 10.11 Deliverables checklist
 
