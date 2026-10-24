@@ -135,8 +135,20 @@ def load_chains(cif_path: str | Path) -> dict[str, ChainAtoms]:
     return out
 
 
-def assert_layout(chains: dict[str, ChainAtoms], cif_path: str | Path) -> None:
-    """Fail loudly rather than score the wrong interface if lettering differs."""
+def assert_layout(
+    chains: dict[str, ChainAtoms],
+    cif_path: str | Path,
+    peptide_sequence: str | None = None,
+) -> None:
+    """Fail loudly rather than score the wrong interface if lettering differs.
+
+    ``peptide_sequence`` is the chain-C sequence THIS structure is expected to carry,
+    and defaults to the cognate PEPTIDE_SEQUENCE. A decoy refold is a deliberate
+    chain-C variant, so scoring one requires passing ITS OWN expected sequence - not
+    relaxing the check. The guard keeps its full strength either way: a structure
+    whose chain C does not match what the caller expected still raises.
+    """
+    expected_peptide = PEPTIDE_SEQUENCE if peptide_sequence is None else peptide_sequence.upper()
     problems = []
     for cid, n in EXPECTED_LAYOUT.items():
         if cid not in chains:
@@ -148,8 +160,8 @@ def assert_layout(chains: dict[str, ChainAtoms], cif_path: str | Path) -> None:
         seq = gemmi.one_letter_code(
             [pep.residue_names[i] for i in sorted(pep.residue_names)]
         ).upper()
-        if seq != PEPTIDE_SEQUENCE:
-            problems.append(f"chain {PEPTIDE_CHAIN} sequence {seq!r} != {PEPTIDE_SEQUENCE!r}")
+        if seq != expected_peptide:
+            problems.append(f"chain {PEPTIDE_CHAIN} sequence {seq!r} != {expected_peptide!r}")
     if problems:
         raise ChainLayoutError(f"{cif_path}: " + "; ".join(problems))
 
@@ -310,9 +322,14 @@ def classify(peptide: dict, chain_a: dict, b2m_atom_contacts: int) -> tuple[str,
     )
 
 
-def analyse_design(design_id: str, cif_path: Path, cutoffs=(CUTOFF_PRIMARY, CUTOFF_SENSITIVITY)) -> dict:
+def analyse_design(
+    design_id: str,
+    cif_path: Path,
+    cutoffs=(CUTOFF_PRIMARY, CUTOFF_SENSITIVITY),
+    peptide_sequence: str | None = None,
+) -> dict:
     chains = load_chains(cif_path)
-    assert_layout(chains, cif_path)
+    assert_layout(chains, cif_path, peptide_sequence)
     binder = chains[BINDER_CHAIN]
 
     rec: dict = {"design_id": design_id, "cif": cif_path.name,

@@ -18,6 +18,18 @@ DEFAULT_RUN_ONE_ARTIFACTS = RUN_ONE / "artifacts"
 
 
 def _load_run_one_module(name: str):
+    """Load a run-one module by path, under its bare name.
+
+    The run-one modules import EACH OTHER by bare name at module scope
+    (layer2_orchestrator imports contact_analysis, layer2_core, specificity_scoring
+    and tier0_targeting). Loading one by path alone therefore raised
+    ModuleNotFoundError for its siblings unless the caller happened to have run-one/
+    on PYTHONPATH. Putting run-one/ on sys.path once fixes that at the root, and makes
+    the load order here irrelevant rather than load-bearing.
+    """
+    run_one = str(RUN_ONE)
+    if run_one not in sys.path:
+        sys.path.insert(0, run_one)
     path = RUN_ONE / f"{name}.py"
     spec = importlib.util.spec_from_file_location(name, path)
     mod = importlib.util.module_from_spec(spec)
@@ -101,15 +113,24 @@ def score_survivor_peptides(
     peptide_dirs: dict[str, Path],
     artifacts_root: Path,
     flags_path: Path,
+    peptide_sequences: dict[str, str] | None = None,
 ) -> dict[str, dict]:
-    orch = _load_run_one_module("layer2_orchestrator")
-    _load_run_one_module("layer2_core")
+    # Dependencies first, dependent last. Not strictly required now that
+    # _load_run_one_module puts run-one/ on sys.path, but it keeps the dependency
+    # direction visible at the call site.
     _load_run_one_module("contact_analysis")
+    _load_run_one_module("layer2_core")
     tier0 = _load_run_one_module("tier0_targeting")
+    orch = _load_run_one_module("layer2_orchestrator")
     flags = tier0.load_flags(flags_path)
+    peptide_sequences = peptide_sequences or {}
     rows: dict[str, dict] = {}
     for peptide_id, pdir in peptide_dirs.items():
         design_id = pdir.name if pdir.name.startswith("pres_") else survivor_id
+        # Each refold carries ITS OWN chain-C sequence: the cognate for the cognate dir,
+        # the mutant for each decoy dir. assert_layout is checked against that expected
+        # sequence rather than the cognate's, so the guard still fires on a genuinely
+        # mislabelled structure instead of being switched off for decoys.
         rec = orch.score_design(
             design_id,
             pdir,
@@ -118,6 +139,7 @@ def score_survivor_peptides(
             with_sasa=False,
             with_docking=True,
             with_contact_site=True,
+            peptide_sequence=peptide_sequences.get(peptide_id),
         )
         sm.attach_metrics_inline(rec, pdir / "metrics.json")
         row = sm.row_from_layer2_design(rec)
@@ -140,6 +162,12 @@ def build_ranked_panel(
     decoy_ids = [e["peptide_id"] for e in decoy_entries]
     panel_ready = decoy_doc.get("panel_ready_for_l1b", False)
 
+    # peptide_id -> the chain-C sequence that peptide's refold must carry.
+    peptide_sequences: dict[str, str] = {cognate_id: decoy_doc["cognate"]["sequence"]}
+    for e in decoy_entries:
+        if e.get("sequence"):
+            peptide_sequences[e["peptide_id"]] = e["sequence"]
+
     designs_out: list[dict] = []
     for s in survivors:
         sid = s["design_id"]
@@ -156,7 +184,9 @@ def build_ranked_panel(
 
         if score:
             peptide_rows = list(
-                score_survivor_peptides(sid, peptide_dirs, artifacts_root, flags_path).values()
+                score_survivor_peptides(
+                    sid, peptide_dirs, artifacts_root, flags_path, peptide_sequences
+                ).values()
             )
         else:
             bundle_path = artifacts_root / "layer2_bundle.json"

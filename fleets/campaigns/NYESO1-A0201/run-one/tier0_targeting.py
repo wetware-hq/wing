@@ -203,9 +203,15 @@ def invariant_surface_fraction(cif_path: Path, flags: dict) -> dict | None:
     }
 
 
-def analyse_design(design_id: str, cif_path: Path, flags: dict, with_sasa: bool = True) -> dict:
+def analyse_design(
+    design_id: str,
+    cif_path: Path,
+    flags: dict,
+    with_sasa: bool = True,
+    peptide_sequence: str | None = None,
+) -> dict:
     chains = load_chains(cif_path)
-    assert_layout(chains, cif_path)
+    assert_layout(chains, cif_path, peptide_sequence)
 
     cutoff = float(flags["contact_cutoff_angstrom"])
     target_chains = (HEAVY_CHAIN, B2M_CHAIN, PEPTIDE_CHAIN)
@@ -278,9 +284,16 @@ def analyse_design(design_id: str, cif_path: Path, flags: dict, with_sasa: bool 
 DEFAULT_SWEEP_CUTOFFS = (4.0, 5.0, 6.0, 7.0, 8.0, 10.0, 12.0)
 
 
-def item1_reporting_at_shell(cif_path: Path, flags: dict, shell_angstrom: float) -> dict:
+def item1_reporting_at_shell(
+    cif_path: Path,
+    flags: dict,
+    shell_angstrom: float,
+    peptide_sequence: str | None = None,
+) -> dict:
     """Item 1 off-epitope fraction at an explicit shell (P1 dual reporting; not a gate)."""
-    row = sweep_design(cif_path, flags, (shell_angstrom,))["by_cutoff"][f"{shell_angstrom:.1f}"]
+    row = sweep_design(cif_path, flags, (shell_angstrom,), peptide_sequence)["by_cutoff"][
+        f"{shell_angstrom:.1f}"
+    ]
     return {
         "reporting_shell_angstrom": shell_angstrom,
         "item_1_off_epitope_contact_fraction": row["off_epitope_contact_fraction"],
@@ -289,10 +302,15 @@ def item1_reporting_at_shell(cif_path: Path, flags: dict, shell_angstrom: float)
     }
 
 
-def sweep_design(cif_path: Path, flags: dict, cutoffs=DEFAULT_SWEEP_CUTOFFS) -> dict:
+def sweep_design(
+    cif_path: Path,
+    flags: dict,
+    cutoffs=DEFAULT_SWEEP_CUTOFFS,
+    peptide_sequence: str | None = None,
+) -> dict:
     """Off-epitope contact fraction at each shell cutoff. Diagnostic only — not a gate."""
     chains = load_chains(cif_path)
-    assert_layout(chains, cif_path)
+    assert_layout(chains, cif_path, peptide_sequence)
     binder = chains[BINDER_CHAIN]
     target_chains = (HEAVY_CHAIN, B2M_CHAIN, PEPTIDE_CHAIN)
     contact_cutoff = float(flags["contact_cutoff_angstrom"])

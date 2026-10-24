@@ -182,6 +182,11 @@ DEFAULT_CHAINS = ""
 # gives 6 pairs) and there is no single "the" interface to report without it.
 BINDER_CHAIN = "D"
 
+# The subtree l1b_runner.py:mirror_prediction_to_decoy_dir writes into, and the
+# separator used to carry (design_id, decoy_id) through score_one's single id arg.
+DECOY_REFOLDS_DIRNAME = "decoy_refolds"
+COMPOSITE_ID_SEP = "::"
+
 
 # -----------------------------------------------------------------------------
 # DELIVERABLE 2 - the functions. CPU ONLY. gpu is NOT set anywhere.
@@ -457,36 +462,98 @@ def main(
     out_path: str = "run-one/layer2_results.json",
     chains: str = DEFAULT_CHAINS,
     binder_chain: str = BINDER_CHAIN,
+    mode: str = "cognate",
 ):
-    """Expect artifacts_dir/<design_id>/ each holding `_predicted.cif` and `pae.npz`
-    (the ART node outputs, infra.json:100-102). Mirror those off-API first (7-day
-    retention clock) before running this."""
+    """Score an artifact tree on Modal via starmap.
+
+    mode="cognate" (DEFAULT, unchanged behaviour): expects
+    artifacts_dir/<design_id>/ each holding `_predicted.cif` and `pae.npz` (the ART
+    node outputs, infra.json:100-102). 10 inputs for this campaign. Mirror those
+    off-API first (7-day retention clock) before running this.
+
+    mode="decoys": expects artifacts_dir/decoy_refolds/<design_id>/<decoy_id>/, the
+    layout l1b_runner.py:mirror_prediction_to_decoy_dir actually writes. 100 inputs
+    for this campaign (10 designs x 10 decoys). Same chain layout as the cognate -
+    verified on the run-one tree, A:275,B:99,C:9,D:73 for both - so DEFAULT_CHAINS
+    ("", i.e. let the worker read the chains off the mmCIF) is correct for both modes
+    and no per-mode chain override is needed.
+
+    WHY A MODE FLAG AND NOT A REPLACEMENT: the cognate path is the one that produced
+    run-one/artifacts/layer2_results_modal.json under run ap-IshjN3qkaWX2kvCezJbqeM.
+    Keeping it byte-reproducible matters more than tidiness, so decoys are additive.
+
+    score_one takes a single `design_id` string, so decoy inputs pass the composite
+    "<design_id>::<decoy_id>". It is split back into separate design_id/decoy_id keys
+    below, so a caller never has to parse the composite out of the results file.
+    """
     adir = pathlib.Path(artifacts_dir)
-    designs = sorted(p.name for p in adir.iterdir() if p.is_dir())
-    if not designs:
-        raise SystemExit(f"no design subdirs under {adir}")
+    if mode not in ("cognate", "decoys"):
+        raise SystemExit(f"mode must be 'cognate' or 'decoys', got {mode!r}")
 
     inputs = []
-    for did in designs:
-        cif = next(adir.joinpath(did).glob("*_predicted.cif"))
-        pae = next(adir.joinpath(did).glob("*pae*.npz"))
-        inputs.append((did, cif.read_bytes(), pae.read_bytes(), chains, binder_chain))
+    if mode == "cognate":
+        designs = sorted(p.name for p in adir.iterdir() if p.is_dir())
+        # decoy_refolds/ is a sibling of the per-design dirs, not one of them.
+        designs = [d for d in designs if d != DECOY_REFOLDS_DIRNAME]
+        if not designs:
+            raise SystemExit(f"no design subdirs under {adir}")
+        for did in designs:
+            cif = next(adir.joinpath(did).glob("*_predicted.cif"))
+            pae = next(adir.joinpath(did).glob("*pae*.npz"))
+            inputs.append((did, cif.read_bytes(), pae.read_bytes(), chains, binder_chain))
+    else:
+        root = adir / DECOY_REFOLDS_DIRNAME
+        if not root.is_dir():
+            raise SystemExit(f"no {DECOY_REFOLDS_DIRNAME}/ tree under {adir}")
+        for design_dir in sorted(p for p in root.iterdir() if p.is_dir()):
+            for decoy_dir in sorted(p for p in design_dir.iterdir() if p.is_dir()):
+                cif = next(decoy_dir.glob("*_predicted.cif"))
+                pae = next(decoy_dir.glob("*pae*.npz"))
+                inputs.append((
+                    f"{design_dir.name}{COMPOSITE_ID_SEP}{decoy_dir.name}",
+                    cif.read_bytes(),
+                    pae.read_bytes(),
+                    chains,
+                    binder_chain,
+                ))
+        if not inputs:
+            raise SystemExit(f"no decoy leaf dirs with a *_predicted.cif under {root}")
+
+    print(f"mode={mode}: {len(inputs)} input(s) enumerated under {adir}")
 
     # starmap: each tuple is unpacked into score_one's positional args.
     # order_outputs=True (default) -> outputs match input order; we also sort below.
     results = list(score_one.starmap(inputs))
-    results.sort(key=lambda r: r["design_id"])
+
+    if mode == "decoys":
+        # Split the composite back into its two identity fields. Done here rather than
+        # in score_one so the remote function keeps its single-id signature and the
+        # cognate path is untouched.
+        for r in results:
+            composite = r["design_id"]
+            design_id, _, decoy_id = composite.partition(COMPOSITE_ID_SEP)
+            r["design_id"] = design_id
+            r["decoy_id"] = decoy_id
+        results.sort(key=lambda r: (r["design_id"], r["decoy_id"]))
+    else:
+        results.sort(key=lambda r: r["design_id"])
 
     out = pathlib.Path(out_path)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(
         json.dumps(
-            {"campaign": "NYESO1-A0201", "layer": 2, "n": len(results), "results": results},
+            {
+                "campaign": "NYESO1-A0201",
+                "layer": 2,
+                "mode": mode,
+                "n": len(results),
+                "results": results,
+            },
             sort_keys=True,
             separators=(",", ":"),
         )
     )
-    print(f"wrote {len(results)} layer-2 results -> {out}")
+    print(f"wrote {len(results)} layer-2 results ({mode}) -> {out}")
 
 
 # -----------------------------------------------------------------------------

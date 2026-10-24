@@ -171,7 +171,7 @@ def _item10_fibonacci_rotations(n: int) -> list[np.ndarray]:
     return mats
 
 
-def measure_item10_docking(cif_path: Path) -> dict[str, Any]:
+def measure_item10_docking(cif_path: Path, peptide_sequence: str | None = None) -> dict[str, Any]:
     from contact_analysis import (
         B2M_CHAIN,
         BINDER_CHAIN,
@@ -182,7 +182,7 @@ def measure_item10_docking(cif_path: Path) -> dict[str, Any]:
     )
 
     chains = load_chains(cif_path)
-    assert_layout(chains, cif_path)
+    assert_layout(chains, cif_path, peptide_sequence)
 
     target_all = np.concatenate(
         [chains[c].coords for c in (HEAVY_CHAIN, B2M_CHAIN, PEPTIDE_CHAIN)], axis=0

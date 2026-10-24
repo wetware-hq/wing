@@ -50,7 +50,9 @@ def row_from_layer2_design(design_block: dict[str, Any]) -> dict[str, Any]:
     min_ipsae = ipsae.get("min_ipsae_overall")
     pairs = ipsae.get("pairs") or {}
     cd = pairs.get("C|D") or pairs.get("D|C") or {}
-    ipsae_cd = cd.get("ipsae") if isinstance(cd, dict) else None
+    # Path A (specificity_scoring.peptide_binder_ipsae) defines the peptide-binder
+    # descriptor as min(C->D, D->C); the pair record exposes that as "min_ipsae".
+    ipsae_cd = cd.get("min_ipsae") if isinstance(cd, dict) else None
     item10 = design_block.get("item10_docking") or {}
     sc = item10.get("complementarity_contact_fraction_delta")
     prov = design_block.get("provenance") or {}
@@ -144,6 +146,23 @@ def compute_specificity_margin(
             "status": "incomplete",
             "reason": "missing decoy rows",
             "missing_decoy_peptide_ids": missing_decoys,
+            "panel_ready": False,
+        }
+
+    # Fail loud rather than ranking on a partially-missing descriptor stack: a
+    # descriptor that is null for every peptide contributes a constant rank and
+    # silently dilutes the margin instead of invalidating it.
+    empty_descriptors = [
+        d
+        for d in stack
+        if all(_EXTRACTORS[d][1](r) is None for r in peptide_rows)
+    ]
+    if empty_descriptors:
+        return {
+            "status": "incomplete",
+            "reason": "descriptor(s) null for every peptide in the panel",
+            "empty_descriptors": empty_descriptors,
+            "descriptor_stack": list(stack),
             "panel_ready": False,
         }
 

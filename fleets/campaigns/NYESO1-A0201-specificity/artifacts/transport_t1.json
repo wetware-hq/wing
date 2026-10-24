@@ -11,6 +11,1306 @@
   "OD-2",
   "OD-3"
  ],
- "top_designs_by_specificity_margin": [],
+ "top_designs_by_specificity_margin": [
+  {
+   "best_decoy_rank": 2,
+   "binder_sequence": "MLPGVLELEDGSRAHVEVSYDAASGRLWGYVTSVEGDSGVQPGDLIVAEGDAASRESPAVVLSLDRRGTLRLL",
+   "contact_site": {
+    "binder_heavy_atoms": 538,
+    "chain_residue_counts": {
+     "A": 275,
+     "B": 99,
+     "C": 9,
+     "D": 73
+    },
+    "cif": "pres_rIVnI2qWY81pul3zHRrN_predicted.cif",
+    "cutoffs": {
+     "4.0": {
+      "atom_pairs": {
+       "A": 77,
+       "B": 0,
+       "C": 41
+      },
+      "b2m_atom_contacts": 0,
+      "b2m_residues_contacted": [],
+      "binder_residues_in_interface": {
+       "A": 11,
+       "B": 0,
+       "C": 7
+      },
+      "chain_A": {
+       "alpha3_Ig_atom_contacts": 0,
+       "atom_contacts_by_region": {
+        "alpha1_helix": 10,
+        "alpha2_helix": 67
+       },
+       "groove_proximal_atom_contacts": 77,
+       "groove_proximal_fraction_of_chainA": 1.0,
+       "residues_by_region": {
+        "alpha1_helix": [
+         65,
+         66,
+         69,
+         73
+        ],
+        "alpha2_helix": [
+         146,
+         149,
+         150,
+         151,
+         152,
+         154,
+         155
+        ]
+       }
+      },
+      "min_distance": {
+       "A": 2.07563060887529,
+       "B": 19.290761381534427,
+       "C": 2.4802347082080773
+      },
+      "peptide": {
+       "anchor_P2_P9_atom_contacts": 0,
+       "per_position_atom_contacts": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 15,
+        "5": 14,
+        "6": 4,
+        "7": 7,
+        "8": 1,
+        "9": 0
+       },
+       "positions_contacted": [
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "tcr_facing_P4_P8_atom_contacts": 41,
+       "tcr_facing_P4_P8_positions_hit": [
+        4,
+        5,
+        6,
+        7,
+        8
+       ]
+      },
+      "peptide_fraction_of_atom_contacts": 0.3474576271186441,
+      "peptide_fraction_of_residue_pairs": 0.3448275862068966,
+      "residue_pairs": {
+       "A": 19,
+       "B": 0,
+       "C": 10
+      },
+      "total_interface_atom_pairs": 118
+     },
+     "5.0": {
+      "atom_pairs": {
+       "A": 266,
+       "B": 0,
+       "C": 159
+      },
+      "b2m_atom_contacts": 0,
+      "b2m_residues_contacted": [],
+      "binder_residues_in_interface": {
+       "A": 18,
+       "B": 0,
+       "C": 9
+      },
+      "chain_A": {
+       "alpha3_Ig_atom_contacts": 0,
+       "atom_contacts_by_region": {
+        "alpha1_helix": 70,
+        "alpha2_helix": 196
+       },
+       "groove_proximal_atom_contacts": 266,
+       "groove_proximal_fraction_of_chainA": 1.0,
+       "residues_by_region": {
+        "alpha1_helix": [
+         65,
+         66,
+         69,
+         72,
+         73,
+         75
+        ],
+        "alpha2_helix": [
+         146,
+         149,
+         150,
+         151,
+         152,
+         154,
+         155
+        ]
+       }
+      },
+      "min_distance": {
+       "A": 2.07563060887529,
+       "B": 19.290761381534427,
+       "C": 2.4802347082080773
+      },
+      "peptide": {
+       "anchor_P2_P9_atom_contacts": 0,
+       "per_position_atom_contacts": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 33,
+        "5": 57,
+        "6": 22,
+        "7": 25,
+        "8": 22,
+        "9": 0
+       },
+       "positions_contacted": [
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "tcr_facing_P4_P8_atom_contacts": 159,
+       "tcr_facing_P4_P8_positions_hit": [
+        4,
+        5,
+        6,
+        7,
+        8
+       ]
+      },
+      "peptide_fraction_of_atom_contacts": 0.37411764705882355,
+      "peptide_fraction_of_residue_pairs": 0.32,
+      "residue_pairs": {
+       "A": 34,
+       "B": 0,
+       "C": 16
+      },
+      "total_interface_atom_pairs": 425
+     }
+    },
+    "design_id": "pres_rIVnI2qWY81pul3zHRrN",
+    "verdict": "peptide-directed",
+    "verdict_criteria": {
+     "alpha3_Ig_atom_contacts": 0,
+     "b2m_atom_contacts": 0,
+     "framework_footing_is_groove_proximal": true,
+     "groove_proximal_fraction_of_chainA": 1.0,
+     "meets_tcr_contact_depth": true,
+     "meets_tcr_position_breadth": true,
+     "no_peptide_remote_framework_contact": true,
+     "tcr_facing_atom_contacts": 41,
+     "tcr_facing_positions_hit": 5
+    },
+    "verdict_reason": "engages 5 of 5 TCR-facing positions [4, 5, 6, 7, 8] with 41 heavy-atom contacts; all framework contact is groove-proximal (alpha1/alpha2 helices and groove floor) with zero alpha3 Ig and zero b2m contact - the canonical TCR-like footprint"
+   },
+   "design_id": "pres_rIVnI2qWY81pul3zHRrN",
+   "on_target_rank": 1,
+   "provenance": {
+    "artifact_paths": {
+     "metrics_json": "pres_rIVnI2qWY81pul3zHRrN/metrics.json",
+     "pae_npz": "pres_rIVnI2qWY81pul3zHRrN/pae.npz",
+     "predicted_cif": "pres_rIVnI2qWY81pul3zHRrN/pres_rIVnI2qWY81pul3zHRrN_predicted.cif"
+    },
+    "complex_iplddt": 0.9143056273460388,
+    "contact_site": {
+     "binder_heavy_atoms": 538,
+     "chain_residue_counts": {
+      "A": 275,
+      "B": 99,
+      "C": 9,
+      "D": 73
+     },
+     "cif": "pres_rIVnI2qWY81pul3zHRrN_predicted.cif",
+     "cutoffs": {
+      "4.0": {
+       "atom_pairs": {
+        "A": 77,
+        "B": 0,
+        "C": 41
+       },
+       "b2m_atom_contacts": 0,
+       "b2m_residues_contacted": [],
+       "binder_residues_in_interface": {
+        "A": 11,
+        "B": 0,
+        "C": 7
+       },
+       "chain_A": {
+        "alpha3_Ig_atom_contacts": 0,
+        "atom_contacts_by_region": {
+         "alpha1_helix": 10,
+         "alpha2_helix": 67
+        },
+        "groove_proximal_atom_contacts": 77,
+        "groove_proximal_fraction_of_chainA": 1.0,
+        "residues_by_region": {
+         "alpha1_helix": [
+          65,
+          66,
+          69,
+          73
+         ],
+         "alpha2_helix": [
+          146,
+          149,
+          150,
+          151,
+          152,
+          154,
+          155
+         ]
+        }
+       },
+       "min_distance": {
+        "A": 2.07563060887529,
+        "B": 19.290761381534427,
+        "C": 2.4802347082080773
+       },
+       "peptide": {
+        "anchor_P2_P9_atom_contacts": 0,
+        "per_position_atom_contacts": {
+         "1": 0,
+         "2": 0,
+         "3": 0,
+         "4": 15,
+         "5": 14,
+         "6": 4,
+         "7": 7,
+         "8": 1,
+         "9": 0
+        },
+        "positions_contacted": [
+         4,
+         5,
+         6,
+         7,
+         8
+        ],
+        "tcr_facing_P4_P8_atom_contacts": 41,
+        "tcr_facing_P4_P8_positions_hit": [
+         4,
+         5,
+         6,
+         7,
+         8
+        ]
+       },
+       "peptide_fraction_of_atom_contacts": 0.3474576271186441,
+       "peptide_fraction_of_residue_pairs": 0.3448275862068966,
+       "residue_pairs": {
+        "A": 19,
+        "B": 0,
+        "C": 10
+       },
+       "total_interface_atom_pairs": 118
+      },
+      "5.0": {
+       "atom_pairs": {
+        "A": 266,
+        "B": 0,
+        "C": 159
+       },
+       "b2m_atom_contacts": 0,
+       "b2m_residues_contacted": [],
+       "binder_residues_in_interface": {
+        "A": 18,
+        "B": 0,
+        "C": 9
+       },
+       "chain_A": {
+        "alpha3_Ig_atom_contacts": 0,
+        "atom_contacts_by_region": {
+         "alpha1_helix": 70,
+         "alpha2_helix": 196
+        },
+        "groove_proximal_atom_contacts": 266,
+        "groove_proximal_fraction_of_chainA": 1.0,
+        "residues_by_region": {
+         "alpha1_helix": [
+          65,
+          66,
+          69,
+          72,
+          73,
+          75
+         ],
+         "alpha2_helix": [
+          146,
+          149,
+          150,
+          151,
+          152,
+          154,
+          155
+         ]
+        }
+       },
+       "min_distance": {
+        "A": 2.07563060887529,
+        "B": 19.290761381534427,
+        "C": 2.4802347082080773
+       },
+       "peptide": {
+        "anchor_P2_P9_atom_contacts": 0,
+        "per_position_atom_contacts": {
+         "1": 0,
+         "2": 0,
+         "3": 0,
+         "4": 33,
+         "5": 57,
+         "6": 22,
+         "7": 25,
+         "8": 22,
+         "9": 0
+        },
+        "positions_contacted": [
+         4,
+         5,
+         6,
+         7,
+         8
+        ],
+        "tcr_facing_P4_P8_atom_contacts": 159,
+        "tcr_facing_P4_P8_positions_hit": [
+         4,
+         5,
+         6,
+         7,
+         8
+        ]
+       },
+       "peptide_fraction_of_atom_contacts": 0.37411764705882355,
+       "peptide_fraction_of_residue_pairs": 0.32,
+       "residue_pairs": {
+        "A": 34,
+        "B": 0,
+        "C": 16
+       },
+       "total_interface_atom_pairs": 425
+      }
+     },
+     "design_id": "pres_rIVnI2qWY81pul3zHRrN",
+     "verdict": "peptide-directed",
+     "verdict_criteria": {
+      "alpha3_Ig_atom_contacts": 0,
+      "b2m_atom_contacts": 0,
+      "framework_footing_is_groove_proximal": true,
+      "groove_proximal_fraction_of_chainA": 1.0,
+      "meets_tcr_contact_depth": true,
+      "meets_tcr_position_breadth": true,
+      "no_peptide_remote_framework_contact": true,
+      "tcr_facing_atom_contacts": 41,
+      "tcr_facing_positions_hit": 5
+     },
+     "verdict_reason": "engages 5 of 5 TCR-facing positions [4, 5, 6, 7, 8] with 41 heavy-atom contacts; all framework contact is groove-proximal (alpha1/alpha2 helices and groove floor) with zero alpha3 Ig and zero b2m contact - the canonical TCR-like footprint"
+    },
+    "descriptor_ranks": {
+     "complex_iplddt": 8.0,
+     "ipsae": 1.0,
+     "iptm": 5.0,
+     "min_ipsae": 1.0,
+     "pae_interaction": 1.0,
+     "plddt": 5.0,
+     "shape_complementarity": 4.0
+    },
+    "descriptors": {
+     "complex_iplddt": 0.9143056273460388,
+     "ipsae": 0.2217962365730534,
+     "iptm": 0.9355947971343994,
+     "min_ipsae": 0.2217962365730534,
+     "pae_interaction": 1.6104905605316162,
+     "plddt": 71.79847945205478,
+     "shape_complementarity": 0.13569
+    },
+    "design_id": "pres_rIVnI2qWY81pul3zHRrN",
+    "ipsae": 0.2217962365730534,
+    "iptm": 0.9355947971343994,
+    "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+    "min_ipsae": 0.2217962365730534,
+    "pae_interaction": 1.6104905605316162,
+    "peptide_id": "cognate_SLLMWITQC",
+    "pins": {
+     "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+     "binder_chain": "D",
+     "contact_cutoff_angstrom": 4.0,
+     "worker_commit": "70b6c6c",
+     "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+     "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+    },
+    "plddt": 71.79847945205478,
+    "rank_average": 3.571429,
+    "shape_complementarity": 0.13569
+   },
+   "specificity_margin": -1
+  },
+  {
+   "best_decoy_rank": 1,
+   "binder_sequence": "MDEGARLYELTAAHPELQEEALRLLTEWEATHRLSMEQQLELTARMAEWLAETSDVEEFRERLREALEELLAR",
+   "contact_site": {
+    "binder_heavy_atoms": 606,
+    "chain_residue_counts": {
+     "A": 275,
+     "B": 99,
+     "C": 9,
+     "D": 73
+    },
+    "cif": "pres_G3ZfGGLFJXddOc0vhQwO_predicted.cif",
+    "cutoffs": {
+     "4.0": {
+      "atom_pairs": {
+       "A": 72,
+       "B": 0,
+       "C": 46
+      },
+      "b2m_atom_contacts": 0,
+      "b2m_residues_contacted": [],
+      "binder_residues_in_interface": {
+       "A": 16,
+       "B": 0,
+       "C": 9
+      },
+      "chain_A": {
+       "alpha3_Ig_atom_contacts": 0,
+       "atom_contacts_by_region": {
+        "alpha1_helix": 45,
+        "alpha2_helix": 27
+       },
+       "groove_proximal_atom_contacts": 72,
+       "groove_proximal_fraction_of_chainA": 1.0,
+       "residues_by_region": {
+        "alpha1_helix": [
+         65,
+         69,
+         72,
+         73,
+         75,
+         76,
+         79,
+         80,
+         82
+        ],
+        "alpha2_helix": [
+         142,
+         146,
+         150,
+         151,
+         154,
+         155
+        ]
+       }
+      },
+      "min_distance": {
+       "A": 2.0640722368657545,
+       "B": 18.017198599080267,
+       "C": 2.382018113470174
+      },
+      "peptide": {
+       "anchor_P2_P9_atom_contacts": 0,
+       "per_position_atom_contacts": {
+        "1": 0,
+        "2": 0,
+        "3": 2,
+        "4": 17,
+        "5": 17,
+        "6": 0,
+        "7": 0,
+        "8": 10,
+        "9": 0
+       },
+       "positions_contacted": [
+        3,
+        4,
+        5,
+        8
+       ],
+       "tcr_facing_P4_P8_atom_contacts": 44,
+       "tcr_facing_P4_P8_positions_hit": [
+        4,
+        5,
+        8
+       ]
+      },
+      "peptide_fraction_of_atom_contacts": 0.3898305084745763,
+      "peptide_fraction_of_residue_pairs": 0.3157894736842105,
+      "residue_pairs": {
+       "A": 26,
+       "B": 0,
+       "C": 12
+      },
+      "total_interface_atom_pairs": 118
+     },
+     "5.0": {
+      "atom_pairs": {
+       "A": 343,
+       "B": 0,
+       "C": 190
+      },
+      "b2m_atom_contacts": 0,
+      "b2m_residues_contacted": [],
+      "binder_residues_in_interface": {
+       "A": 19,
+       "B": 0,
+       "C": 12
+      },
+      "chain_A": {
+       "alpha3_Ig_atom_contacts": 0,
+       "atom_contacts_by_region": {
+        "alpha1_helix": 185,
+        "alpha2_helix": 158
+       },
+       "groove_proximal_atom_contacts": 343,
+       "groove_proximal_fraction_of_chainA": 1.0,
+       "residues_by_region": {
+        "alpha1_helix": [
+         65,
+         66,
+         68,
+         69,
+         72,
+         73,
+         75,
+         76,
+         79,
+         80,
+         82,
+         83
+        ],
+        "alpha2_helix": [
+         142,
+         145,
+         146,
+         149,
+         150,
+         151,
+         154,
+         155,
+         159,
+         163
+        ]
+       }
+      },
+      "min_distance": {
+       "A": 2.0640722368657545,
+       "B": 18.017198599080267,
+       "C": 2.382018113470174
+      },
+      "peptide": {
+       "anchor_P2_P9_atom_contacts": 4,
+       "per_position_atom_contacts": {
+        "1": 0,
+        "2": 1,
+        "3": 11,
+        "4": 60,
+        "5": 86,
+        "6": 0,
+        "7": 1,
+        "8": 28,
+        "9": 3
+       },
+       "positions_contacted": [
+        2,
+        3,
+        4,
+        5,
+        7,
+        8,
+        9
+       ],
+       "tcr_facing_P4_P8_atom_contacts": 175,
+       "tcr_facing_P4_P8_positions_hit": [
+        4,
+        5,
+        7,
+        8
+       ]
+      },
+      "peptide_fraction_of_atom_contacts": 0.35647279549718575,
+      "peptide_fraction_of_residue_pairs": 0.29850746268656714,
+      "residue_pairs": {
+       "A": 47,
+       "B": 0,
+       "C": 20
+      },
+      "total_interface_atom_pairs": 533
+     }
+    },
+    "design_id": "pres_G3ZfGGLFJXddOc0vhQwO",
+    "verdict": "mixed (peptide-marginal)",
+    "verdict_criteria": {
+     "alpha3_Ig_atom_contacts": 0,
+     "b2m_atom_contacts": 0,
+     "framework_footing_is_groove_proximal": true,
+     "groove_proximal_fraction_of_chainA": 1.0,
+     "meets_tcr_contact_depth": true,
+     "meets_tcr_position_breadth": false,
+     "no_peptide_remote_framework_contact": true,
+     "tcr_facing_atom_contacts": 44,
+     "tcr_facing_positions_hit": 3
+    },
+    "verdict_reason": "touches only TCR-facing positions [4, 5, 8] with 44 heavy-atom contacts; peptide engagement is present and groove-proximal but too sparse or narrow to call a full readout"
+   },
+   "design_id": "pres_G3ZfGGLFJXddOc0vhQwO",
+   "on_target_rank": 2,
+   "provenance": {
+    "artifact_paths": {
+     "metrics_json": "pres_G3ZfGGLFJXddOc0vhQwO/metrics.json",
+     "pae_npz": "pres_G3ZfGGLFJXddOc0vhQwO/pae.npz",
+     "predicted_cif": "pres_G3ZfGGLFJXddOc0vhQwO/pres_G3ZfGGLFJXddOc0vhQwO_predicted.cif"
+    },
+    "complex_iplddt": 0.8863698840141296,
+    "contact_site": {
+     "binder_heavy_atoms": 606,
+     "chain_residue_counts": {
+      "A": 275,
+      "B": 99,
+      "C": 9,
+      "D": 73
+     },
+     "cif": "pres_G3ZfGGLFJXddOc0vhQwO_predicted.cif",
+     "cutoffs": {
+      "4.0": {
+       "atom_pairs": {
+        "A": 72,
+        "B": 0,
+        "C": 46
+       },
+       "b2m_atom_contacts": 0,
+       "b2m_residues_contacted": [],
+       "binder_residues_in_interface": {
+        "A": 16,
+        "B": 0,
+        "C": 9
+       },
+       "chain_A": {
+        "alpha3_Ig_atom_contacts": 0,
+        "atom_contacts_by_region": {
+         "alpha1_helix": 45,
+         "alpha2_helix": 27
+        },
+        "groove_proximal_atom_contacts": 72,
+        "groove_proximal_fraction_of_chainA": 1.0,
+        "residues_by_region": {
+         "alpha1_helix": [
+          65,
+          69,
+          72,
+          73,
+          75,
+          76,
+          79,
+          80,
+          82
+         ],
+         "alpha2_helix": [
+          142,
+          146,
+          150,
+          151,
+          154,
+          155
+         ]
+        }
+       },
+       "min_distance": {
+        "A": 2.0640722368657545,
+        "B": 18.017198599080267,
+        "C": 2.382018113470174
+       },
+       "peptide": {
+        "anchor_P2_P9_atom_contacts": 0,
+        "per_position_atom_contacts": {
+         "1": 0,
+         "2": 0,
+         "3": 2,
+         "4": 17,
+         "5": 17,
+         "6": 0,
+         "7": 0,
+         "8": 10,
+         "9": 0
+        },
+        "positions_contacted": [
+         3,
+         4,
+         5,
+         8
+        ],
+        "tcr_facing_P4_P8_atom_contacts": 44,
+        "tcr_facing_P4_P8_positions_hit": [
+         4,
+         5,
+         8
+        ]
+       },
+       "peptide_fraction_of_atom_contacts": 0.3898305084745763,
+       "peptide_fraction_of_residue_pairs": 0.3157894736842105,
+       "residue_pairs": {
+        "A": 26,
+        "B": 0,
+        "C": 12
+       },
+       "total_interface_atom_pairs": 118
+      },
+      "5.0": {
+       "atom_pairs": {
+        "A": 343,
+        "B": 0,
+        "C": 190
+       },
+       "b2m_atom_contacts": 0,
+       "b2m_residues_contacted": [],
+       "binder_residues_in_interface": {
+        "A": 19,
+        "B": 0,
+        "C": 12
+       },
+       "chain_A": {
+        "alpha3_Ig_atom_contacts": 0,
+        "atom_contacts_by_region": {
+         "alpha1_helix": 185,
+         "alpha2_helix": 158
+        },
+        "groove_proximal_atom_contacts": 343,
+        "groove_proximal_fraction_of_chainA": 1.0,
+        "residues_by_region": {
+         "alpha1_helix": [
+          65,
+          66,
+          68,
+          69,
+          72,
+          73,
+          75,
+          76,
+          79,
+          80,
+          82,
+          83
+         ],
+         "alpha2_helix": [
+          142,
+          145,
+          146,
+          149,
+          150,
+          151,
+          154,
+          155,
+          159,
+          163
+         ]
+        }
+       },
+       "min_distance": {
+        "A": 2.0640722368657545,
+        "B": 18.017198599080267,
+        "C": 2.382018113470174
+       },
+       "peptide": {
+        "anchor_P2_P9_atom_contacts": 4,
+        "per_position_atom_contacts": {
+         "1": 0,
+         "2": 1,
+         "3": 11,
+         "4": 60,
+         "5": 86,
+         "6": 0,
+         "7": 1,
+         "8": 28,
+         "9": 3
+        },
+        "positions_contacted": [
+         2,
+         3,
+         4,
+         5,
+         7,
+         8,
+         9
+        ],
+        "tcr_facing_P4_P8_atom_contacts": 175,
+        "tcr_facing_P4_P8_positions_hit": [
+         4,
+         5,
+         7,
+         8
+        ]
+       },
+       "peptide_fraction_of_atom_contacts": 0.35647279549718575,
+       "peptide_fraction_of_residue_pairs": 0.29850746268656714,
+       "residue_pairs": {
+        "A": 47,
+        "B": 0,
+        "C": 20
+       },
+       "total_interface_atom_pairs": 533
+      }
+     },
+     "design_id": "pres_G3ZfGGLFJXddOc0vhQwO",
+     "verdict": "mixed (peptide-marginal)",
+     "verdict_criteria": {
+      "alpha3_Ig_atom_contacts": 0,
+      "b2m_atom_contacts": 0,
+      "framework_footing_is_groove_proximal": true,
+      "groove_proximal_fraction_of_chainA": 1.0,
+      "meets_tcr_contact_depth": true,
+      "meets_tcr_position_breadth": false,
+      "no_peptide_remote_framework_contact": true,
+      "tcr_facing_atom_contacts": 44,
+      "tcr_facing_positions_hit": 3
+     },
+     "verdict_reason": "touches only TCR-facing positions [4, 5, 8] with 44 heavy-atom contacts; peptide engagement is present and groove-proximal but too sparse or narrow to call a full readout"
+    },
+    "descriptor_ranks": {
+     "complex_iplddt": 11.0,
+     "ipsae": 1.0,
+     "iptm": 11.0,
+     "min_ipsae": 1.0,
+     "pae_interaction": 1.0,
+     "plddt": 8.0,
+     "shape_complementarity": 1.0
+    },
+    "descriptors": {
+     "complex_iplddt": 0.8863698840141296,
+     "ipsae": 0.08487528025374977,
+     "iptm": 0.8731725811958313,
+     "min_ipsae": 0.08487528025374977,
+     "pae_interaction": 2.5549328327178955,
+     "plddt": 72.42616438356164,
+     "shape_complementarity": 0.17162
+    },
+    "design_id": "pres_G3ZfGGLFJXddOc0vhQwO",
+    "ipsae": 0.08487528025374977,
+    "iptm": 0.8731725811958313,
+    "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+    "min_ipsae": 0.08487528025374977,
+    "pae_interaction": 2.5549328327178955,
+    "peptide_id": "cognate_SLLMWITQC",
+    "pins": {
+     "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+     "binder_chain": "D",
+     "contact_cutoff_angstrom": 4.0,
+     "worker_commit": "70b6c6c",
+     "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+     "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+    },
+    "plddt": 72.42616438356164,
+    "rank_average": 4.857143,
+    "shape_complementarity": 0.17162
+   },
+   "specificity_margin": 1
+  },
+  {
+   "best_decoy_rank": 1,
+   "binder_sequence": "AVRVTLSDGTVVEITVLGPNRVEVSGDFERAEIVEMDAETAVLRFTNAARREEVLVTLDMRTGEVLSVEVRPL",
+   "contact_site": {
+    "binder_heavy_atoms": 561,
+    "chain_residue_counts": {
+     "A": 275,
+     "B": 99,
+     "C": 9,
+     "D": 73
+    },
+    "cif": "pres_xpto8wJvfrJQhLVH4Mvz_predicted.cif",
+    "cutoffs": {
+     "4.0": {
+      "atom_pairs": {
+       "A": 6,
+       "B": 0,
+       "C": 56
+      },
+      "b2m_atom_contacts": 0,
+      "b2m_residues_contacted": [],
+      "binder_residues_in_interface": {
+       "A": 3,
+       "B": 0,
+       "C": 8
+      },
+      "chain_A": {
+       "alpha3_Ig_atom_contacts": 0,
+       "atom_contacts_by_region": {
+        "alpha1_helix": 5,
+        "alpha2_helix": 1
+       },
+       "groove_proximal_atom_contacts": 6,
+       "groove_proximal_fraction_of_chainA": 1.0,
+       "residues_by_region": {
+        "alpha1_helix": [
+         69,
+         76
+        ],
+        "alpha2_helix": [
+         155
+        ]
+       }
+      },
+      "min_distance": {
+       "A": 3.4386105213152613,
+       "B": 18.872123851238893,
+       "C": 2.094771466986316
+      },
+      "peptide": {
+       "anchor_P2_P9_atom_contacts": 0,
+       "per_position_atom_contacts": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 41,
+        "6": 3,
+        "7": 2,
+        "8": 9,
+        "9": 0
+       },
+       "positions_contacted": [
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "tcr_facing_P4_P8_atom_contacts": 56,
+       "tcr_facing_P4_P8_positions_hit": [
+        4,
+        5,
+        6,
+        7,
+        8
+       ]
+      },
+      "peptide_fraction_of_atom_contacts": 0.9032258064516129,
+      "peptide_fraction_of_residue_pairs": 0.7857142857142857,
+      "residue_pairs": {
+       "A": 3,
+       "B": 0,
+       "C": 11
+      },
+      "total_interface_atom_pairs": 62
+     },
+     "5.0": {
+      "atom_pairs": {
+       "A": 38,
+       "B": 0,
+       "C": 184
+      },
+      "b2m_atom_contacts": 0,
+      "b2m_residues_contacted": [],
+      "binder_residues_in_interface": {
+       "A": 6,
+       "B": 0,
+       "C": 10
+      },
+      "chain_A": {
+       "alpha3_Ig_atom_contacts": 0,
+       "atom_contacts_by_region": {
+        "alpha1_helix": 31,
+        "alpha2_helix": 7
+       },
+       "groove_proximal_atom_contacts": 38,
+       "groove_proximal_fraction_of_chainA": 1.0,
+       "residues_by_region": {
+        "alpha1_helix": [
+         65,
+         69,
+         72,
+         73,
+         76
+        ],
+        "alpha2_helix": [
+         152,
+         155
+        ]
+       }
+      },
+      "min_distance": {
+       "A": 3.4386105213152613,
+       "B": 18.872123851238893,
+       "C": 2.094771466986316
+      },
+      "peptide": {
+       "anchor_P2_P9_atom_contacts": 0,
+       "per_position_atom_contacts": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 4,
+        "5": 123,
+        "6": 19,
+        "7": 14,
+        "8": 24,
+        "9": 0
+       },
+       "positions_contacted": [
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "tcr_facing_P4_P8_atom_contacts": 184,
+       "tcr_facing_P4_P8_positions_hit": [
+        4,
+        5,
+        6,
+        7,
+        8
+       ]
+      },
+      "peptide_fraction_of_atom_contacts": 0.8288288288288288,
+      "peptide_fraction_of_residue_pairs": 0.6666666666666666,
+      "residue_pairs": {
+       "A": 9,
+       "B": 0,
+       "C": 18
+      },
+      "total_interface_atom_pairs": 222
+     }
+    },
+    "design_id": "pres_xpto8wJvfrJQhLVH4Mvz",
+    "verdict": "peptide-directed",
+    "verdict_criteria": {
+     "alpha3_Ig_atom_contacts": 0,
+     "b2m_atom_contacts": 0,
+     "framework_footing_is_groove_proximal": true,
+     "groove_proximal_fraction_of_chainA": 1.0,
+     "meets_tcr_contact_depth": true,
+     "meets_tcr_position_breadth": true,
+     "no_peptide_remote_framework_contact": true,
+     "tcr_facing_atom_contacts": 56,
+     "tcr_facing_positions_hit": 5
+    },
+    "verdict_reason": "engages 5 of 5 TCR-facing positions [4, 5, 6, 7, 8] with 56 heavy-atom contacts; all framework contact is groove-proximal (alpha1/alpha2 helices and groove floor) with zero alpha3 Ig and zero b2m contact - the canonical TCR-like footprint"
+   },
+   "design_id": "pres_xpto8wJvfrJQhLVH4Mvz",
+   "on_target_rank": 2,
+   "provenance": {
+    "artifact_paths": {
+     "metrics_json": "pres_xpto8wJvfrJQhLVH4Mvz/metrics.json",
+     "pae_npz": "pres_xpto8wJvfrJQhLVH4Mvz/pae.npz",
+     "predicted_cif": "pres_xpto8wJvfrJQhLVH4Mvz/pres_xpto8wJvfrJQhLVH4Mvz_predicted.cif"
+    },
+    "complex_iplddt": 0.94670569896698,
+    "contact_site": {
+     "binder_heavy_atoms": 561,
+     "chain_residue_counts": {
+      "A": 275,
+      "B": 99,
+      "C": 9,
+      "D": 73
+     },
+     "cif": "pres_xpto8wJvfrJQhLVH4Mvz_predicted.cif",
+     "cutoffs": {
+      "4.0": {
+       "atom_pairs": {
+        "A": 6,
+        "B": 0,
+        "C": 56
+       },
+       "b2m_atom_contacts": 0,
+       "b2m_residues_contacted": [],
+       "binder_residues_in_interface": {
+        "A": 3,
+        "B": 0,
+        "C": 8
+       },
+       "chain_A": {
+        "alpha3_Ig_atom_contacts": 0,
+        "atom_contacts_by_region": {
+         "alpha1_helix": 5,
+         "alpha2_helix": 1
+        },
+        "groove_proximal_atom_contacts": 6,
+        "groove_proximal_fraction_of_chainA": 1.0,
+        "residues_by_region": {
+         "alpha1_helix": [
+          69,
+          76
+         ],
+         "alpha2_helix": [
+          155
+         ]
+        }
+       },
+       "min_distance": {
+        "A": 3.4386105213152613,
+        "B": 18.872123851238893,
+        "C": 2.094771466986316
+       },
+       "peptide": {
+        "anchor_P2_P9_atom_contacts": 0,
+        "per_position_atom_contacts": {
+         "1": 0,
+         "2": 0,
+         "3": 0,
+         "4": 1,
+         "5": 41,
+         "6": 3,
+         "7": 2,
+         "8": 9,
+         "9": 0
+        },
+        "positions_contacted": [
+         4,
+         5,
+         6,
+         7,
+         8
+        ],
+        "tcr_facing_P4_P8_atom_contacts": 56,
+        "tcr_facing_P4_P8_positions_hit": [
+         4,
+         5,
+         6,
+         7,
+         8
+        ]
+       },
+       "peptide_fraction_of_atom_contacts": 0.9032258064516129,
+       "peptide_fraction_of_residue_pairs": 0.7857142857142857,
+       "residue_pairs": {
+        "A": 3,
+        "B": 0,
+        "C": 11
+       },
+       "total_interface_atom_pairs": 62
+      },
+      "5.0": {
+       "atom_pairs": {
+        "A": 38,
+        "B": 0,
+        "C": 184
+       },
+       "b2m_atom_contacts": 0,
+       "b2m_residues_contacted": [],
+       "binder_residues_in_interface": {
+        "A": 6,
+        "B": 0,
+        "C": 10
+       },
+       "chain_A": {
+        "alpha3_Ig_atom_contacts": 0,
+        "atom_contacts_by_region": {
+         "alpha1_helix": 31,
+         "alpha2_helix": 7
+        },
+        "groove_proximal_atom_contacts": 38,
+        "groove_proximal_fraction_of_chainA": 1.0,
+        "residues_by_region": {
+         "alpha1_helix": [
+          65,
+          69,
+          72,
+          73,
+          76
+         ],
+         "alpha2_helix": [
+          152,
+          155
+         ]
+        }
+       },
+       "min_distance": {
+        "A": 3.4386105213152613,
+        "B": 18.872123851238893,
+        "C": 2.094771466986316
+       },
+       "peptide": {
+        "anchor_P2_P9_atom_contacts": 0,
+        "per_position_atom_contacts": {
+         "1": 0,
+         "2": 0,
+         "3": 0,
+         "4": 4,
+         "5": 123,
+         "6": 19,
+         "7": 14,
+         "8": 24,
+         "9": 0
+        },
+        "positions_contacted": [
+         4,
+         5,
+         6,
+         7,
+         8
+        ],
+        "tcr_facing_P4_P8_atom_contacts": 184,
+        "tcr_facing_P4_P8_positions_hit": [
+         4,
+         5,
+         6,
+         7,
+         8
+        ]
+       },
+       "peptide_fraction_of_atom_contacts": 0.8288288288288288,
+       "peptide_fraction_of_residue_pairs": 0.6666666666666666,
+       "residue_pairs": {
+        "A": 9,
+        "B": 0,
+        "C": 18
+       },
+       "total_interface_atom_pairs": 222
+      }
+     },
+     "design_id": "pres_xpto8wJvfrJQhLVH4Mvz",
+     "verdict": "peptide-directed",
+     "verdict_criteria": {
+      "alpha3_Ig_atom_contacts": 0,
+      "b2m_atom_contacts": 0,
+      "framework_footing_is_groove_proximal": true,
+      "groove_proximal_fraction_of_chainA": 1.0,
+      "meets_tcr_contact_depth": true,
+      "meets_tcr_position_breadth": true,
+      "no_peptide_remote_framework_contact": true,
+      "tcr_facing_atom_contacts": 56,
+      "tcr_facing_positions_hit": 5
+     },
+     "verdict_reason": "engages 5 of 5 TCR-facing positions [4, 5, 6, 7, 8] with 56 heavy-atom contacts; all framework contact is groove-proximal (alpha1/alpha2 helices and groove floor) with zero alpha3 Ig and zero b2m contact - the canonical TCR-like footprint"
+    },
+    "descriptor_ranks": {
+     "complex_iplddt": 2.0,
+     "ipsae": 4.0,
+     "iptm": 11.0,
+     "min_ipsae": 4.0,
+     "pae_interaction": 1.0,
+     "plddt": 1.0,
+     "shape_complementarity": 7.0
+    },
+    "descriptors": {
+     "complex_iplddt": 0.94670569896698,
+     "ipsae": 0.0057552743154277546,
+     "iptm": 0.5105286836624146,
+     "min_ipsae": 0.004605277681641059,
+     "pae_interaction": 11.995018005371094,
+     "plddt": 82.25530136986302,
+     "shape_complementarity": 0.04991
+    },
+    "design_id": "pres_xpto8wJvfrJQhLVH4Mvz",
+    "ipsae": 0.0057552743154277546,
+    "iptm": 0.5105286836624146,
+    "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
+    "min_ipsae": 0.004605277681641059,
+    "pae_interaction": 11.995018005371094,
+    "peptide_id": "cognate_SLLMWITQC",
+    "pins": {
+     "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
+     "binder_chain": "D",
+     "contact_cutoff_angstrom": 4.0,
+     "worker_commit": "70b6c6c",
+     "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
+     "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
+    },
+    "plddt": 82.25530136986302,
+    "rank_average": 4.285714,
+    "shape_complementarity": 0.04991
+   },
+   "specificity_margin": 1
+  }
+ ],
  "transport": "T1"
 }

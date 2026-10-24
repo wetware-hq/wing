@@ -38,6 +38,7 @@ def score_design(
     *,
     decoy_panel: dict | None = None,
     with_specificity: bool = False,
+    peptide_sequence: str | None = None,
 ) -> dict:
     paths = layer2_core.design_paths(design_dir)
     block: dict = {
@@ -55,16 +56,23 @@ def score_design(
 
     if paths["cif"]:
         block["tier0"] = tier0_targeting.analyse_design(
-            design_id, paths["cif"], flags, with_sasa=with_sasa
+            design_id, paths["cif"], flags, with_sasa=with_sasa,
+            peptide_sequence=peptide_sequence,
         )
         block["item1_shell_reporting"] = {
-            str(shell): tier0_targeting.item1_reporting_at_shell(paths["cif"], flags, shell)
+            str(shell): tier0_targeting.item1_reporting_at_shell(
+                paths["cif"], flags, shell, peptide_sequence
+            )
             for shell in REPORTING_SHELLS
         }
         if with_docking:
-            block["item10_docking"] = layer2_core.measure_item10_docking(paths["cif"])
+            block["item10_docking"] = layer2_core.measure_item10_docking(
+                paths["cif"], peptide_sequence
+            )
         if with_contact_site:
-            block["contact_site"] = contact_analysis.analyse_design(design_id, paths["cif"])
+            block["contact_site"] = contact_analysis.analyse_design(
+                design_id, paths["cif"], peptide_sequence=peptide_sequence
+            )
         if with_specificity and paths["cif"]:
             seq = specificity_scoring.binder_sequence_from_cif(paths["cif"])
             block["binder_sequence"] = seq
