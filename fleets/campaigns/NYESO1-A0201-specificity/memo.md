@@ -20,4 +20,25 @@
 
 ## Open decisions
 
-Three courses are available, and they are not mutually exclusive. The first is to pin and record a random seed for each prediction, which would make runs reproducible and would make the declared content address and the manifest hash truthful; it would not make any single draw more trustworthy, since a seeded value remains one sample from the same distribution, merely a repeatable one. The second is to replicate each prediction and gate on a confidence interval rather than a point estimate, which addresses the dispersion directly but scales linearly in cost: three replicates of 100 predictions is approximately $15.00 at $0.05 per prediction, which exceeds the remaining approval cap, so a replicate design requires either a revised cap or a reduced panel. The third is to revisit whether a fixed threshold of 0.15 is defensible at all on a quantity whose run-to-run standard deviation is 0.0725, as against widening it into a band with an explicit indeterminate verdict or replacing it with a ranked comparison against the decoy panel that does not depend on an absolute cut.
+Three courses are available, and they are not mutually exclusive. The first is to pin and record a random seed for each prediction, which would make the declared content address and the manifest hash truthful; it would not make runs reproducible, and it would not make any single draw more trustworthy, since a seeded value remains one sample from the same distribution. Appendix 1 reports a direct test of this course. The second is to replicate each prediction and gate on a confidence interval rather than a point estimate, which addresses the dispersion directly but scales linearly in cost: three replicates of 100 predictions is approximately $15.00 at $0.05 per prediction, which exceeds the remaining approval cap, so a replicate design requires either a revised cap or a reduced panel. The third is to revisit whether a fixed threshold of 0.15 is defensible at all on a quantity whose run-to-run standard deviation is 0.0725, as against widening it into a band with an explicit indeterminate verdict or replacing it with a ranked comparison against the decoy panel that does not depend on an absolute cut.
+
+## Appendix 1. Attribution of the variation to the random seed
+
+**Question.** Whether the run-to-run dispersion reported above is attributable to sampling without a fixed random seed.
+
+**Methods.** The leading candidate, rIVnI2qWY81pul3zHRrN, was studied, this being the design whose threshold crossing the dispersion decided. Its full ten-peptide decoy panel was predicted twice under an identical pinned random seed of 20261024 and identical sampler settings of 3 recycling steps, 200 sampling steps and a diffusion step scale of 1.638, giving 20 predictions. All other inputs were held as in the main comparison. Three controls establish that the pinned settings took effect rather than being ignored: the prediction service rejects unrecognised sampler options, every response returned the pinned settings as submitted, and the ten requests were identical between the two arms. Absent these controls, a negative result could not be distinguished from a seed that was never applied.
+
+**Results.** Predictions were not identical under a pinned seed. Five of the ten structures reproduced exactly and five did not. The specificity margin was 0.150682 in the first arm and 0.150285 in the second, a difference of 0.000397, against 0.078112 between the two unseeded runs of the same design: approximately 197-fold narrower.
+
+| Condition | Margin, run 1 | Margin, run 2 | Difference |
+| --- | ---: | ---: | ---: |
+| Pinned seed | 0.150682 | 0.150285 | 0.000397 |
+| Unseeded | 0.085826 | 0.163938 | 0.078112 |
+
+**The difference that remains is larger than the margin that is being read.** Both seeded arms clear the 0.15 threshold, by 0.000682 and 0.000285 respectively. The residual difference between them, 0.000397, exceeds the smaller of those two distances and is of the same order as the larger. A design that passes by less than the variation remaining after the seed is fixed has not been shown to pass.
+
+Two further observations bear on interpretation. Neither seeded value reproduces either unseeded value; pinning the seed returned a third answer rather than one of the two already obtained. And the decoy peptide that set the margin differed between conditions, being decoy_p5_w_to_a when unseeded and decoy_p6a_p7a in both seeded arms. A design's measured specificity therefore depends in part on which decoy happens to score highest in the draw at hand.
+
+**Limitation.** Two runs per condition demonstrate non-identity but cannot estimate a variance. The fold-differences above compare single observed spreads, not estimated variances, and should be read as indicative of magnitude only.
+
+**Interpretation.** Pinning the seed is necessary and insufficient. It removes most of the dispersion without making any single prediction reproducible, and it does not render a threshold verdict trustworthy for a design lying this close to the line.

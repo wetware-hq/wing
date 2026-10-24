@@ -131,3 +131,58 @@ def test_the_published_hash_field_says_what_it_hashes():
     assert payload["predictions_reproducible"] is False
     # The bare name is gone, so no consumer can keep reading it as an artifact address.
     assert "manifest_hash" not in payload
+
+
+# --------------------------------------------------------------------------
+# 2026-10-24, second measurement: the seed option in OD-5 was tested directly.
+# Pinning the seed narrows the dispersion ~197-fold and still does not make a
+# prediction reproduce. Both conditions must stay on the record, each labelled,
+# and OD-5 must not read as though seeding were an untried idea.
+# --------------------------------------------------------------------------
+
+
+def test_both_dispersion_conditions_are_labelled():
+    st = _fleet()["stochasticity"]
+    unseeded = st["specificity_margin_dispersion"]
+    seeded = st["seeded_dispersion"]
+    # A reader must be able to tell which condition produced which number.
+    assert "unseeded" in unseeded["condition"]
+    assert "20261024" in seeded["condition"]
+    assert unseeded["n_runs"] == 2
+    assert seeded["n_runs"] == 2
+    # Declared before the gate, like the unseeded figures.
+    text = FLEET.read_text()
+    assert text.index("[stochasticity.seeded_dispersion]") < text.index("[gates]")
+
+
+def test_the_seeded_dispersion_numbers_are_recorded():
+    d = _fleet()["stochasticity"]["seeded_dispersion"]
+    assert d["margin_run_1"] == 0.150682
+    assert d["margin_run_2"] == 0.150285
+    assert d["abs_difference"] == 0.000397
+    assert d["unseeded_abs_difference_same_design"] == 0.078112
+    assert d["gate_threshold"] == 0.15
+    # The residual exceeds one arm's headroom above the bar. That is the finding.
+    assert d["abs_difference"] > d["headroom_run_2"]
+    assert d["structures_reproduced"] == "5 of 10"
+
+
+def test_the_seed_option_reports_that_it_was_tested_and_is_insufficient():
+    od = {o["id"]: o for o in _fleet()["open_decisions"]}["OD-5"]
+    seed_option = next(o for o in od["options"] if o.startswith("pin and record a seed"))
+    assert "TESTED" in seed_option
+    # It must not still claim seeding makes runs reproducible.
+    assert "makes runs reproducible" not in seed_option
+    assert "does NOT make predictions identical" in seed_option
+    assert od["status"] == "open"
+    assert "evidence_seeded" in od
+
+
+def test_seeding_is_still_not_implemented_because_od5_is_undecided():
+    # Testing an option is not choosing it. The builder must send no sampler
+    # options until OD-5 is decided by its owner.
+    src = (CAMPAIGN / "l1b_request_builder.py").read_text()
+    assert "model_options" not in src
+    assert "seed" not in src
+    od = {o["id"]: o for o in _fleet()["open_decisions"]}["OD-5"]
+    assert "seeding is NOT implemented" in od["not_decided"]

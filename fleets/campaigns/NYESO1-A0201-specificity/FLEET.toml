@@ -87,6 +87,7 @@ measured  = "On 2026-10-24 all 100 decoy refolds were resubmitted on identical s
 # threshold below is UNCHANGED and the decision it raises is open as OD-5.
 [stochasticity.specificity_margin_dispersion]
 measured_on          = "2026-10-24"
+condition            = "unseeded - no seed or sampler setting sent with the request"
 n_designs            = 10
 n_runs               = 2
 inputs               = "identical sequences, decoy panel and scoring code across both runs"
@@ -95,6 +96,28 @@ max_abs_difference   = 0.1174
 std_dev              = 0.0725
 gate_threshold       = 0.15
 note = "The dispersion is of the same order as the threshold it is compared against. The lead design moved 0.085826 -> 0.163938 between the two runs and so crossed the bar, changing the campaign result from 0/10 above threshold to 1/10. Neither run is wrong; the quantity is not reproducible at this precision. Threshold deliberately NOT changed - see OD-5."
+
+# The seeded condition, measured 2026-10-24 to test whether the dispersion above
+# is attributable to the missing seed. It is attributable in large part but not
+# wholly: see OD-5. Nothing here changes a gate or the request builder.
+[stochasticity.seeded_dispersion]
+measured_on            = "2026-10-24"
+condition              = "pinned seed 20261024, recycling_steps 3, sampling_steps 200, step_scale 1.638, identical in both runs"
+design                 = "pres_rIVnI2qWY81pul3zHRrN"
+n_designs              = 1
+n_runs                 = 2
+n_predictions          = 20
+seed_honoured_controls = "service rejects unrecognised model_options keys; all 20 responses echoed the pinned block; both arms sent byte-identical request bodies for all 10 peptides"
+structures_reproduced  = "5 of 10"
+margin_run_1           = 0.150682
+margin_run_2           = 0.150285
+abs_difference         = 0.000397
+unseeded_abs_difference_same_design = 0.078112
+narrowing_fold         = 196.8
+gate_threshold         = 0.15
+headroom_run_1         = 0.000682
+headroom_run_2         = 0.000285
+note = "Pinning the seed narrowed the run-to-run margin difference ~197-fold but did NOT make predictions identical. The residual 0.000397 EXCEEDS run 2's headroom of 0.000285 above the 0.15 bar and is the same order as run 1's 0.000682, so a near-threshold verdict is still not established by one seeded draw. Neither seeded margin reproduces either unseeded margin (0.085826, 0.163938), and the margin-setting decoy changed identity (decoy_p5_w_to_a unseeded -> decoy_p6a_p7a seeded). n=2 per condition: demonstrates non-identity, cannot estimate a variance."
 
 [gates]
 hard = ["specificity_margin >= 0.15", "buried_anchor_contacts == 0", "liability_filters.pass"]
@@ -296,13 +319,14 @@ owner = "Mathew"
 opened = "2026-10-24"
 question = "how to gate a stochastic, unseeded quantity: pin and record a seed, replicate and gate on a confidence interval, or revisit the fixed 0.15 threshold"
 evidence = "[stochasticity.specificity_margin_dispersion]: mean abs difference 0.0637, max 0.1174, SD 0.0725 over n=10 designs across two runs with identical inputs, against a 0.15 threshold"
+evidence_seeded = "[stochasticity.seeded_dispersion]: with the seed and sampler pinned, the same design still gave non-identical predictions and a 0.000397 margin difference, against 0.078112 unseeded - ~197-fold narrower but larger than its 0.000285 headroom at the gate"
 options = [
-  "pin and record a seed - makes runs reproducible and makes content_address truthful again, but a single draw is no more trustworthy for being repeatable",
+  "pin and record a seed - TESTED 2026-10-24, see [stochasticity.seeded_dispersion]: narrows run-to-run margin difference ~197-fold (0.078112 -> 0.000397) and makes content_address truthful, but does NOT make predictions identical (5 of 10 structures reproduced) and the residual 0.000397 exceeds this design's 0.000285 headroom above the bar, so it is necessary and insufficient on its own",
   "replicate and gate on a confidence interval - addresses the dispersion directly, but costs N times the spend: 3 replicates of 100 predictions is ~$15.00 at $0.05 each, which EXCEEDS spend_cap_usd 14.50",
   "revisit the 0.15 threshold - widen it into a band with an explicit indeterminate verdict, or replace it with a ranked comparison against the decoy panel that needs no absolute cut",
 ]
 status = "open"
-not_decided = "No gate, threshold or replicate count has been changed pending this decision. The 0.15 bar in [gates] stands as written."
+not_decided = "No gate, threshold or replicate count has been changed pending this decision, and seeding is NOT implemented: l1b_request_builder.py still sends no model_options. The 0.15 bar in [gates] stands as written. Testing the seed option settled what seeding does, not which option to take."
 memo = "memo.md"
 
 [transport]
