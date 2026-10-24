@@ -9,6 +9,7 @@ import json
 import sys
 from pathlib import Path
 
+import config_pins
 import specificity_margin as sm
 
 CAMPAIGN_DIR = Path(__file__).resolve().parent
@@ -255,13 +256,39 @@ def _run_one_cognate_row(bundle_path: Path, design_id: str, cognate_id: str) -> 
     return row
 
 
-def transport_payload(ranked: dict, *, top_n: int = 3) -> dict:
-    eligible = [
+def transport_payload(
+    ranked: dict, *, top_n: int = 3, config_pins_report: dict | None = None
+) -> dict:
+    # status == "computed" only means the margin is defined, not that the design
+    # passed. The T1 handoff must gate on the verdict: pass_in_silico_draft is
+    # true only when the cognate outranks every decoy in the panel.
+    computed = [
         d
         for d in ranked["designs"]
         if d.get("margin", {}).get("status") == "computed"
     ]
-    top = eligible[:top_n]
+    eligible = [
+        d for d in computed if d["margin"].get("pass_in_silico_draft") is True
+    ]
+    # A gate declared active in FLEET.toml whose inputs are unpinned has not been
+    # evaluated, so nothing may be handed off on the strength of it passing.
+    pins = config_pins_report or {"all_pinned": True, "unpinned_gates": [], "findings": []}
+    blocked_by_unpinned = not pins.get("all_pinned", True)
+    top = [] if blocked_by_unpinned else eligible[:top_n]
+    excluded = [
+        {
+            "design_id": d["design_id"],
+            "status": d.get("margin", {}).get("status"),
+            "specificity_margin": d.get("margin", {}).get("specificity_margin"),
+            "reason": (
+                "cognate does not outrank every decoy"
+                if d in computed
+                else d.get("margin", {}).get("reason", "margin undefined")
+            ),
+        }
+        for d in ranked["designs"]
+        if d not in eligible
+    ]
     return {
         "transport": "T1",
         "direction": "fleet_to_case",
@@ -279,6 +306,18 @@ def transport_payload(ranked: dict, *, top_n: int = 3) -> dict:
             }
             for d in top
         ],
+        "gate": "margin.pass_in_silico_draft",
+        "eligible_count": len(eligible),
+        "config_pins": pins,
+        "handoff_blocked_by_unpinned_gates": blocked_by_unpinned,
+        "handoff_block_reason": (
+            "declared gates "
+            + ", ".join(pins.get("unpinned_gates") or [])
+            + " have unpinned inputs and were never evaluated"
+            if blocked_by_unpinned
+            else None
+        ),
+        "excluded_designs": excluded,
         "open_decisions": ["OD-1", "OD-4"],
         "resolved_decisions": ["OD-2", "OD-3"],
         "note": "In-vitro work is out of scope; BIO Physician owns the reproduction bar.",
@@ -294,6 +333,11 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--ranked-out", default=str(CAMPAIGN_DIR / "artifacts" / "ranked_panel.json"))
     ap.add_argument("--transport-out", default=str(CAMPAIGN_DIR / "artifacts" / "transport_t1.json"))
     ap.add_argument("--score", action="store_true", help="Run layer-2 scoring per peptide dir")
+    ap.add_argument(
+        "--require-pinned",
+        action="store_true",
+        help="Fail the run if a gate declared active in FLEET.toml has unpinned inputs",
+    )
     ap.add_argument(
         "--write-l1b-manifest",
         default=None,
@@ -330,12 +374,22 @@ def main(argv: list[str] | None = None) -> int:
     ranked_path = Path(args.ranked_out)
     ranked_path.parent.mkdir(parents=True, exist_ok=True)
     ranked_path.write_text(sm.canonical_json(ranked))
-    transport = transport_payload(ranked)
+    pins_report = config_pins.collect_unpinned(CAMPAIGN_DIR / "FLEET.toml", CAMPAIGN_DIR)
+    if args.require_pinned and not pins_report["all_pinned"]:
+        config_pins.require_pinned(CAMPAIGN_DIR / "FLEET.toml", CAMPAIGN_DIR)
+    transport = transport_payload(ranked, config_pins_report=pins_report)
     Path(args.transport_out).write_text(sm.canonical_json(transport))
     print(f"WROTE {ranked_path}")
     print(f"WROTE {args.transport_out}")
     computed = sum(1 for d in ranked["designs"] if d.get("margin", {}).get("status") == "computed")
     print(f"designs={len(ranked['designs'])} margins_computed={computed}")
+    if not pins_report["all_pinned"]:
+        print(
+            "UNPINNED GATES (handoff blocked): "
+            + ", ".join(pins_report["unpinned_gates"])
+        )
+        for f in pins_report["findings"]:
+            print(f"  - [{f['gate']}] {f['detail']}")
     return 0
 
 

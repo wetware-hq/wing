@@ -254,7 +254,22 @@ def build_panel_payload(
     ranked = rank_panel_rows(rows)
     for i, row in enumerate(ranked, start=1):
         row["rank"] = i
-    handoff = ranked[:handoff_top_n]
+    # A design that fails a hard gate is not a candidate. Filter the handoff on
+    # gates.hard_pass rather than on rank, and carry the excluded designs with
+    # their reasons so "rejected for developability reasons" is a first-class,
+    # readable output instead of a silent omission. An empty handoff is a valid
+    # and meaningful result.
+    eligible = [r for r in ranked if (r.get("gates") or {}).get("hard_pass") is True]
+    handoff = eligible[:handoff_top_n]
+    excluded = [
+        {
+            "design_id": r["design_id"],
+            "rank": r.get("rank"),
+            "fail_reasons": (r.get("gates") or {}).get("fail_reasons") or ["gates:absent"],
+        }
+        for r in ranked
+        if r not in eligible
+    ]
     return {
         "schema_version": "1.0.0",
         "campaign_id": campaign_id,
@@ -272,6 +287,14 @@ def build_panel_payload(
         "handoff": {
             "top_n": handoff_top_n,
             "recipient": "BIO Physician",
+            "gate": "gates.hard_pass",
+            "eligible_count": len(eligible),
             "designs": handoff,
+            "excluded": excluded,
+            "note": (
+                "No design cleared the hard gates; nothing is handed off."
+                if not handoff
+                else None
+            ),
         },
     }
