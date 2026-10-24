@@ -111,7 +111,7 @@ onto its entity IF present, it was simply absent. The three staged panels live i
 
 - Schema acceptance of the migrated `type:"binder"` body on the real design endpoint. The only
   proofs are a test-mode submission (needs a test key; we hold a LIVE key) or a real paid run
-  (needs Mathew's approval + spend). Neither done.
+  (needs Campaign approver's approval + spend). Neither done.
 - The price tier for the `type:"binder"` shape (estimate-cost rejects it). Best evidence remains
   $0.0500/design = $15.0000 for 300, from the legacy estimate.
 - **Which BoltzGen version backs the hosted design pipeline — the sharpest risk.** It is not

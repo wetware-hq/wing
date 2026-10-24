@@ -128,7 +128,7 @@
  "handoff_block_reason": "declared gates calibration, manufacturability, species_cross_reactivity have unpinned inputs and were never evaluated",
  "handoff_blocked_by_unpinned_gates": true,
  "manifest_hash": "6394fd250866822690626d28cdeb1f16464539a787fa6d9b74bb185d7bd3972a",
- "note": "In-vitro work is out of scope; BIO Physician owns the reproduction bar.",
+ "note": "In-vitro work is out of scope; Clinical lead owns the reproduction bar.",
  "open_decisions": [
   "OD-1",
   "OD-4"

@@ -106,7 +106,7 @@
       "type": "object",
       "properties": {
         "top_n": { "type": "integer" },
-        "recipient": { "const": "BIO Physician" },
+        "recipient": { "const": "Clinical lead" },
         "designs": { "type": "array" }
       }
     },

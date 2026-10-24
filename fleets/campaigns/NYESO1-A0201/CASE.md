@@ -15,9 +15,9 @@
 
 ## Clinical case
 
-The demonstration indication, decided with BIO Physician, is **resected high-tumour-mutational-burden cutaneous melanoma treated in the minimal-residual-disease / adjuvant window**. The product class is **TCR-mimic antibodies and de novo minibinders** — agents that recognise a tumour antigen in the context of HLA rather than a surface protein.
+The demonstration indication, decided with Clinical lead, is **resected high-tumour-mutational-burden cutaneous melanoma treated in the minimal-residual-disease / adjuvant window**. The product class is **TCR-mimic antibodies and de novo minibinders** — agents that recognise a tumour antigen in the context of HLA rather than a surface protein.
 
-The MRD framing is anchored to randomised and early-phase evidence that antigen-directed therapy acts in the post-resection window rather than in bulk disease: TG4050 in resected head and neck squamous cell carcinoma (0 of 16 relapses in the treated arm against 3 of 16 in the control arm) and the triple-negative breast cancer phase data assembled by BIO Physician. The clinical bet is that a defined antigen, targeted while disease burden is minimal, is where a binder of this class can plausibly matter.
+The MRD framing is anchored to randomised and early-phase evidence that antigen-directed therapy acts in the post-resection window rather than in bulk disease: TG4050 in resected head and neck squamous cell carcinoma (0 of 16 relapses in the treated arm against 3 of 16 in the control arm) and the triple-negative breast cancer phase data assembled by Clinical lead. The clinical bet is that a defined antigen, targeted while disease burden is minimal, is where a binder of this class can plausibly matter.
 
 ## Target selection, and what it does and does not prove
 
@@ -45,7 +45,7 @@ Cross-reactive clones are therefore treated as an **expected output** of any gen
 
 ## What the in-silico campaign is, in clinical terms
 
-The campaign designs candidate binders against the real `SLLMWITQC`/HLA-A*02:01 complex and then re-folds the survivors against a panel of closely related decoy peptides on the *same* HLA. A design is only interesting if it ranks well on the real epitope **and** poorly on the decoys. The decoy panel for the reproduction is ten peptide mutants of `SLLMWITQC` (nine single or double mutants and one quadruple mutant); a clinically motivated panel of proteome near-neighbours and self-peptides is a planned extension and is owned by BIO Physician.
+The campaign designs candidate binders against the real `SLLMWITQC`/HLA-A*02:01 complex and then re-folds the survivors against a panel of closely related decoy peptides on the *same* HLA. A design is only interesting if it ranks well on the real epitope **and** poorly on the decoys. The decoy panel for the reproduction is ten peptide mutants of `SLLMWITQC` (nine single or double mutants and one quadruple mutant); a clinically motivated panel of proteome near-neighbours and self-peptides is a planned extension and is owned by Clinical lead.
 
 ## What is reproduced, and what is not
 
@@ -57,10 +57,10 @@ The reproduction target is bioRxiv [10.1101/2024.11.27.624796](https://doi.org/1
 2. **Every quality threshold is transferred, not calibrated.** They come from a protein-protein interaction benchmark containing no pMHC complexes at all. Campaign one is itself the calibration experiment.
 3. **There is no independent model confirming any design.** The architecture was cut to two layers, removing the orthogonal re-predictor. Anything the generator is *systematically* wrong about will pass undetected. The specificity margin is a differential under one model, so a shared bias cancels to first order — but a peptide-dependent bias does not cancel.
 
-## Downstream hand-off (in vitro, owned by BIO Physician)
+## Downstream hand-off (in vitro, owned by Clinical lead)
 
-Surface plasmon resonance or bio-layer interferometry for affinity; counter-screening against the decoy and self-peptide panels for specificity; multimer staining and a Jurkat-NFAT reporter for functional engagement; optionally co-culture cytotoxicity; and developability assessment. Whether the reproduction bar includes co-culture cytotoxicity or stops at multimer plus Jurkat-NFAT is an open decision owned by BIO Physician.
+Surface plasmon resonance or bio-layer interferometry for affinity; counter-screening against the decoy and self-peptide panels for specificity; multimer staining and a Jurkat-NFAT reporter for functional engagement; optionally co-culture cytotoxicity; and developability assessment. Whether the reproduction bar includes co-culture cytotoxicity or stops at multimer plus Jurkat-NFAT is an open decision owned by Clinical lead.
 
 ## Governance
 
-Nothing is submitted and no money is spent without Mathew's explicit approval. The approval and spend cap are not prose in this file — they are a node inside the execution graph in `FLEET.toml`, and the graph halts at zero cost if approval is withheld.
+Nothing is submitted and no money is spent without Campaign approver's explicit approval. The approval and spend cap are not prose in this file — they are a node inside the execution graph in `FLEET.toml`, and the graph halts at zero cost if approval is withheld.

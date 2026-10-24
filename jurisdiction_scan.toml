@@ -25,7 +25,8 @@ J-JOBTITLE = '\b(VMO|CMO|CNC|CNE|JMO|Nurse Unit Manager|RMO|SRMO)\b(?! *=)'
 "SCAN-PROMPT-LEAK/directive" = 'SYSTEM DIRECTIVE|%PURGE'
 
 [scan]
-# Campaign specs under fleets/campaigns/ are backup manifests (read by no code); agent role names are intentional.
+# Campaign specs under fleets/campaigns/ still carry jurisdiction-local prose and Modal env names;
+# core wing is scanned. prior-art cites third-party field names verbatim in places.
 skip_prefixes = ["fleets/campaigns/", "fleets/prior-art.md"]
 
 [planted]

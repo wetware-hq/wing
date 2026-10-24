@@ -10,7 +10,7 @@ Supersedes the earlier "NOTHING LIVE" status.
 
 SCOPE (read infra.json "modal_scope_note" and FLEET.toml [platform.modal_layer2]):
   IN SCOPE  -> Modal as a CPU execution host for LAYER 2 (the ipSAE scoring worker
-               that today runs in the pinned ghcr image on the box). Mathew's
+               that today runs in the pinned ghcr image on the box). Campaign approver's
                direction, 2026-10-21.
   REJECTED  -> self-hosting a GPU DESIGN model (BoltzGen/Boltz) on Modal GPU.
                That rejection (infra.json:406-411, :439, layer_1_boltz.self_hosting)
@@ -57,9 +57,9 @@ Modal APIs used, each with the doc URL fetched 2026-10-21 (Australia/Sydney):
       https://modal.com/docs/guide/volumes
 ------------------------------------------------------------------------------
 
-DEPLOY (when Mathew chooses to, under the APPR gate - do not run now):
+DEPLOY (when Campaign approver chooses to, under the APPR gate - do not run now):
   0. Auth: source modal_cli_env.sh (maps Cloud secrets modal_token_id / modal_token_secret
-     to MODAL_TOKEN_ID / MODAL_TOKEN_SECRET), or run ./launch_modal_l2.sh.
+     to the Modal CLI token env vars), or run ./launch_modal_l2.sh.
   1. Create the ghcr read-only pull Secret on Modal (dashboard or CLI). ghcr package
      pulls need a GitHub token with `read:packages`:
          REGISTRY_USERNAME = <a GitHub username with read access to wetware-hq packages>

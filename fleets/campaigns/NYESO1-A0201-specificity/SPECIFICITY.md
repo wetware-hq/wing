@@ -131,7 +131,7 @@ in `survivor_panel.yaml`.
 ## Decoy panel
 
 `decoy_panel.yaml` — ten signed decoys (7 single / 2 double / 1 triple on P4–P8).
-`panel_ready_for_l1b: true` (BIO Physician 2026-10-23). `self_peptides` empty (OD-4 deferred).
+`panel_ready_for_l1b: true` (Clinical lead 2026-10-23). `self_peptides` empty (OD-4 deferred).
 
 ---
 

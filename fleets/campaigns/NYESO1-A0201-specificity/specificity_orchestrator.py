@@ -384,7 +384,7 @@ def transport_payload(
         "excluded_designs": excluded,
         "open_decisions": ["OD-1", "OD-4"],
         "resolved_decisions": ["OD-2", "OD-3"],
-        "note": "In-vitro work is out of scope; BIO Physician owns the reproduction bar.",
+        "note": "In-vitro work is out of scope; Clinical lead owns the reproduction bar.",
     }
 
 

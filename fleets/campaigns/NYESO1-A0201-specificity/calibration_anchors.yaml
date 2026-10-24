@@ -5,8 +5,8 @@
 
 schema_version: "1.0"
 campaign_id: NYESO1-A0201-specificity
-owner: BIO Scientist
-status: specified   # sequences/thresholds to be pinned with BIO Physician (OD-1 calibration)
+owner: Science lead
+status: specified   # sequences/thresholds to be pinned with Clinical lead (OD-1 calibration)
 scored_each_run: true
 per_axis: true
 
