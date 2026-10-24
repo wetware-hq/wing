@@ -2319,7 +2319,16 @@
       "start": "35"
      }
     ],
+    "n_terminal_glutamine": {
+     "hard_fail": false,
+     "residue": "S"
+    },
     "pass": false,
+    "poly_q": {
+     "hard_fail": false,
+     "longest_run": 1,
+     "max_run": 2
+    },
     "sap_patch": {
      "mode": "soft",
      "soft_fail": false,
@@ -2771,7 +2780,16 @@
       "start": "50"
      }
     ],
+    "n_terminal_glutamine": {
+     "hard_fail": false,
+     "residue": "M"
+    },
     "pass": false,
+    "poly_q": {
+     "hard_fail": false,
+     "longest_run": 0,
+     "max_run": 2
+    },
     "sap_patch": {
      "mode": "soft",
      "soft_fail": false,
@@ -3222,7 +3240,16 @@
      "threshold": 1
     },
     "motif_hits": [],
+    "n_terminal_glutamine": {
+     "hard_fail": false,
+     "residue": "S"
+    },
     "pass": true,
+    "poly_q": {
+     "hard_fail": false,
+     "longest_run": 0,
+     "max_run": 2
+    },
     "sap_patch": {
      "mode": "soft",
      "soft_fail": false,
@@ -3668,7 +3695,16 @@
      "threshold": 1
     },
     "motif_hits": [],
+    "n_terminal_glutamine": {
+     "hard_fail": false,
+     "residue": "M"
+    },
     "pass": false,
+    "poly_q": {
+     "hard_fail": false,
+     "longest_run": 2,
+     "max_run": 2
+    },
     "sap_patch": {
      "mode": "soft",
      "soft_fail": false,
@@ -4108,7 +4144,16 @@
      "threshold": 1
     },
     "motif_hits": [],
+    "n_terminal_glutamine": {
+     "hard_fail": false,
+     "residue": "M"
+    },
     "pass": false,
+    "poly_q": {
+     "hard_fail": false,
+     "longest_run": 1,
+     "max_run": 2
+    },
     "sap_patch": {
      "mode": "soft",
      "soft_fail": false,
@@ -4554,7 +4599,16 @@
       "start": "61"
      }
     ],
+    "n_terminal_glutamine": {
+     "hard_fail": false,
+     "residue": "S"
+    },
     "pass": false,
+    "poly_q": {
+     "hard_fail": false,
+     "longest_run": 1,
+     "max_run": 2
+    },
     "sap_patch": {
      "mode": "soft",
      "soft_fail": false,
@@ -4995,7 +5049,16 @@
      "threshold": 1
     },
     "motif_hits": [],
+    "n_terminal_glutamine": {
+     "hard_fail": false,
+     "residue": "V"
+    },
     "pass": true,
+    "poly_q": {
+     "hard_fail": false,
+     "longest_run": 1,
+     "max_run": 2
+    },
     "sap_patch": {
      "mode": "soft",
      "soft_fail": false,
@@ -5450,7 +5513,16 @@
       "start": "47"
      }
     ],
+    "n_terminal_glutamine": {
+     "hard_fail": false,
+     "residue": "A"
+    },
     "pass": false,
+    "poly_q": {
+     "hard_fail": false,
+     "longest_run": 0,
+     "max_run": 2
+    },
     "sap_patch": {
      "mode": "soft",
      "soft_fail": false,
@@ -5893,7 +5965,16 @@
       "start": "36"
      }
     ],
+    "n_terminal_glutamine": {
+     "hard_fail": false,
+     "residue": "M"
+    },
     "pass": false,
+    "poly_q": {
+     "hard_fail": false,
+     "longest_run": 1,
+     "max_run": 2
+    },
     "sap_patch": {
      "mode": "soft",
      "soft_fail": false,
@@ -6318,7 +6399,16 @@
       "start": "7"
      }
     ],
+    "n_terminal_glutamine": {
+     "hard_fail": false,
+     "residue": "A"
+    },
     "pass": false,
+    "poly_q": {
+     "hard_fail": false,
+     "longest_run": 0,
+     "max_run": 2
+    },
     "sap_patch": {
      "mode": "soft",
      "soft_fail": false,

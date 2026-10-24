@@ -251,7 +251,13 @@ def analyse_design(
         "item_2_coldspot_contact_fraction": (
             round(cold_hit / n_cold, 5) if n_cold else None
         ),
-        "item_3_buried_anchor_contact_count": len(anchor_hit),
+        # A binder that contacted nothing has no measured anchor count: len([])
+        # is 0, and 0 is also the PASSING value of the hard gate. Report None,
+        # the way the sibling fractions above already do, so "touched nothing"
+        # cannot read as "cleanly avoided the buried anchors".
+        "item_3_buried_anchor_contact_count": (
+            len(anchor_hit) if n_contacted_total else None
+        ),
         "hotspot_contact_fraction": (
             round(hotspots_hit / n_hotspots, 5) if n_hotspots else None
         ),
@@ -359,14 +365,17 @@ def main_sweep(argv: list[str] | None = None) -> int:
         vals = [v["by_cutoff"][key]["off_epitope_contact_fraction"] for v in per_design.values()]
         vals = [v for v in vals if v is not None]
         shells = [v["by_cutoff"][key]["shell_size_total"] for v in per_design.values()]
+        # Every value can be None at a given cutoff (no design contacted the
+        # target). min/median would raise on the empty list; report the absence.
         summary[key] = {
-            "off_epitope_min": round(min(vals), 5),
-            "off_epitope_max": round(max(vals), 5),
-            "off_epitope_median": round(statistics.median(vals), 5),
-            "off_epitope_stdev": round(statistics.pstdev(vals), 5),
+            "off_epitope_min": round(min(vals), 5) if vals else None,
+            "off_epitope_max": round(max(vals), 5) if vals else None,
+            "off_epitope_median": round(statistics.median(vals), 5) if vals else None,
+            "off_epitope_stdev": round(statistics.pstdev(vals), 5) if vals else None,
+            "designs_measured": len(vals),
             "designs_at_zero": sum(1 for v in vals if v == 0.0),
-            "shell_size_total_min": min(shells),
-            "shell_size_total_max": max(shells),
+            "shell_size_total_min": min(shells) if shells else None,
+            "shell_size_total_max": max(shells) if shells else None,
         }
 
     payload = {

@@ -269,9 +269,14 @@ def classify(peptide: dict, chain_a: dict, b2m_atom_contacts: int) -> tuple[str,
         "meets_tcr_position_breadth": len(tcr_hits) >= PEPTIDE_DIRECTED_MIN_TCR_POSITIONS,
         "meets_tcr_contact_depth": tcr_atoms >= PEPTIDE_DIRECTED_MIN_TCR_ATOMS,
         "no_peptide_remote_framework_contact": a3 == 0 and b2m_atom_contacts == 0,
+        # purity is None when the binder makes no chain-A contact at all. That
+        # is "no framework footing to assess", not "the footing is groove
+        # proximal", and reading it as the latter put a criterion-met claim in
+        # the verdict reason for a binder that never touched the framework.
         "framework_footing_is_groove_proximal": (
-            purity is None or purity >= GROOVE_PROXIMAL_PURITY
+            None if purity is None else purity >= GROOVE_PROXIMAL_PURITY
         ),
+        "framework_footing_assessable": purity is not None,
     }
 
     if not any_peptide:

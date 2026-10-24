@@ -42,7 +42,7 @@ def test_specificity_margin_negative_when_cognate_wins():
     )
     assert out["status"] == "computed"
     assert out["on_target_rank"] == 1
-    assert out["specificity_margin"] <= 0
+    assert out["rank_margin"] <= 0
     assert out["pass_in_silico_draft"] is True
 
 

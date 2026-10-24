@@ -21,6 +21,11 @@ API_BASE = "https://api.boltz.bio/compute/v1/predictions/structure-and-binding"
 DEFAULT_APPROVAL = "NYESO1-A0201-specificity APPR launch 2026-10-23 (user LAUNCH)"
 
 
+# Descriptors that FLEET.toml gates on. A mirrored decoy missing one of these
+# is not a usable decoy, however well-formed its archive is.
+GATED_METRIC_KEYS = ("iptm", "complex_plddt")
+
+
 class BoltzPredictError(RuntimeError):
     pass
 
@@ -122,6 +127,17 @@ def mirror_prediction_to_decoy_dir(doc: dict[str, Any], dest: Path, *, decoy_id:
         merged["binding_confidence"] = binding["binding_confidence"]
     if "iptm" not in merged and best.get("iptm") is not None:
         merged["iptm"] = best["iptm"]
+    # The merge was written with no check that the gated descriptors survived
+    # it. A decoy whose metrics.json lacks iptm was still recorded as
+    # "mirrored" and counted as OK, and the missing value then ranked last
+    # everywhere downstream rather than stopping the run.
+    missing_gated = [k for k in GATED_METRIC_KEYS if merged.get(k) is None]
+    if missing_gated:
+        raise BoltzPredictError(
+            f"{decoy_id}: prediction output has no {', '.join(missing_gated)}; "
+            "these feed the gated descriptors, so the decoy cannot be mirrored "
+            "as complete"
+        )
     metrics_out.write_text(json.dumps(merged, indent=2, sort_keys=True))
     meta = {
         "prediction_id": doc.get("id"),
@@ -217,7 +233,14 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.dry_run:
         sample = estimate_cost(jobs[0]["payload"])
-        unit = float(sample.get("estimated_cost_usd", 0.05))
+        # A hardcoded 0.05 substituted for a missing price printed invented
+        # money in the same format as a real estimate.
+        if sample.get("estimated_cost_usd") is None:
+            raise SystemExit(
+                "cost estimate unavailable: the API response has no "
+                "estimated_cost_usd, and a guessed unit price is not an estimate"
+            )
+        unit = float(sample["estimated_cost_usd"])
         print(
             json.dumps(
                 {

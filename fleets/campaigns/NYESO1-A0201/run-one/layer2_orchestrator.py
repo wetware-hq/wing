@@ -120,7 +120,19 @@ def run_bundle(
     tier0_rows: dict[str, dict] = {}
     contact_rows: dict[str, dict] = {}
 
-    for d in sorted(p for p in artifacts_root.iterdir() if p.is_dir() and p.name.startswith("pres_")):
+    design_dirs = sorted(
+        p for p in artifacts_root.iterdir() if p.is_dir() and p.name.startswith("pres_")
+    )
+    # "0 of 0 scored" and "0 of 10 scored" are different facts. Without this, an
+    # artifacts root with no design dirs produced a zero-design panel reading
+    # "No design cleared the hard gates" and exited 0: a pipeline misconfiguration
+    # presented as a scientific result.
+    if not design_dirs:
+        raise FileNotFoundError(
+            f"no pres_* design directories under {artifacts_root}; "
+            "nothing was scored, which is a pipeline failure, not an empty panel"
+        )
+    for d in design_dirs:
         try:
             rec = score_design(
                 d.name,
@@ -180,7 +192,13 @@ def run_bundle(
             "Specificity campaign: hard gates include specificity_margin >= 0.15, "
             "buried_anchor_contacts == 0, liability_filters.pass (see SPECIFICITY.md)."
         )
-        payload["panel"] = specificity_scoring.build_panel_payload(payload)
+        # A design that raised was dropped from `designs` and its error kept only
+        # in the bundle, so panel.json showed a clean, consecutively ranked panel
+        # with no sign that anything had failed. Carry the errors into the panel
+        # and refuse the handoff while any remain.
+        payload["panel"] = specificity_scoring.build_panel_payload(
+            payload, design_errors=payload.get("errors") or {}
+        )
     return payload
 
 
@@ -220,6 +238,11 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="Ranked PANEL JSON path (default: <artifacts>/panel.json)",
     )
+    ap.add_argument(
+        "--rejections-out",
+        default=None,
+        help="Rejection store JSONL path (default: <artifacts>/rejections.jsonl)",
+    )
     args = ap.parse_args(argv)
 
     artifacts = Path(args.artifacts)
@@ -257,6 +280,19 @@ def main(argv: list[str] | None = None) -> int:
         panel_path = Path(args.panel_out or artifacts / "panel.json")
         panel_path.write_text(json.dumps(payload["panel"], indent=1, sort_keys=True))
         print(f"WROTE {panel_path} (ranked PANEL)")
+        # FLEET.toml [rejections] declares this store and nothing wrote it, so an
+        # empty file read as "nothing was rejected" rather than "never recorded".
+        rejections_path = Path(args.rejections_out or artifacts / "rejections.jsonl")
+        n_rejected = specificity_scoring.write_rejections(payload["panel"], rejections_path)
+        print(f"WROTE {rejections_path} ({n_rejected} rejection records)")
+        pins = (payload["panel"].get("config_pins") or {})
+        if not pins.get("all_pinned", False):
+            print(
+                "HANDOFF BLOCKED (unpinned gates): "
+                + ", ".join(pins.get("unpinned_gates") or ["unknown"])
+            )
+            for f in pins.get("findings") or []:
+                print(f"  - [{f.get('gate')}] {f.get('detail')}")
 
     legacy_path = Path(args.legacy_out or artifacts / "layer2_results.json")
     legacy_path.write_text(
@@ -267,14 +303,26 @@ def main(argv: list[str] | None = None) -> int:
     for did, rec in payload["designs"].items():
         violations.extend(layer2_core.policy_violations(rec.get("policy", {})))
         t0 = rec.get("tier0") or {}
-        if "buried-anchors-zero" in args.policy and t0.get("item_3_buried_anchor_contact_count", 0) != 0:
-            print(
-                f"POLICY buried-anchors-zero FAILED: {did} "
-                f"item_3_buried_anchor_contact_count={t0.get('item_3_buried_anchor_contact_count')} "
-                "(UPGRADES.md item 3 / P2 — not FLEET.toml until signed)",
-                file=sys.stderr,
-            )
-            violations.append(f"{did}:item_3_buried_anchor_contact_count")
+        if "buried-anchors-zero" in args.policy:
+            # Zero is the passing value, so an absent count must not default to
+            # 0: that silently reports a design nobody measured as compliant.
+            n = t0.get("item_3_buried_anchor_contact_count")
+            if n is None:
+                print(
+                    f"POLICY buried-anchors-zero UNMEASURED: {did} "
+                    "item_3_buried_anchor_contact_count absent (tier 0 did not "
+                    "produce it); not treated as compliant",
+                    file=sys.stderr,
+                )
+                violations.append(f"{did}:item_3_buried_anchor_contact_count:unmeasured")
+            elif n != 0:
+                print(
+                    f"POLICY buried-anchors-zero FAILED: {did} "
+                    f"item_3_buried_anchor_contact_count={n} "
+                    "(UPGRADES.md item 3 / P2 — not FLEET.toml until signed)",
+                    file=sys.stderr,
+                )
+                violations.append(f"{did}:item_3_buried_anchor_contact_count")
 
     print(f"WROTE {bundle_path} ({len(payload['designs'])} designs)")
     print(f"WROTE {legacy_path} (legacy ipSAE)")

@@ -35,6 +35,11 @@
    },
    {
     "declared_active_by": "species_cross_reactivity.panel",
+    "detail": "ortholog_panel.yaml status is 'deferred', which is not pinned",
+    "gate": "species_cross_reactivity"
+   },
+   {
+    "declared_active_by": "species_cross_reactivity.panel",
     "detail": "'murine' ortholog sequence is not pinned",
     "gate": "species_cross_reactivity"
    },
@@ -56,61 +61,67 @@
   ]
  },
  "direction": "fleet_to_case",
- "eligible_count": 1,
+ "eligible_count": 0,
  "excluded_designs": [
   {
-   "design_id": "pres_G3ZfGGLFJXddOc0vhQwO",
-   "reason": "cognate does not outrank every decoy",
-   "specificity_margin": 1,
-   "status": "computed"
+   "design_id": "pres_rIVnI2qWY81pul3zHRrN",
+   "rank_margin": 2.0,
+   "reason": "margin from a reduced descriptor stack: pae_interaction incomplete across the panel",
+   "status": "computed_reduced_stack"
   },
   {
    "design_id": "pres_xpto8wJvfrJQhLVH4Mvz",
-   "reason": "cognate does not outrank every decoy",
-   "specificity_margin": 1,
-   "status": "computed"
-  },
-  {
-   "design_id": "pres_Bw8vknhmXJUg72L6CGAw",
-   "reason": "cognate does not outrank every decoy",
-   "specificity_margin": 2,
-   "status": "computed"
+   "rank_margin": 2.0,
+   "reason": "margin from a reduced descriptor stack: pae_interaction incomplete across the panel",
+   "status": "computed_reduced_stack"
   },
   {
    "design_id": "pres_KvvXtVa6yakB17EmB1Ge",
-   "reason": "cognate does not outrank every decoy",
-   "specificity_margin": 2,
-   "status": "computed"
+   "rank_margin": 2.5,
+   "reason": "margin from a reduced descriptor stack: pae_interaction incomplete across the panel",
+   "status": "computed_reduced_stack"
   },
   {
-   "design_id": "pres_2SOqXG5xbTO4FD4yB5so",
-   "reason": "cognate does not outrank every decoy",
-   "specificity_margin": 3,
-   "status": "computed"
+   "design_id": "pres_Bw8vknhmXJUg72L6CGAw",
+   "rank_margin": 3.0,
+   "reason": "margin from a reduced descriptor stack: pae_interaction incomplete across the panel",
+   "status": "computed_reduced_stack"
   },
   {
-   "design_id": "pres_B8eqLRLyLSgzkVbLyC7C",
-   "reason": "cognate does not outrank every decoy",
-   "specificity_margin": 3,
-   "status": "computed"
-  },
-  {
-   "design_id": "pres_JA4idjMYaE8EsQKrcb6K",
-   "reason": "cognate does not outrank every decoy",
-   "specificity_margin": 3,
-   "status": "computed"
-  },
-  {
-   "design_id": "pres_PfYJkQdsLag9x1R5Pt6L",
-   "reason": "cognate does not outrank every decoy",
-   "specificity_margin": 3,
-   "status": "computed"
+   "design_id": "pres_G3ZfGGLFJXddOc0vhQwO",
+   "rank_margin": 4.0,
+   "reason": "margin from a reduced descriptor stack: pae_interaction incomplete across the panel",
+   "status": "computed_reduced_stack"
   },
   {
    "design_id": "pres_lppWP1t4ozGyw5s4gq3P",
-   "reason": "cognate does not outrank every decoy",
-   "specificity_margin": 3,
-   "status": "computed"
+   "rank_margin": 5.0,
+   "reason": "margin from a reduced descriptor stack: pae_interaction incomplete across the panel",
+   "status": "computed_reduced_stack"
+  },
+  {
+   "design_id": "pres_PfYJkQdsLag9x1R5Pt6L",
+   "rank_margin": 5.5,
+   "reason": "margin from a reduced descriptor stack: pae_interaction incomplete across the panel",
+   "status": "computed_reduced_stack"
+  },
+  {
+   "design_id": "pres_JA4idjMYaE8EsQKrcb6K",
+   "rank_margin": 6.0,
+   "reason": "margin from a reduced descriptor stack: pae_interaction incomplete across the panel",
+   "status": "computed_reduced_stack"
+  },
+  {
+   "design_id": "pres_B8eqLRLyLSgzkVbLyC7C",
+   "rank_margin": 7.0,
+   "reason": "margin from a reduced descriptor stack: pae_interaction incomplete across the panel",
+   "status": "computed_reduced_stack"
+  },
+  {
+   "design_id": "pres_2SOqXG5xbTO4FD4yB5so",
+   "rank_margin": 8.0,
+   "reason": "margin from a reduced descriptor stack: pae_interaction incomplete across the panel",
+   "status": "computed_reduced_stack"
   }
  ],
  "gate": "margin.pass_in_silico_draft",
@@ -126,6 +137,6 @@
   "OD-2",
   "OD-3"
  ],
- "top_designs_by_specificity_margin": [],
+ "top_designs_by_rank_margin": [],
  "transport": "T1"
 }

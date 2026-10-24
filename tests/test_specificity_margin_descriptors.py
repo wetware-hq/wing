@@ -61,7 +61,7 @@ def test_margin_is_incomplete_when_a_descriptor_is_null_for_every_peptide():
     assert out["panel_ready"] is False
     assert "ipsae" in out["empty_descriptors"]
     assert "min_ipsae" in out["empty_descriptors"]
-    assert "specificity_margin" not in out
+    assert "rank_margin" not in out
     assert "pass_in_silico_draft" not in out
 
 
@@ -73,5 +73,5 @@ def test_margin_computes_when_the_stack_is_populated():
     )
     assert out["status"] == "computed"
     assert out["on_target_rank"] == 1
-    assert out["specificity_margin"] < 0
+    assert out["rank_margin"] < 0
     assert out["pass_in_silico_draft"] is True

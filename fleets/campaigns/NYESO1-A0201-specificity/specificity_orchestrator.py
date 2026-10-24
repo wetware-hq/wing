@@ -161,6 +161,22 @@ def build_ranked_panel(
     cognate_id = decoy_doc["cognate"]["peptide_id"]
     decoy_entries = decoy_peptide_entries(decoy_doc)
     decoy_ids = [e["peptide_id"] for e in decoy_entries]
+    # An empty decoy panel is not a panel. Without this the run got as far as
+    # ranking and died on min() of an empty sequence, naming neither the
+    # campaign nor the real cause.
+    if not decoy_ids:
+        raise SystemExit(
+            "decoy panel is empty: no 'decoys.entries' and no 'mutants' in the decoy "
+            "document; a specificity margin against zero decoys is not a margin"
+        )
+    duplicate_ids = sorted({i for i in decoy_ids if decoy_ids.count(i) > 1})
+    if duplicate_ids:
+        raise SystemExit(f"decoy panel has duplicate peptide_ids: {duplicate_ids}")
+    if cognate_id in decoy_ids:
+        raise SystemExit(
+            f"cognate peptide_id {cognate_id!r} also appears in the decoy panel; "
+            "the on-target peptide cannot be its own decoy"
+        )
     panel_ready = decoy_doc.get("panel_ready_for_l1b", False)
 
     # peptide_id -> the chain-C sequence that peptide's refold must carry.
@@ -175,7 +191,10 @@ def build_ranked_panel(
         entry: dict = {
             "design_id": sid,
             "binder_sequence": s["binder_sequence"],
-            "source_job_id": decoy_doc.get("source_job_id", "prot_des_TY6KzyxULq8mACflXbhn"),
+            # No hardcoded fallback: a guessed job id stamped run-one's
+            # provenance onto every design regardless of which job actually
+            # produced the artifacts. Absent provenance reports as null.
+            "source_job_id": decoy_doc.get("source_job_id"),
         }
         peptide_dirs = collect_peptide_artifact_dirs(sid, artifacts_root)
         if not peptide_dirs:
@@ -222,15 +241,15 @@ def build_ranked_panel(
 
     designs_out.sort(
         key=lambda d: (
-            d.get("margin", {}).get("specificity_margin") is None,
-            d.get("margin", {}).get("specificity_margin", 9999),
+            d.get("margin", {}).get("rank_margin") is None,
+            d.get("margin", {}).get("rank_margin", 9999),
             d["design_id"],
         ),
     )
     return {
         "schema_version": "1.0.0",
         "campaign_id": "NYESO1-A0201-specificity",
-        "primary_endpoint": "specificity_margin",
+        "primary_endpoint": "rank_margin (ordinal; audit-only, NOT the Path A specificity_margin gated at >= 0.15)",
         "manifest_hash": _manifest_hash(
             CAMPAIGN_DIR / "survivor_panel.yaml",
             CAMPAIGN_DIR / "decoy_panel.yaml",
@@ -256,12 +275,25 @@ def _run_one_cognate_row(bundle_path: Path, design_id: str, cognate_id: str) -> 
     return row
 
 
+def _cognate_row(design: dict) -> dict | None:
+    """The on-target peptide's row for a design, selected by id rather than position."""
+    margin = design.get("margin") or {}
+    cognate_id = margin.get("on_target_peptide_id") or COGNATE_PEPTIDE_ID
+    for row in margin.get("peptide_rows") or []:
+        if row.get("peptide_id") == cognate_id:
+            return row
+    return None
+
+
 def transport_payload(
     ranked: dict, *, top_n: int = 3, config_pins_report: dict | None = None
 ) -> dict:
     # status == "computed" only means the margin is defined, not that the design
     # passed. The T1 handoff must gate on the verdict: pass_in_silico_draft is
     # true only when the cognate outranks every decoy in the panel.
+    # Only the full declared descriptor stack counts. "computed_reduced_stack"
+    # is an honest number from fewer descriptors, which is fine for audit and
+    # not fine for a handoff.
     computed = [
         d
         for d in ranked["designs"]
@@ -272,18 +304,35 @@ def transport_payload(
     ]
     # A gate declared active in FLEET.toml whose inputs are unpinned has not been
     # evaluated, so nothing may be handed off on the strength of it passing.
-    pins = config_pins_report or {"all_pinned": True, "unpinned_gates": [], "findings": []}
+    # `or {...all_pinned: True}` turned an absent report into "everything is
+    # pinned", so any caller but main() got a populated handoff with no gate
+    # evaluation behind it. Absent is now an error, not a pass.
+    if config_pins_report is None:
+        raise ValueError(
+            "config_pins_report is required: a handoff cannot be built without "
+            "evaluating whether the declared gates have pinned inputs"
+        )
+    pins = config_pins_report
     blocked_by_unpinned = not pins.get("all_pinned", True)
     top = [] if blocked_by_unpinned else eligible[:top_n]
     excluded = [
         {
             "design_id": d["design_id"],
             "status": d.get("margin", {}).get("status"),
-            "specificity_margin": d.get("margin", {}).get("specificity_margin"),
+            "rank_margin": d.get("margin", {}).get("rank_margin"),
             "reason": (
                 "cognate does not outrank every decoy"
                 if d in computed
-                else d.get("margin", {}).get("reason", "margin undefined")
+                else d.get("margin", {}).get("reason")
+                or (
+                    "margin from a reduced descriptor stack: "
+                    + ", ".join(
+                        sorted((d.get("margin", {}).get("excluded_descriptors") or {}))
+                    )
+                    + " incomplete across the panel"
+                    if d.get("margin", {}).get("status") == "computed_reduced_stack"
+                    else "margin undefined"
+                )
             ),
         }
         for d in ranked["designs"]
@@ -294,15 +343,18 @@ def transport_payload(
         "direction": "fleet_to_case",
         "campaign_id": ranked["campaign_id"],
         "manifest_hash": ranked["manifest_hash"],
-        "top_designs_by_specificity_margin": [
+        "top_designs_by_rank_margin": [
             {
                 "design_id": d["design_id"],
                 "binder_sequence": d["binder_sequence"],
-                "specificity_margin": d["margin"]["specificity_margin"],
+                "rank_margin": d["margin"]["rank_margin"],
                 "on_target_rank": d["margin"]["on_target_rank"],
                 "best_decoy_rank": d["margin"]["best_decoy_rank"],
-                "contact_site": (d["margin"]["peptide_rows"][0].get("contact_site") if d["margin"].get("peptide_rows") else None),
-                "provenance": (d["margin"]["peptide_rows"][0] if d["margin"].get("peptide_rows") else {}),
+                # Select the cognate row by peptide_id. Taking [0] was correct
+                # only by insertion-order accident: any reordering would have
+                # put a DECOY's contact site and provenance in the handoff.
+                "contact_site": (_cognate_row(d) or {}).get("contact_site"),
+                "provenance": _cognate_row(d) or {},
             }
             for d in top
         ],
@@ -347,7 +399,8 @@ def main(argv: list[str] | None = None) -> int:
 
     survivors_doc = _load_yaml(Path(args.survivors))
     decoy_doc = _load_yaml(Path(args.decoys))
-    decoy_doc.setdefault("source_job_id", survivors_doc.get("source_job_id"))
+    # survivors_doc can be None when the YAML is empty; .get would raise.
+    decoy_doc.setdefault("source_job_id", (survivors_doc or {}).get("source_job_id"))
 
     if args.write_l1b_manifest:
         from l1b_request_builder import write_l1b_manifest
@@ -381,8 +434,14 @@ def main(argv: list[str] | None = None) -> int:
     Path(args.transport_out).write_text(sm.canonical_json(transport))
     print(f"WROTE {ranked_path}")
     print(f"WROTE {args.transport_out}")
-    computed = sum(1 for d in ranked["designs"] if d.get("margin", {}).get("status") == "computed")
-    print(f"designs={len(ranked['designs'])} margins_computed={computed}")
+    designs = ranked["designs"]
+    statuses = [(d.get("margin") or {}).get("status") for d in designs]
+    computed = sum(1 for st in statuses if st == "computed")
+    reduced = sum(1 for st in statuses if st == "computed_reduced_stack")
+    print(
+        f"designs={len(designs)} margins_computed={computed} "
+        f"margins_reduced_stack={reduced}"
+    )
     if not pins_report["all_pinned"]:
         print(
             "UNPINNED GATES (handoff blocked): "
@@ -390,6 +449,24 @@ def main(argv: list[str] | None = None) -> int:
         )
         for f in pins_report["findings"]:
             print(f"  - [{f['gate']}] {f['detail']}")
+    # Both artifacts were written unconditionally and main returned 0 on every
+    # path, so a run in which NO design scored still produced a well-formed
+    # ranked panel and a success exit code; only a stdout line dissented, and
+    # nothing read it. A run that scored nothing is a failed run.
+    scored = computed + reduced
+    if not designs:
+        print("FAILED: no designs in the ranked panel")
+        return 2
+    if scored == 0:
+        print(f"FAILED: no margin was computed for any of {len(designs)} designs")
+        return 2
+    if scored < len(designs):
+        unscored = [
+            d["design_id"] for d, st in zip(designs, statuses)
+            if st not in ("computed", "computed_reduced_stack")
+        ]
+        print(f"FAILED: {len(unscored)} of {len(designs)} designs have no margin: {unscored}")
+        return 1
     return 0
 
 

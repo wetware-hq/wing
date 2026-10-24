@@ -78,9 +78,28 @@ def _read_metrics_field(design_block: dict[str, Any], key: str) -> float | None:
     return _num(inline.get(key))
 
 
+# Fields read out of metrics.json. The cognate and the decoy refolds are
+# produced by different pipelines and their metrics.json schemas differ, so
+# record which of these were actually present rather than letting a missing one
+# become a null descriptor downstream.
+METRICS_FIELDS = ("complex_iplddt", "min_interaction_pae")
+
+
 def attach_metrics_inline(design_block: dict[str, Any], metrics_path: Path | None) -> None:
-    if metrics_path and metrics_path.is_file():
-        design_block["metrics_inline"] = json.loads(metrics_path.read_text())
+    if not metrics_path or not metrics_path.is_file():
+        design_block["metrics_inline_status"] = {
+            "found": False,
+            "path": str(metrics_path) if metrics_path else None,
+            "missing_fields": list(METRICS_FIELDS),
+        }
+        return
+    doc = json.loads(metrics_path.read_text())
+    design_block["metrics_inline"] = doc
+    design_block["metrics_inline_status"] = {
+        "found": True,
+        "path": str(metrics_path),
+        "missing_fields": [f for f in METRICS_FIELDS if doc.get(f) is None],
+    }
 
 
 def average_rank(values: list[float | None], higher_is_better: bool) -> dict[int, float]:
@@ -93,8 +112,20 @@ def average_rank(values: list[float | None], higher_is_better: bool) -> dict[int
 
     present.sort(key=lambda t: t[1], reverse=higher_is_better)
     ranks: dict[int, float] = {}
-    for rank, (idx, _val) in enumerate(present, start=1):
-        ranks[idx] = float(rank)
+    # Tied values must share the MEAN of the ordinal positions they span. With
+    # plain enumerate, ties were broken by list order, and the cognate is
+    # inserted first by construction: a panel carrying no discriminating signal
+    # whatsoever handed the cognate rank 1 on every descriptor and reported the
+    # resulting margin as a pass. A tie must contribute exactly zero margin.
+    i = 0
+    while i < len(present):
+        j = i
+        while j + 1 < len(present) and present[j + 1][1] == present[i][1]:
+            j += 1
+        shared = (i + 1 + j + 1) / 2.0  # mean of the 1-based positions i..j
+        for idx, _val in present[i : j + 1]:
+            ranks[idx] = shared
+        i = j + 1
     worst = float(len(values))
     for idx in missing:
         ranks[idx] = worst
@@ -124,6 +155,11 @@ def rank_average_score(
         r["rank_average"] = round(avg, 6)
         out.append(r)
     return out
+
+
+# Below this many complete descriptors the rank average is no longer a
+# meaningful aggregate, so the margin is withheld rather than reported thin.
+MIN_EFFECTIVE_DESCRIPTORS = 3
 
 
 def compute_specificity_margin(
@@ -166,27 +202,83 @@ def compute_specificity_margin(
             "panel_ready": False,
         }
 
-    ranked = rank_average_score(list(peptide_rows), stack=stack)
+    # A descriptor null for SOME peptides is more dangerous than one null for
+    # all of them. average_rank places missing values last, so a descriptor that
+    # is present for the cognate and absent for every decoy awards the cognate
+    # the best rank on that descriptor by construction and manufactures apparent
+    # specificity. Drop any descriptor with a null cell instead of ranking
+    # around it, and say which and why.
+    null_cells = {
+        d: sorted(
+            r["peptide_id"] for r in peptide_rows if _EXTRACTORS[d][1](r) is None
+        )
+        for d in stack
+    }
+    dropped = sorted(d for d, ids in null_cells.items() if ids)
+    effective = tuple(d for d in stack if d not in dropped)
+    if len(effective) < MIN_EFFECTIVE_DESCRIPTORS:
+        return {
+            "status": "incomplete",
+            "reason": (
+                f"only {len(effective)} of {len(stack)} descriptors are complete "
+                f"across the panel; {MIN_EFFECTIVE_DESCRIPTORS} are required"
+            ),
+            "descriptor_stack": list(stack),
+            "effective_descriptor_stack": list(effective),
+            "excluded_descriptors": {d: null_cells[d] for d in dropped},
+            "panel_ready": False,
+        }
+
+    ranked = rank_average_score(list(peptide_rows), stack=effective)
     id_to_rank = {r["peptide_id"]: r["rank_average"] for r in ranked}
-    # Convert rank_average to ordinal rank among peptides (1 = best = lowest rank_average).
+    # Convert rank_average to ordinal rank among peptides (1 = best = lowest
+    # rank_average). Ties must share the MEAN ordinal: breaking them by
+    # peptide_id gave "cognate" the win alphabetically, so a panel carrying no
+    # discriminating signal reported a negative (passing) margin.
     sorted_ids = sorted(id_to_rank.keys(), key=lambda k: (id_to_rank[k], k))
-    ordinal = {pid: i + 1 for i, pid in enumerate(sorted_ids)}
+    ordinal: dict[str, float] = {}
+    i = 0
+    while i < len(sorted_ids):
+        j = i
+        while (
+            j + 1 < len(sorted_ids)
+            and id_to_rank[sorted_ids[j + 1]] == id_to_rank[sorted_ids[i]]
+        ):
+            j += 1
+        shared = (i + 1 + j + 1) / 2.0
+        for pid in sorted_ids[i : j + 1]:
+            ordinal[pid] = shared
+        i = j + 1
 
     on_target = ordinal[cognate_peptide_id]
     best_decoy = min(ordinal[d] for d in decoy_peptide_ids)
     margin = on_target - best_decoy
 
     return {
-        "status": "computed",
+        # "computed" is reserved for a margin from the full declared stack. A
+        # reduced stack still gives an unbiased number, but it is not the
+        # endpoint the campaign declared, so it must not read as one.
+        "status": "computed" if not dropped else "computed_reduced_stack",
         "ranking_rule": "rank_average",
         "descriptor_stack": list(stack),
+        "effective_descriptor_stack": list(effective),
+        "excluded_descriptors": {d: null_cells[d] for d in dropped},
         "on_target_peptide_id": cognate_peptide_id,
         "on_target_rank": on_target,
         "best_decoy_peptide_id": min(decoy_peptide_ids, key=lambda d: ordinal[d]),
         "best_decoy_rank": best_decoy,
-        "specificity_margin": margin,
+        # Named rank_margin, not specificity_margin: this is an ordinal rank
+        # difference on Path B's seven-descriptor stack, NOT the quantity
+        # FLEET.toml [gates].hard gates at >= 0.15, which is on a different
+        # scale and has the opposite sign convention. Sharing the name invited
+        # a reader to compare the two numbers directly.
+        "rank_margin": margin,
+        "margin_scale": "ordinal_rank_difference",
         "peptide_rows": ranked,
-        "pass_in_silico_draft": margin <= 0,
+        # Strictly less than zero: a margin of exactly 0 means the cognate
+        # merely TIES the best decoy, which is no discrimination at all and
+        # was being reported as a draft pass.
+        "pass_in_silico_draft": margin < 0,
     }
 
 

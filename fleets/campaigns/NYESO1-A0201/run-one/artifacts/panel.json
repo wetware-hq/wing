@@ -1,5 +1,66 @@
 {
  "campaign_id": "NYESO1-A0201-specificity",
+ "config_pins": {
+  "all_pinned": false,
+  "checked": [
+   "calibration",
+   "species_cross_reactivity",
+   "manufacturability"
+  ],
+  "findings": [
+   {
+    "declared_active_by": "calibration.scored_each_run",
+    "detail": "calibration_anchors.yaml status is 'specified', not 'pinned'; anchor sequences and per-axis thresholds are not fixed, so the broken-rubric rule cannot be evaluated",
+    "gate": "calibration"
+   },
+   {
+    "declared_active_by": "calibration.scored_each_run",
+    "detail": "anchors entry 'trastuzumab_like' has no pinned sequence",
+    "gate": "calibration"
+   },
+   {
+    "declared_active_by": "calibration.scored_each_run",
+    "detail": "anchors entry 'adalimumab_like' has no pinned sequence",
+    "gate": "calibration"
+   },
+   {
+    "declared_active_by": "calibration.scored_each_run",
+    "detail": "controls entry 'aggregator_control' has no pinned sequence",
+    "gate": "calibration"
+   },
+   {
+    "declared_active_by": "calibration.scored_each_run",
+    "detail": "controls entry 'polyreactive_control' has no pinned sequence",
+    "gate": "calibration"
+   },
+   {
+    "declared_active_by": "species_cross_reactivity.panel",
+    "detail": "ortholog_panel.yaml status is 'deferred', which is not pinned",
+    "gate": "species_cross_reactivity"
+   },
+   {
+    "declared_active_by": "species_cross_reactivity.panel",
+    "detail": "'murine' ortholog sequence is not pinned",
+    "gate": "species_cross_reactivity"
+   },
+   {
+    "declared_active_by": "species_cross_reactivity.panel",
+    "detail": "'cyno' ortholog sequence is not pinned",
+    "gate": "species_cross_reactivity"
+   },
+   {
+    "declared_active_by": "manufacturability.floor.mode = hard_floor",
+    "detail": "the aggregation-propensity tool is not pinned, so the hard floor cannot be enforced",
+    "gate": "manufacturability"
+   }
+  ],
+  "unpinned_gates": [
+   "calibration",
+   "manufacturability",
+   "species_cross_reactivity"
+  ]
+ },
+ "design_errors": {},
  "designs": [
   {
    "binder_sequence": "MLPGVLELEDGSRAHVEVSYDAASGRLWGYVTSVEGDSGVQPGDLIVAEGDAASRESPAVVLSLDRRGTLRLL",
@@ -231,7 +292,16 @@
       "start": "36"
      }
     ],
+    "n_terminal_glutamine": {
+     "hard_fail": false,
+     "residue": "M"
+    },
     "pass": false,
+    "poly_q": {
+     "hard_fail": false,
+     "longest_run": 1,
+     "max_run": 2
+    },
     "sap_patch": {
      "mode": "soft",
      "soft_fail": false,
@@ -566,7 +636,16 @@
       "start": "61"
      }
     ],
+    "n_terminal_glutamine": {
+     "hard_fail": false,
+     "residue": "S"
+    },
     "pass": false,
+    "poly_q": {
+     "hard_fail": false,
+     "longest_run": 1,
+     "max_run": 2
+    },
     "sap_patch": {
      "mode": "soft",
      "soft_fail": false,
@@ -901,7 +980,16 @@
      "threshold": 1
     },
     "motif_hits": [],
+    "n_terminal_glutamine": {
+     "hard_fail": false,
+     "residue": "M"
+    },
     "pass": false,
+    "poly_q": {
+     "hard_fail": false,
+     "longest_run": 2,
+     "max_run": 2
+    },
     "sap_patch": {
      "mode": "soft",
      "soft_fail": false,
@@ -1251,7 +1339,16 @@
       "start": "47"
      }
     ],
+    "n_terminal_glutamine": {
+     "hard_fail": false,
+     "residue": "A"
+    },
     "pass": false,
+    "poly_q": {
+     "hard_fail": false,
+     "longest_run": 0,
+     "max_run": 2
+    },
     "sap_patch": {
      "mode": "soft",
      "soft_fail": false,
@@ -1563,7 +1660,16 @@
       "start": "7"
      }
     ],
+    "n_terminal_glutamine": {
+     "hard_fail": false,
+     "residue": "A"
+    },
     "pass": false,
+    "poly_q": {
+     "hard_fail": false,
+     "longest_run": 0,
+     "max_run": 2
+    },
     "sap_patch": {
      "mode": "soft",
      "soft_fail": false,
@@ -1886,7 +1992,16 @@
      "threshold": 1
     },
     "motif_hits": [],
+    "n_terminal_glutamine": {
+     "hard_fail": false,
+     "residue": "S"
+    },
     "pass": true,
+    "poly_q": {
+     "hard_fail": false,
+     "longest_run": 0,
+     "max_run": 2
+    },
     "sap_patch": {
      "mode": "soft",
      "soft_fail": false,
@@ -2209,7 +2324,16 @@
      "threshold": 1
     },
     "motif_hits": [],
+    "n_terminal_glutamine": {
+     "hard_fail": false,
+     "residue": "M"
+    },
     "pass": false,
+    "poly_q": {
+     "hard_fail": false,
+     "longest_run": 1,
+     "max_run": 2
+    },
     "sap_patch": {
      "mode": "soft",
      "soft_fail": false,
@@ -2534,7 +2658,16 @@
      "threshold": 1
     },
     "motif_hits": [],
+    "n_terminal_glutamine": {
+     "hard_fail": false,
+     "residue": "V"
+    },
     "pass": true,
+    "poly_q": {
+     "hard_fail": false,
+     "longest_run": 1,
+     "max_run": 2
+    },
     "sap_patch": {
      "mode": "soft",
      "soft_fail": false,
@@ -2871,7 +3004,16 @@
       "start": "50"
      }
     ],
+    "n_terminal_glutamine": {
+     "hard_fail": false,
+     "residue": "M"
+    },
     "pass": false,
+    "poly_q": {
+     "hard_fail": false,
+     "longest_run": 0,
+     "max_run": 2
+    },
     "sap_patch": {
      "mode": "soft",
      "soft_fail": false,
@@ -3218,7 +3360,16 @@
       "start": "35"
      }
     ],
+    "n_terminal_glutamine": {
+     "hard_fail": false,
+     "residue": "S"
+    },
     "pass": false,
+    "poly_q": {
+     "hard_fail": false,
+     "longest_run": 1,
+     "max_run": 2
+    },
     "sap_patch": {
      "mode": "soft",
      "soft_fail": false,
@@ -3325,6 +3476,8 @@
   }
  ],
  "handoff": {
+  "blocked_by_design_errors": [],
+  "blocked_by_unpinned_gates": true,
   "designs": [],
   "eligible_count": 0,
   "excluded": [
@@ -3408,7 +3561,7 @@
    }
   ],
   "gate": "gates.hard_pass",
-  "note": "No design cleared the hard gates; nothing is handed off.",
+  "note": "handoff blocked: calibration, manufacturability, species_cross_reactivity have unpinned inputs and were never evaluated",
   "recipient": "BIO Physician",
   "top_n": 3
  },

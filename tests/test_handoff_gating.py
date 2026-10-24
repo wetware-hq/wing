@@ -18,6 +18,11 @@ for _p in (RUN_ONE, CAMPAIGN):
         sys.path.insert(0, str(_p))
 
 import specificity_scoring as ss  # noqa: E402
+
+# Path A now blocks its handoff on the unpinned-gate report, and the live
+# campaign has unpinned gates. Tests that mean to exercise the hard-gate filter
+# hand in an all-pinned report; the block itself is tested at the bottom.
+ALL_PINNED = {"all_pinned": True, "unpinned_gates": [], "findings": [], "checked": []}
 import specificity_orchestrator as so  # noqa: E402
 
 
@@ -49,7 +54,8 @@ def _bundle(*designs: tuple[str, bool, float]) -> dict:
 
 def test_path_a_hands_off_nothing_when_no_design_clears_the_hard_gates():
     payload = ss.build_panel_payload(
-        _bundle(("d_best", False, 0.09), ("d_mid", False, 0.02), ("d_worst", False, -0.3))
+        _bundle(("d_best", False, 0.09), ("d_mid", False, 0.02), ("d_worst", False, -0.3)),
+        config_pins_report=ALL_PINNED,
     )
     handoff = payload["handoff"]
     assert handoff["designs"] == []
@@ -60,7 +66,8 @@ def test_path_a_hands_off_nothing_when_no_design_clears_the_hard_gates():
 
 def test_path_a_records_every_excluded_design_with_its_reason():
     payload = ss.build_panel_payload(
-        _bundle(("d_pass", True, 0.4), ("d_fail", False, 0.9))
+        _bundle(("d_pass", True, 0.4), ("d_fail", False, 0.9)),
+        config_pins_report=ALL_PINNED,
     )
     excluded = payload["handoff"]["excluded"]
     assert [e["design_id"] for e in excluded] == ["d_fail"]
@@ -95,7 +102,7 @@ def _ranked(*designs: tuple[str, str, bool, float]) -> dict:
                 "margin": {
                     "status": status,
                     "pass_in_silico_draft": passed,
-                    "specificity_margin": margin,
+                    "rank_margin": margin,
                     "on_target_rank": 1,
                     "best_decoy_rank": 2,
                     "peptide_rows": [{"contact_site": "A"}],
@@ -118,7 +125,7 @@ def test_path_b_computed_but_failing_is_not_handed_off():
     payload = so.transport_payload(
         _ranked(("d_fail", "computed", False, 0.4)), config_pins_report=PINNED
     )
-    assert payload["top_designs_by_specificity_margin"] == []
+    assert payload["top_designs_by_rank_margin"] == []
     assert payload["eligible_count"] == 0
     assert payload["gate"] == "margin.pass_in_silico_draft"
     assert payload["excluded_designs"][0]["reason"] == "cognate does not outrank every decoy"
@@ -128,7 +135,7 @@ def test_path_b_hands_off_a_passing_design_when_the_gates_are_pinned():
     payload = so.transport_payload(
         _ranked(("d_pass", "computed", True, -0.4)), config_pins_report=PINNED
     )
-    assert [d["design_id"] for d in payload["top_designs_by_specificity_margin"]] == ["d_pass"]
+    assert [d["design_id"] for d in payload["top_designs_by_rank_margin"]] == ["d_pass"]
     assert payload["handoff_blocked_by_unpinned_gates"] is False
     assert payload["handoff_block_reason"] is None
 
@@ -140,7 +147,7 @@ def test_path_b_blocks_the_handoff_while_a_declared_gate_is_unpinned():
     # The design is still eligible; it just cannot be handed off yet, and the
     # payload says why rather than reporting an empty panel.
     assert payload["eligible_count"] == 1
-    assert payload["top_designs_by_specificity_margin"] == []
+    assert payload["top_designs_by_rank_margin"] == []
     assert payload["handoff_blocked_by_unpinned_gates"] is True
     assert "calibration" in payload["handoff_block_reason"]
 
@@ -150,3 +157,42 @@ def test_path_b_carries_an_incomplete_margin_through_with_its_reason():
     ranked["designs"][0]["margin"]["reason"] = "descriptor(s) null for every peptide"
     payload = so.transport_payload(ranked, config_pins_report=PINNED)
     assert payload["excluded_designs"][0]["reason"] == "descriptor(s) null for every peptide"
+
+
+# ---------------------------------------------------------------------------
+# Path A must honour the unpinned-gate block that only Path B honoured.
+# ---------------------------------------------------------------------------
+
+
+def test_path_a_blocks_the_handoff_while_a_declared_gate_is_unpinned():
+    unpinned = {
+        "all_pinned": False,
+        "unpinned_gates": ["calibration"],
+        "findings": [{"gate": "calibration", "detail": "anchors not pinned"}],
+        "checked": ["calibration"],
+    }
+    payload = ss.build_panel_payload(
+        _bundle(("d_pass", True, 0.4)), config_pins_report=unpinned
+    )
+    assert payload["handoff"]["designs"] == []
+    assert payload["handoff"]["blocked_by_unpinned_gates"] is True
+    assert payload["handoff"]["eligible_count"] == 1
+    assert "calibration" in payload["handoff"]["note"]
+
+
+def test_path_a_carries_the_pin_report_into_the_panel():
+    payload = ss.build_panel_payload(_bundle(("d_pass", True, 0.4)))
+    assert payload["config_pins"]["all_pinned"] is False
+
+
+def test_an_unrunnable_pin_check_blocks_rather_than_passes():
+    report = ss.load_config_pins_report(Path("/nonexistent/campaign/dir"))
+    assert report["all_pinned"] is False
+    assert report["unpinned_gates"] == ["config_pins_check_unavailable"]
+
+
+def test_the_live_campaign_pin_check_resolves_from_path_a():
+    # Path A lives in a different directory from config_pins.py. If that path
+    # ever breaks, the check must not degrade quietly into a pass.
+    report = ss.load_config_pins_report()
+    assert "config_pins_check_unavailable" not in report["unpinned_gates"]

@@ -492,9 +492,14 @@ def main(
 
     inputs = []
     if mode == "cognate":
-        designs = sorted(p.name for p in adir.iterdir() if p.is_dir())
-        # decoy_refolds/ is a sibling of the per-design dirs, not one of them.
-        designs = [d for d in designs if d != DECOY_REFOLDS_DIRNAME]
+        # Every other reader identifies a design by the pres_ prefix (see
+        # layer2_core.write_ipsae_only). Excluding only decoy_refolds/ meant any
+        # other sibling directory was either scored as a design or died on
+        # StopIteration below, so the two scoring hosts disagreed on what a
+        # design is.
+        designs = sorted(
+            p.name for p in adir.iterdir() if p.is_dir() and p.name.startswith("pres_")
+        )
         if not designs:
             raise SystemExit(f"no design subdirs under {adir}")
         for did in designs:

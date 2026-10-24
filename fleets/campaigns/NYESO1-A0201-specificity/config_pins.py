@@ -45,6 +45,20 @@ def _check_calibration(fleet: dict, campaign_dir: Path) -> list[dict]:
     if not cfg:
         return []
     # scored_each_run declares the gate ACTIVE: it must have something to score.
+    # Absent is NOT inactive. A typo or a deletion here used to disable the whole
+    # calibration check silently, and the gate then vanished from unpinned_gates
+    # instead of being reported as unevaluable.
+    if "scored_each_run" not in cfg:
+        return [
+            {
+                "gate": "calibration",
+                "declared_active_by": "presence of [calibration] in FLEET.toml",
+                "detail": (
+                    "[calibration] declares no scored_each_run, so whether the gate "
+                    "is active cannot be determined; it is treated as unpinned"
+                ),
+            }
+        ]
     if not cfg.get("scored_each_run"):
         return []
     anchors_path = campaign_dir / str(cfg.get("anchors_file", "calibration_anchors.yaml"))
@@ -89,8 +103,42 @@ def _check_species_cross_reactivity(fleet: dict, campaign_dir: Path) -> list[dic
     cfg = fleet.get("species_cross_reactivity") or {}
     if not cfg:
         return []
-    doc = _load_yaml(campaign_dir / str(cfg.get("panel", "ortholog_panel.yaml")))
+    panel_path = campaign_dir / str(cfg.get("panel", "ortholog_panel.yaml"))
+    doc = _load_yaml(panel_path)
     findings: list[dict] = []
+    # A missing or empty panel file produced NO findings, so deleting or
+    # renaming ortholog_panel.yaml made this gate report pinned. The calibration
+    # check already flags its missing file; this one has to match.
+    if not doc:
+        return [
+            {
+                "gate": "species_cross_reactivity",
+                "declared_active_by": "species_cross_reactivity.panel",
+                "detail": f"ortholog panel file not found or empty: {panel_path.name}",
+            }
+        ]
+    # The panel's own status is part of being pinned: pinning both sequences
+    # while the document still says deferred is not a pinned gate.
+    for label, value in (
+        ("FLEET.toml species_cross_reactivity.status", cfg.get("status")),
+        (f"{panel_path.name} status", doc.get("status")),
+    ):
+        if value is not None and _is_unpinned(value):
+            findings.append(
+                {
+                    "gate": "species_cross_reactivity",
+                    "declared_active_by": "species_cross_reactivity.panel",
+                    "detail": f"{label} is {value!r}, which is not pinned",
+                }
+            )
+    if not (doc.get("orthologs") or []):
+        findings.append(
+            {
+                "gate": "species_cross_reactivity",
+                "declared_active_by": "species_cross_reactivity.panel",
+                "detail": f"{panel_path.name} declares no orthologs to score",
+            }
+        )
     for item in doc.get("orthologs") or []:
         if _is_unpinned(item.get("sequence")):
             findings.append(
