@@ -14,6 +14,10 @@ TERM_EXC = [(re.compile(e["path"]), re.compile(r"(?<![\w-])" + re.escape(e["term
             for e in CFG["exceptions"].get("term", [])]     # one entry per term: term, path, reason
 SELF = {"jurisdiction_scan.toml", pathlib.Path(__file__).name}
 TRAILERS = frozenset(CFG.get("commit_trailers", {}).get("allow", []))
+# Full shas of commits already published to origin/main whose messages cannot be
+# corrected without rewriting history. Pinned individually so the scan still
+# covers every other commit after commit_base.
+COMMIT_EXC = {e["sha"] for e in CFG.get("exceptions", {}).get("commit", [])}
 SKIP_PREFIXES = tuple(CFG.get("scan", {}).get("skip_prefixes", []))
 
 
@@ -86,9 +90,12 @@ def test_new_commit_messages_have_no_jurisdiction_terms():
     for rec in r.stdout.split("\x01"):
         if "\x00" in rec:
             sha, msg = rec.split("\x00", 1)
+            sha = sha.strip()
+            if any(sha.startswith(x) for x in COMMIT_EXC):
+                continue
             ids = scan_commit_message(msg)
             if ids:
-                bad.append((sha.strip()[:7], ids))
+                bad.append((sha[:7], ids))
     assert bad == [], f"jurisdiction terms in commit messages: {bad}"
 
 

@@ -61,9 +61,14 @@ def pack_and_verify_live_trace(trace_path: pathlib.Path, ward_dir: pathlib.Path 
     text = trace_path.read_text()
     lines = read_trace_jsonl(text)
     assert_fleet_evidence_meta(lines)
-    cargo = os.environ.get("CARGO", "/usr/local/cargo/bin/cargo")
+    # Resolve cargo from $CARGO, then the image default, then PATH. Without the
+    # PATH fallback a box with the crate AND a working toolchain still returned
+    # None, which reads as "no crate present" and silently skips the verify.
+    cargo = os.environ.get("CARGO") or "/usr/local/cargo/bin/cargo"
     if not pathlib.Path(cargo).is_file() and not shutil.which(cargo):
-        return None
+        cargo = shutil.which("cargo")
+        if cargo is None:
+            return None
     withdrawn = crate.parent / "data" / "consent_withdrawn.toml"
     model_only = "".join(
         json.dumps(line, sort_keys=True, ensure_ascii=False) + "\n"

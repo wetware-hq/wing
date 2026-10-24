@@ -57,6 +57,23 @@ allow = ["Co-authored-by: Cursor Agent <cursoragent@cursor.com>"]
 # ids only: signed/pinned line ids that keep a local word until the next version (renaming re-pins the hash)
 ids = ['\bLT-REACH-[A-Z]+-PT\b', '\bLT-OWNWORDS-ASK-GP-PT\b']
 
+# Commit messages already on origin/main cannot be corrected without rewriting
+# published history. Each is pinned by full sha with the term it carries, so the
+# scan still covers every other commit after commit_base instead of the base
+# being walked forward to hide them. Nothing may be added here that is not
+# already pushed.
+[[exceptions.commit]]
+sha = "9ff9803498fd36ec2315352a371e00c845f1ff55"
+reason = "SCAN-PROMPT-LEAK/names: 'BIO Physician' in a merged PR body; on origin/main"
+
+[[exceptions.commit]]
+sha = "629315e1cb05996d61bfbea972294a360c8a0d5b"
+reason = "SCAN-PROMPT-LEAK/names: 'BIO Physician' in the subject of a merged PR; on origin/main"
+
+[[exceptions.commit]]
+sha = "b4cc405abdd7e150d8e9340cc73c018c5cb50489"
+reason = "SCAN-PROMPT-LEAK/names: 'BIO Physician' in a merged PR body; on origin/main"
+
 [[exceptions.term]]
 term = "NSW"
 path = "^tests/test_profile\\.py$"
