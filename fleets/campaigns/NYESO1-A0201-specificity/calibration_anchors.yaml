@@ -1,0 +1,49 @@
+# Calibration anchors for the terminal multi-objective judge (bioeng feedback #3).
+# Scored PER-AXIS at the start of every judge run. If the judge cannot rank the
+# adalimumab-like anchor above the aggregation-prone control on the developability
+# axis, the run FAILS as a broken rubric (see FLEET.toml [calibration]).
+
+schema_version: "1.0"
+campaign_id: NYESO1-A0201-specificity
+owner: BIO Scientist
+status: specified   # sequences/thresholds to be pinned with BIO Physician (OD-1 calibration)
+scored_each_run: true
+per_axis: true
+
+broken_rubric_rule: >
+  FAIL the run if rank(adalimumab_like) on the developability axis is not strictly above
+  rank(aggregator_control). This is a sanity gate on the rubric, not on the candidates.
+
+anchors:
+  - id: trastuzumab_like
+    role: positive_reference
+    expectation:
+      potency: high
+      specificity: high
+      developability: high
+      immunogenicity_safety: high
+    note: well-behaved clinical-grade reference across all four axes.
+
+  - id: adalimumab_like
+    role: positive_reference
+    expectation:
+      developability: high
+      immunogenicity_safety: high
+    note: developability-axis positive anchor; must outrank the aggregator control.
+
+controls:
+  - id: aggregator_control
+    role: negative_control
+    expectation:
+      developability: low            # aggregation-prone; manufacturability floor should flag it
+      manufacturability: below_floor
+    note: aggregation-prone construct; developability-axis negative anchor.
+
+  - id: polyreactive_control
+    role: negative_control
+    expectation:
+      specificity: low               # binds decoys ~ cognate; specificity_margin should be low/negative
+    note: non-specific binder; specificity-axis negative anchor.
+
+open_decisions:
+  - OD-1   # exact anchor sequences + per-axis thresholds pinned on this run's calibration

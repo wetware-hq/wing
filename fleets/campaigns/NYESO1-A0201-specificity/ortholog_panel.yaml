@@ -1,0 +1,27 @@
+# Species cross-reactivity panel (bioeng feedback #9) — murine / cyno orthologs.
+# Feeds the immunogenicity_safety axis. Deferred for this computational screen
+# alongside the OD-4 self-peptide panel; structure mirrors decoy_panel.yaml.
+
+schema_version: "1.0"
+campaign_id: NYESO1-A0201-specificity
+owner: BIO Physician
+status: deferred   # specified now; signed sequences pending (tracks OD-4)
+panel_ready_for_l1b: false
+
+orthologs:
+  - species: murine
+    ortholog_of: NY-ESO-1
+    sequence: TBD        # murine CTAG1 ortholog peptide at the A*02:01-restricted register
+    role: cross_reactivity_probe
+  - species: cyno
+    ortholog_of: NY-ESO-1
+    sequence: TBD        # cynomolgus ortholog peptide
+    role: cross_reactivity_probe
+
+note: >
+  Cross-reactivity vs murine/cyno orthologs is a safety signal on the immunogenicity_safety
+  axis: unexpectedly strong ortholog binding is a liability, loss-of-binding is expected for a
+  human-specific epitope. Signed sequences required before this panel enters L1B.
+
+open_decisions:
+  - OD-4

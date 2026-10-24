@@ -8,6 +8,12 @@ extension (#13). **Path A is the primary hard gate** (physician sign-off 2026-10
 computed and recorded in parallel when using `specificity_orchestrator.py` but does not gate L1B
 or hand-off.
 
+> **Multi-objective upgrade (2026-10-24):** terminal selection is now a four-axis Pareto judge
+> (potency / specificity / developability / immunogenicity-safety) with scalar compositing forbidden,
+> a staged selection funnel, calibration anchors, judge blinding, and first-class rejection tracking.
+> See **`SCORING.md`** and `FLEET.toml` `[scoring]`/`[judge]`/`[[stages]]`/`[rejections]`. Path A below
+> remains the specificity hard gate within that judge.
+
 ---
 
 ## Path A — ipSAE score margin (Layer 2 `--specificity-campaign`) **primary**

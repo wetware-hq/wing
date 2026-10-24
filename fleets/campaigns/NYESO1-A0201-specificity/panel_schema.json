@@ -66,6 +66,38 @@
               "soft_pass": { "type": "boolean" },
               "fail_reasons": { "type": "array", "items": { "type": "string" } }
             }
+          },
+          "format": {
+            "type": "string",
+            "enum": ["IgG", "bispecific_arm", "ADC_arm", "scFv"],
+            "description": "Construct format; per-format triads apply (bioeng feedback #7)."
+          },
+          "scores": {
+            "type": "object",
+            "description": "Per-axis multi-objective scores. The terminal judge MUST NOT collapse these into a scalar (feedback #1).",
+            "properties": {
+              "potency": { "type": ["number", "null"], "description": "k_off/residence-time-weighted potency (feedback #6)" },
+              "specificity": { "type": ["number", "null"], "description": "Path A ipSAE specificity_margin" },
+              "developability": { "type": ["number", "null"] },
+              "immunogenicity_safety": { "type": ["number", "null"] }
+            }
+          },
+          "pareto": {
+            "type": "object",
+            "description": "Pareto-front bookkeeping from the terminal judge (feedback #1).",
+            "properties": {
+              "rank": { "type": ["integer", "null"], "description": "Pareto rank; 1 = non-dominated front" },
+              "dominated": { "type": ["boolean", "null"] },
+              "sacrificed_axis": { "type": ["string", "null"], "enum": ["potency", "specificity", "developability", "immunogenicity_safety", null], "description": "Axis this candidate trades off; rendered with the candidate (feedback #1)." }
+            }
+          },
+          "species_cross_reactivity": {
+            "type": "object",
+            "description": "Per-ortholog cross-reactivity (feedback #9).",
+            "properties": {
+              "murine": { "type": ["number", "null"] },
+              "cyno": { "type": ["number", "null"] }
+            }
           }
         }
       }
@@ -76,6 +108,34 @@
         "top_n": { "type": "integer" },
         "recipient": { "const": "BIO Physician" },
         "designs": { "type": "array" }
+      }
+    },
+    "calibration": {
+      "type": "object",
+      "description": "Per-axis calibration-anchor results scored at the start of every judge run (feedback #3).",
+      "properties": {
+        "anchors_file": { "type": "string" },
+        "rubric_ok": { "type": "boolean", "description": "False => run FAILED as a broken rubric" },
+        "per_axis": { "type": "object" },
+        "adalimumab_above_aggregator": { "type": "boolean", "description": "Developability-axis sanity gate (feedback #3)." }
+      }
+    },
+    "rejected": {
+      "type": "array",
+      "description": "First-class rejected candidates, persisted every stage with a structured reason (bioeng feedback #11). Mirror of artifacts/rejections.jsonl.",
+      "items": {
+        "type": "object",
+        "required": ["design_id", "stage", "reason_code", "reason"],
+        "properties": {
+          "design_id": { "type": "string" },
+          "format": { "type": "string", "enum": ["IgG", "bispecific_arm", "ADC_arm", "scFv"] },
+          "stage": { "type": "integer", "description": "Funnel stage that rejected it (1-4)." },
+          "reason_code": { "type": "string", "enum": ["liability", "manufacturability", "specificity_margin", "developability", "immunogenicity_safety", "adversary_prefilter", "format_triad"] },
+          "reason": { "type": "string", "description": "Human-readable rejection reason." },
+          "axis": { "type": ["string", "null"], "enum": ["potency", "specificity", "developability", "immunogenicity_safety", null] },
+          "evidence": { "type": "object", "description": "Structured evidence (e.g. motif hit, margin value, SAP patch)." },
+          "rejected_at": { "type": ["string", "null"] }
+        }
       }
     }
   }

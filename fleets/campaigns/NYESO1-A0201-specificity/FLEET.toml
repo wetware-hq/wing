@@ -21,10 +21,15 @@ negative_design_panel = "targeted"
 spend_cap_usd    = 14.50
 
 [ranking]
+# NOTE (bioeng feedback #1): this is the lexicographic tie-break ordering applied only
+# WITHIN a single Pareto rank. It is NOT a scalar weighted composite — the terminal judge
+# MUST return a Pareto front (see [scoring], [judge] and SCORING.md). Scalar compositing of
+# the four axes in the terminal judge is forbidden.
 primary   = "specificity_margin"
 secondary = "developability_score"
 tertiary  = "iptm"
 handoff_top_n = 3
+superseded_by = "scoring.mode = multi_objective_pareto"
 
 [survivors]
 source           = "survivor_panel.yaml"
@@ -45,11 +50,26 @@ physician_signoff = "PHYSICIAN_SIGNOFF_2026-10-23.md"
 margin_primary_path = "path_a_ipsae_difference"  # Path B rank margin is audit-only
 
 [liability_filters]
-motif_scan = ["NG", "NS", "NT", "NH", "DG", "DS", "DT", "N[^P][ST]"]
+# Bioeng feedback #2: these are a PRE-JUDGE OUTPUT SCHEMA gate on the design agents, not a
+# post-hoc down-rank. The schema is the codon of allowed constructs — a construct that trips a
+# hard_fail motif is never emitted into the panel, it is routed to [rejections] with a reason.
+stage        = "output_schema_pre_judge"
+enforcement  = "design-agent OUTPUT SCHEMA gate; invalid constructs are rejected, not merely down-ranked"
+# deamidation (NG/NS/NT/NH), Asp isomerisation (DG/DS/DT), N-linked glycosylation sequon N[^P][ST]
+motif_scan   = ["NG", "NS", "NT", "NH", "DG", "DS", "DT", "N[^P][ST]"]
 unpaired_cys = "hard_fail"
+n_terminal_glutamine = "hard_fail"            # feedback #2: N-terminal Gln -> pyroglutamate
+poly_q       = { max_run = 2, mode = "hard_fail" }   # feedback #2: poly-Q aggregation/liability
 exposed_oxidation = { residues = ["M", "W"], threshold = 1 }
-sap_patch = { threshold = 0.6, mode = "soft" }
-allow = "none"
+sap_patch    = { threshold = 0.6, mode = "soft" }
+allow        = "none"
+
+[manufacturability]
+# Bioeng feedback #8: manufacturability floor, enforced pre-judge like the liability gate.
+floor        = { tool_class = "TANGO/CamSol", metric = "aggregation_propensity", mode = "hard_floor" }
+stage        = "output_schema_pre_judge"
+on_fail      = "reject -> [rejections] with reason_code = manufacturability"
+status       = "specified; proxy wired at Stage 3 (see [[stages]] id=3), tool pin TBD"
 
 [gates]
 hard = ["specificity_margin >= 0.15", "buried_anchor_contacts == 0", "liability_filters.pass"]
@@ -241,3 +261,125 @@ payloads = [
 ]
 rule = "top ≤ 3 designs by primary specificity_margin (path A) with decoy ranks and provenance"
 handoff_top_n = 3
+
+# ================================================================
+# Bioengineering-feedback upgrade (2026-10-24)
+# Multi-objective Pareto judging, negative-design/adversary role, staged
+# selection funnel, calibration anchors, and first-class rejection tracking.
+# Narrative + rationale: SCORING.md. These sections are additive; the legacy
+# [ranking] lexicographic order survives only as an in-Pareto-rank tie-break.
+# ================================================================
+
+# ---------------------------------------------------------------- scoring (#1,#6)
+[scoring]
+mode            = "multi_objective_pareto"
+terminal_rule   = "pareto_front"
+scalar_compositing = "forbidden"   # #1: no weighted sum of axes in the terminal judge
+axis_order      = ["potency", "specificity", "developability", "immunogenicity_safety"]
+render_marks_sacrificed_axis = true   # #1: every rendered candidate names the axis it trades off
+doc             = "SCORING.md"
+note            = "Terminal judge returns a Pareto front across the four axes; it MUST NOT collapse them into one score."
+
+[scoring.axes.potency]
+# #6: reweight potency toward a kinetic (k_off / residence-time) proxy over equilibrium iptm.
+descriptors = ["k_off_proxy", "residence_time_proxy", "min_ipsae", "iptm"]
+reweight    = "toward k_off / residence-time proxy; iptm is confirmatory, not primary"
+direction   = "higher_better"
+
+[scoring.axes.specificity]
+primary   = "specificity_margin"   # Path A ipSAE C|D difference; hard gate >= 0.15
+direction = "higher_better"
+
+[scoring.axes.developability]
+descriptors = ["developability_score", "manufacturability_floor"]
+direction   = "higher_better"
+
+[scoring.axes.immunogenicity_safety]
+descriptors = ["immunogenicity_proxy", "species_cross_reactivity"]
+direction   = "higher_better"
+
+# ---------------------------------------------------------------- judge blinding (#5)
+[judge]
+blinding        = "strip agent name + provenance fields before scoring"   # #5
+terminal_rule   = "pareto_front"
+scalar_compositing = "forbidden"
+calibration_gate = "score anchors per-axis first; abort the run as a broken rubric on anchor inversion"
+
+# ---------------------------------------------------------------- calibration anchors (#3)
+[calibration]
+anchors_file      = "calibration_anchors.yaml"
+scored_each_run   = true
+per_axis          = true
+broken_rubric_rule = "FAIL the run as a broken rubric if the judge cannot rank the adalimumab-like anchor above the aggregation-prone control on the developability axis"
+
+# ---------------------------------------------------------------- format (#7)
+[format]
+field             = "format"   # schema-tracked on every design (panel_schema.json)
+allowed           = ["IgG", "bispecific_arm", "ADC_arm", "scFv"]
+per_format_triads = true       # developability/immunogenicity/manufacturability triad scored per format
+default           = "scFv"     # current survivors are single-chain binders
+note              = "#7: thresholds and triads are per-format; an scFv and an ADC arm are not judged on one bar."
+
+# ------------------------------------------------- species cross-reactivity (#9)
+[species_cross_reactivity]
+orthologs = ["murine", "cyno"]
+panel     = "ortholog_panel.yaml"
+status    = "specified_deferred_for_this_computational_screen"   # deferred alongside OD-4
+note      = "#9: cross-reactivity vs murine/cyno orthologs feeds the immunogenicity_safety axis once the ortholog panel is signed."
+
+# ---------------------------------------------------------- pipeline roles (#4)
+# Distinct from the org/clinical [[agents]] above: these are the in-silico pipeline roles.
+[[pipeline_roles]]
+id   = "scout"
+does = "enumerate target/epitope context and the candidate space"
+
+[[pipeline_roles]]
+id   = "design"
+does = "generate binder constructs under the [liability_filters] OUTPUT SCHEMA gate"
+
+[[pipeline_roles]]
+id   = "adversary"
+does = "negative design — actively propose decoys/off-targets and constructs that SHOULD fail, to pre-filter non-specific binders before the judge"
+note = "#4: highest-leverage addition; owns Stage 1 adversarial pre-filter and the decoy panel"
+
+[[pipeline_roles]]
+id   = "curator"
+does = "dedup, cluster, enforce per-format triads, assemble per-stage panels"
+
+[[pipeline_roles]]
+id   = "judge"
+does = "multi-objective Pareto scoring on BLINDED candidates; no scalar compositing"
+blinding = "see [judge]"
+
+# ------------------------------------------- progressive selection funnel (#10)
+[[stages]]
+id   = 1
+name = "broad_adversarial_pre_filter"
+does = "broad generation + adversary negative-design pre-filter + liability OUTPUT SCHEMA gate"
+rejects_to = "artifacts/rejections.jsonl"
+
+[[stages]]
+id   = 2
+name = "structure_rescore_paralog"
+does = "structure re-scoring + decoy/paralog panels (Path A ipSAE specificity_margin >= 0.15)"
+rejects_to = "artifacts/rejections.jsonl"
+
+[[stages]]
+id   = 3
+name = "full_triad"
+does = "full developability / immunogenicity / manufacturability triad, scored per format"
+rejects_to = "artifacts/rejections.jsonl"
+
+[[stages]]
+id   = 4
+name = "pareto_render"
+does = "terminal Pareto render; each surviving candidate marks its sacrificed axis"
+
+# ----------------------------------- rejection tracking — HEADLINE (#11)
+[rejections]
+first_class    = true   # #11: "rejected for developability reasons" is a first-class, schema-tracked output
+persist        = "every stage persists its rejected candidates with a structured rejection reason"
+store          = "artifacts/rejections.jsonl"
+schema         = "panel_schema.json#/properties/rejected"
+reason_taxonomy = ["liability", "manufacturability", "specificity_margin", "developability", "immunogenicity_safety", "adversary_prefilter", "format_triad"]
+note           = "This repo has no SQLite layer; run state is JSON/JSONL. Rejection tracking is implemented in that native convention (JSONL), matching artifacts/l1b_state.jsonl."
