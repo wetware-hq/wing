@@ -7,6 +7,7 @@ import argparse
 import io
 import json
 import os
+import sys
 import tarfile
 import time
 import urllib.error
@@ -221,7 +222,18 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--dry-run", action="store_true", help="estimate-cost only, no submit")
     ap.add_argument("--limit", type=int, default=0, help="max jobs (0 = all)")
     ap.add_argument("--workers", type=int, default=3, help="concurrent predictions")
-    ap.add_argument("--skip-existing", action="store_true", default=True)
+    # `action="store_true", default=True` made this impossible to turn off:
+    # there was no --no-skip-existing, so once a decoy had been mirrored the
+    # paid submit branch was unreachable and a "launch" silently re-reported
+    # old artifacts as a successful run. Skipping stays the default so a rerun
+    # resumes from state instead of paying twice, but it is now switchable.
+    ap.add_argument(
+        "--skip-existing",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="skip decoys already mirrored on disk (default); "
+        "--no-skip-existing forces a real, paid resubmit of every job",
+    )
     ap.add_argument("--state-out", default=None, help="JSONL progress log")
     args = ap.parse_args(argv)
 
@@ -276,8 +288,24 @@ def main(argv: list[str] | None = None) -> int:
                 fh.write(json.dumps(rec, sort_keys=True) + "\n")
             print(json.dumps(rec, sort_keys=True))
 
-    ok = sum(1 for r in results if r["status"] in ("mirrored", "skipped_existing"))
-    print(f"DONE jobs={len(jobs)} ok={ok} state={state_path}")
+    submitted = sum(1 for r in results if r["status"] == "mirrored")
+    skipped = sum(1 for r in results if r["status"] == "skipped_existing")
+    ok = submitted + skipped
+    # `ok=100` counted a run that submitted nothing exactly like one that
+    # submitted everything, so a reader could not tell a real launch from a
+    # replay of old artifacts. Report the two separately, and say loudly when
+    # nothing was actually submitted.
+    print(
+        f"DONE jobs={len(jobs)} submitted={submitted} skipped_existing={skipped} "
+        f"ok={ok} state={state_path}"
+    )
+    if jobs and submitted == 0:
+        print(
+            "NOTE: no prediction was submitted; every job was skipped as already "
+            "mirrored on disk, so this run cost nothing and produced no new data. "
+            "Pass --no-skip-existing to force a real (paid) resubmit.",
+            file=sys.stderr,
+        )
     return 0 if ok == len(jobs) else 1
 
 

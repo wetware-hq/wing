@@ -198,6 +198,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -400,6 +401,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -603,6 +605,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -806,6 +809,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -998,6 +1002,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -1198,6 +1203,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -1396,6 +1402,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -1589,6 +1596,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -1781,6 +1789,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -1959,6 +1968,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -2170,6 +2180,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -2366,6 +2377,7 @@
     "best_decoy_id": "decoy_p4_m_to_a",
     "best_decoy_ipsae_cd": 0.634101779617168,
     "best_decoy_rank": 1,
+    "decoy_panel_size": 10,
     "decoy_scores": {
      "decoy_p4_m_to_a": 0.634101779617168,
      "decoy_p4_m_to_v": 0.016413574023522476,
@@ -2378,6 +2390,8 @@
      "decoy_p7_t_to_a": 0.024788952822435137,
      "decoy_p8_q_to_a": 0.10001933792582618
     },
+    "decoys_missing": [],
+    "decoys_scored": 10,
     "margin_status": "computed",
     "on_target_ipsae_cd": 0.0654306831581959,
     "on_target_rank": 5,
@@ -2631,6 +2645,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -2827,6 +2842,7 @@
     "best_decoy_id": "decoy_p5_w_to_f",
     "best_decoy_ipsae_cd": 0.5231821421394811,
     "best_decoy_rank": 1,
+    "decoy_panel_size": 10,
     "decoy_scores": {
      "decoy_p4_m_to_a": 0.520816592174534,
      "decoy_p4_m_to_v": 0.12478769492519981,
@@ -2839,6 +2855,8 @@
      "decoy_p7_t_to_a": 0.009791260727697447,
      "decoy_p8_q_to_a": 0.39595344372273744
     },
+    "decoys_missing": [],
+    "decoys_scored": 10,
     "margin_status": "computed",
     "on_target_ipsae_cd": 0.0891797738998594,
     "on_target_rank": 8,
@@ -3098,6 +3116,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -3287,6 +3306,7 @@
     "best_decoy_id": "decoy_p4_m_to_v",
     "best_decoy_ipsae_cd": 0.6785841176775792,
     "best_decoy_rank": 1,
+    "decoy_panel_size": 10,
     "decoy_scores": {
      "decoy_p4_m_to_a": 0.39486136402569716,
      "decoy_p4_m_to_v": 0.6785841176775792,
@@ -3299,6 +3319,8 @@
      "decoy_p7_t_to_a": 0.5341190317290524,
      "decoy_p8_q_to_a": 0.05454815615178635
     },
+    "decoys_missing": [],
+    "decoys_scored": 10,
     "margin_status": "computed",
     "on_target_ipsae_cd": 0.45996453000944765,
     "on_target_rank": 5,
@@ -3552,6 +3574,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -3742,6 +3765,7 @@
     "best_decoy_id": "decoy_p6_i_to_a",
     "best_decoy_ipsae_cd": 0.08459716578084302,
     "best_decoy_rank": 2,
+    "decoy_panel_size": 10,
     "decoy_scores": {
      "decoy_p4_m_to_a": 0.00906162168506443,
      "decoy_p4_m_to_v": 0.08299607279885608,
@@ -3754,6 +3778,8 @@
      "decoy_p7_t_to_a": 0.008297787375757265,
      "decoy_p8_q_to_a": 0.022137070326863965
     },
+    "decoys_missing": [],
+    "decoys_scored": 10,
     "margin_status": "computed",
     "on_target_ipsae_cd": 0.08487528025374977,
     "on_target_rank": 1,
@@ -4001,6 +4027,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -4191,6 +4218,7 @@
     "best_decoy_id": "decoy_p7_t_to_a",
     "best_decoy_ipsae_cd": 0.4687349565269622,
     "best_decoy_rank": 1,
+    "decoy_panel_size": 10,
     "decoy_scores": {
      "decoy_p4_m_to_a": 0.024974831706563477,
      "decoy_p4_m_to_v": 0.426282543608075,
@@ -4203,6 +4231,8 @@
      "decoy_p7_t_to_a": 0.4687349565269622,
      "decoy_p8_q_to_a": 0.05238401507503502
     },
+    "decoys_missing": [],
+    "decoys_scored": 10,
     "margin_status": "computed",
     "on_target_ipsae_cd": 0.24026643432751346,
     "on_target_rank": 4,
@@ -4450,6 +4480,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -4646,6 +4677,7 @@
     "best_decoy_id": "decoy_p6_i_to_a",
     "best_decoy_ipsae_cd": 0.6906080357060309,
     "best_decoy_rank": 2,
+    "decoy_panel_size": 10,
     "decoy_scores": {
      "decoy_p4_m_to_a": 0.40429239837535347,
      "decoy_p4_m_to_v": 0.5699962178514313,
@@ -4658,6 +4690,8 @@
      "decoy_p7_t_to_a": 0.5968884440826748,
      "decoy_p8_q_to_a": 0.32816918457316735
     },
+    "decoys_missing": [],
+    "decoys_scored": 10,
     "margin_status": "computed",
     "on_target_ipsae_cd": 0.6967623884137182,
     "on_target_rank": 1,
@@ -4907,6 +4941,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -4944,7 +4979,7 @@
     "ipsae_ordered": {
      "A->B": 0.9549147398039743,
      "A->C": 0.7104841481079879,
-     "A->D": 0.042548365018911176,
+     "A->D": 0.0425483650189112,
      "B->A": 0.9722406557826029,
      "B->C": 0.5242710744496774,
      "B->D": 0.03901873809979183,
@@ -4975,7 +5010,7 @@
       "min_ipsae": 0.7104841481079879
      },
      "A|D": {
-      "ipsae_A_to_D": 0.042548365018911176,
+      "ipsae_A_to_D": 0.0425483650189112,
       "ipsae_D_to_A": 0.0284297527770769,
       "min_ipsae": 0.0284297527770769
      },
@@ -5096,6 +5131,7 @@
     "best_decoy_id": "decoy_p6_i_to_a",
     "best_decoy_ipsae_cd": 0.43717036547192434,
     "best_decoy_rank": 1,
+    "decoy_panel_size": 10,
     "decoy_scores": {
      "decoy_p4_m_to_a": 0.0,
      "decoy_p4_m_to_v": 0.01568364686475143,
@@ -5108,6 +5144,8 @@
      "decoy_p7_t_to_a": 0.0,
      "decoy_p8_q_to_a": 0.01149153654976433
     },
+    "decoys_missing": [],
+    "decoys_scored": 10,
     "margin_status": "computed",
     "on_target_ipsae_cd": 0.005974362120038042,
     "on_target_rank": 7,
@@ -5349,6 +5387,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -5560,6 +5599,7 @@
     "best_decoy_id": "decoy_p6_i_to_a",
     "best_decoy_ipsae_cd": 0.11445965223916987,
     "best_decoy_rank": 1,
+    "decoy_panel_size": 10,
     "decoy_scores": {
      "decoy_p4_m_to_a": 0.007453705796203876,
      "decoy_p4_m_to_v": 0.0588898567808857,
@@ -5572,6 +5612,8 @@
      "decoy_p7_t_to_a": 0.004783136562492223,
      "decoy_p8_q_to_a": 0.018327013814887775
     },
+    "decoys_missing": [],
+    "decoys_scored": 10,
     "margin_status": "computed",
     "on_target_ipsae_cd": 0.04343433100173654,
     "on_target_rank": 4,
@@ -5811,6 +5853,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -6012,6 +6055,7 @@
     "best_decoy_id": "decoy_p5_w_to_a",
     "best_decoy_ipsae_cd": 0.1359698698421536,
     "best_decoy_rank": 2,
+    "decoy_panel_size": 10,
     "decoy_scores": {
      "decoy_p4_m_to_a": 0.004737074030434471,
      "decoy_p4_m_to_v": 0.0,
@@ -6024,6 +6068,8 @@
      "decoy_p7_t_to_a": 0.1253662488676991,
      "decoy_p8_q_to_a": 0.0
     },
+    "decoys_missing": [],
+    "decoys_scored": 10,
     "margin_status": "computed",
     "on_target_ipsae_cd": 0.2217962365730534,
     "on_target_rank": 1,
@@ -6250,6 +6296,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -6446,6 +6493,7 @@
     "best_decoy_id": "decoy_p8_q_to_a",
     "best_decoy_ipsae_cd": 0.09237268216709374,
     "best_decoy_rank": 1,
+    "decoy_panel_size": 10,
     "decoy_scores": {
      "decoy_p4_m_to_a": 0.01700376647065136,
      "decoy_p4_m_to_v": 0.0,
@@ -6458,6 +6506,8 @@
      "decoy_p7_t_to_a": 0.0,
      "decoy_p8_q_to_a": 0.09237268216709374
     },
+    "decoys_missing": [],
+    "decoys_scored": 10,
     "margin_status": "computed",
     "on_target_ipsae_cd": 0.0057552743154277546,
     "on_target_rank": 4,
@@ -6512,6 +6562,67 @@
  "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
  "panel": {
   "campaign_id": "NYESO1-A0201-specificity",
+  "config_pins": {
+   "all_pinned": false,
+   "checked": [
+    "calibration",
+    "species_cross_reactivity",
+    "manufacturability"
+   ],
+   "findings": [
+    {
+     "declared_active_by": "calibration.scored_each_run",
+     "detail": "calibration_anchors.yaml status is 'specified', not 'pinned'; anchor sequences and per-axis thresholds are not fixed, so the broken-rubric rule cannot be evaluated",
+     "gate": "calibration"
+    },
+    {
+     "declared_active_by": "calibration.scored_each_run",
+     "detail": "anchors entry 'trastuzumab_like' has no pinned sequence",
+     "gate": "calibration"
+    },
+    {
+     "declared_active_by": "calibration.scored_each_run",
+     "detail": "anchors entry 'adalimumab_like' has no pinned sequence",
+     "gate": "calibration"
+    },
+    {
+     "declared_active_by": "calibration.scored_each_run",
+     "detail": "controls entry 'aggregator_control' has no pinned sequence",
+     "gate": "calibration"
+    },
+    {
+     "declared_active_by": "calibration.scored_each_run",
+     "detail": "controls entry 'polyreactive_control' has no pinned sequence",
+     "gate": "calibration"
+    },
+    {
+     "declared_active_by": "species_cross_reactivity.panel",
+     "detail": "ortholog_panel.yaml status is 'deferred', which is not pinned",
+     "gate": "species_cross_reactivity"
+    },
+    {
+     "declared_active_by": "species_cross_reactivity.panel",
+     "detail": "'murine' ortholog sequence is not pinned",
+     "gate": "species_cross_reactivity"
+    },
+    {
+     "declared_active_by": "species_cross_reactivity.panel",
+     "detail": "'cyno' ortholog sequence is not pinned",
+     "gate": "species_cross_reactivity"
+    },
+    {
+     "declared_active_by": "manufacturability.floor.mode = hard_floor",
+     "detail": "the aggregation-propensity tool is not pinned, so the hard floor cannot be enforced",
+     "gate": "manufacturability"
+    }
+   ],
+   "unpinned_gates": [
+    "calibration",
+    "manufacturability",
+    "species_cross_reactivity"
+   ]
+  },
+  "design_errors": {},
   "designs": [
    {
     "binder_sequence": "MLPGVLELEDGSRAHVEVSYDAASGRLWGYVTSVEGDSGVQPGDLIVAEGDAASRESPAVVLSLDRRGTLRLL",
@@ -6698,6 +6809,7 @@
      "verdict_criteria": {
       "alpha3_Ig_atom_contacts": 0,
       "b2m_atom_contacts": 0,
+      "framework_footing_assessable": true,
       "framework_footing_is_groove_proximal": true,
       "groove_proximal_fraction_of_chainA": 1.0,
       "meets_tcr_contact_depth": true,
@@ -6743,7 +6855,16 @@
        "start": "36"
       }
      ],
+     "n_terminal_glutamine": {
+      "hard_fail": false,
+      "residue": "M"
+     },
      "pass": false,
+     "poly_q": {
+      "hard_fail": false,
+      "longest_run": 1,
+      "max_run": 2
+     },
      "sap_patch": {
       "mode": "soft",
       "soft_fail": false,
@@ -6777,6 +6898,7 @@
      "best_decoy_id": "decoy_p5_w_to_a",
      "best_decoy_ipsae_cd": 0.1359698698421536,
      "best_decoy_rank": 2,
+     "decoy_panel_size": 10,
      "decoy_scores": {
       "decoy_p4_m_to_a": 0.004737074030434471,
       "decoy_p4_m_to_v": 0.0,
@@ -6789,6 +6911,8 @@
       "decoy_p7_t_to_a": 0.1253662488676991,
       "decoy_p8_q_to_a": 0.0
      },
+     "decoys_missing": [],
+     "decoys_scored": 10,
      "margin_status": "computed",
      "on_target_ipsae_cd": 0.2217962365730534,
      "on_target_rank": 1,
@@ -7038,6 +7162,7 @@
      "verdict_criteria": {
       "alpha3_Ig_atom_contacts": 0,
       "b2m_atom_contacts": 0,
+      "framework_footing_assessable": true,
       "framework_footing_is_groove_proximal": true,
       "groove_proximal_fraction_of_chainA": 1.0,
       "meets_tcr_contact_depth": true,
@@ -7078,7 +7203,16 @@
        "start": "61"
       }
      ],
+     "n_terminal_glutamine": {
+      "hard_fail": false,
+      "residue": "S"
+     },
      "pass": false,
+     "poly_q": {
+      "hard_fail": false,
+      "longest_run": 1,
+      "max_run": 2
+     },
      "sap_patch": {
       "mode": "soft",
       "soft_fail": false,
@@ -7112,6 +7246,7 @@
      "best_decoy_id": "decoy_p6_i_to_a",
      "best_decoy_ipsae_cd": 0.6906080357060309,
      "best_decoy_rank": 2,
+     "decoy_panel_size": 10,
      "decoy_scores": {
       "decoy_p4_m_to_a": 0.40429239837535347,
       "decoy_p4_m_to_v": 0.5699962178514313,
@@ -7124,6 +7259,8 @@
       "decoy_p7_t_to_a": 0.5968884440826748,
       "decoy_p8_q_to_a": 0.32816918457316735
      },
+     "decoys_missing": [],
+     "decoys_scored": 10,
      "margin_status": "computed",
      "on_target_ipsae_cd": 0.6967623884137182,
      "on_target_rank": 1,
@@ -7379,6 +7516,7 @@
      "verdict_criteria": {
       "alpha3_Ig_atom_contacts": 0,
       "b2m_atom_contacts": 0,
+      "framework_footing_assessable": true,
       "framework_footing_is_groove_proximal": true,
       "groove_proximal_fraction_of_chainA": 1.0,
       "meets_tcr_contact_depth": true,
@@ -7413,7 +7551,16 @@
       "threshold": 1
      },
      "motif_hits": [],
+     "n_terminal_glutamine": {
+      "hard_fail": false,
+      "residue": "M"
+     },
      "pass": false,
+     "poly_q": {
+      "hard_fail": false,
+      "longest_run": 2,
+      "max_run": 2
+     },
      "sap_patch": {
       "mode": "soft",
       "soft_fail": false,
@@ -7447,6 +7594,7 @@
      "best_decoy_id": "decoy_p6_i_to_a",
      "best_decoy_ipsae_cd": 0.08459716578084302,
      "best_decoy_rank": 2,
+     "decoy_panel_size": 10,
      "decoy_scores": {
       "decoy_p4_m_to_a": 0.00906162168506443,
       "decoy_p4_m_to_v": 0.08299607279885608,
@@ -7459,6 +7607,8 @@
       "decoy_p7_t_to_a": 0.008297787375757265,
       "decoy_p8_q_to_a": 0.022137070326863965
      },
+     "decoys_missing": [],
+     "decoys_scored": 10,
      "margin_status": "computed",
      "on_target_ipsae_cd": 0.08487528025374977,
      "on_target_rank": 1,
@@ -7708,6 +7858,7 @@
      "verdict_criteria": {
       "alpha3_Ig_atom_contacts": 0,
       "b2m_atom_contacts": 0,
+      "framework_footing_assessable": true,
       "framework_footing_is_groove_proximal": true,
       "groove_proximal_fraction_of_chainA": 1.0,
       "meets_tcr_contact_depth": true,
@@ -7763,7 +7914,16 @@
        "start": "47"
       }
      ],
+     "n_terminal_glutamine": {
+      "hard_fail": false,
+      "residue": "A"
+     },
      "pass": false,
+     "poly_q": {
+      "hard_fail": false,
+      "longest_run": 0,
+      "max_run": 2
+     },
      "sap_patch": {
       "mode": "soft",
       "soft_fail": false,
@@ -7797,6 +7957,7 @@
      "best_decoy_id": "decoy_p6_i_to_a",
      "best_decoy_ipsae_cd": 0.11445965223916987,
      "best_decoy_rank": 1,
+     "decoy_panel_size": 10,
      "decoy_scores": {
       "decoy_p4_m_to_a": 0.007453705796203876,
       "decoy_p4_m_to_v": 0.0588898567808857,
@@ -7809,6 +7970,8 @@
       "decoy_p7_t_to_a": 0.004783136562492223,
       "decoy_p8_q_to_a": 0.018327013814887775
      },
+     "decoys_missing": [],
+     "decoys_scored": 10,
      "margin_status": "computed",
      "on_target_ipsae_cd": 0.04343433100173654,
      "on_target_rank": 4,
@@ -8035,6 +8198,7 @@
      "verdict_criteria": {
       "alpha3_Ig_atom_contacts": 0,
       "b2m_atom_contacts": 0,
+      "framework_footing_assessable": true,
       "framework_footing_is_groove_proximal": true,
       "groove_proximal_fraction_of_chainA": 1.0,
       "meets_tcr_contact_depth": true,
@@ -8075,7 +8239,16 @@
        "start": "7"
       }
      ],
+     "n_terminal_glutamine": {
+      "hard_fail": false,
+      "residue": "A"
+     },
      "pass": false,
+     "poly_q": {
+      "hard_fail": false,
+      "longest_run": 0,
+      "max_run": 2
+     },
      "sap_patch": {
       "mode": "soft",
       "soft_fail": false,
@@ -8109,6 +8282,7 @@
      "best_decoy_id": "decoy_p8_q_to_a",
      "best_decoy_ipsae_cd": 0.09237268216709374,
      "best_decoy_rank": 1,
+     "decoy_panel_size": 10,
      "decoy_scores": {
       "decoy_p4_m_to_a": 0.01700376647065136,
       "decoy_p4_m_to_v": 0.0,
@@ -8121,6 +8295,8 @@
       "decoy_p7_t_to_a": 0.0,
       "decoy_p8_q_to_a": 0.09237268216709374
      },
+     "decoys_missing": [],
+     "decoys_scored": 10,
      "margin_status": "computed",
      "on_target_ipsae_cd": 0.0057552743154277546,
      "on_target_rank": 4,
@@ -8365,6 +8541,7 @@
      "verdict_criteria": {
       "alpha3_Ig_atom_contacts": 0,
       "b2m_atom_contacts": 0,
+      "framework_footing_assessable": true,
       "framework_footing_is_groove_proximal": true,
       "groove_proximal_fraction_of_chainA": 1.0,
       "meets_tcr_contact_depth": true,
@@ -8398,7 +8575,16 @@
       "threshold": 1
      },
      "motif_hits": [],
+     "n_terminal_glutamine": {
+      "hard_fail": false,
+      "residue": "S"
+     },
      "pass": true,
+     "poly_q": {
+      "hard_fail": false,
+      "longest_run": 0,
+      "max_run": 2
+     },
      "sap_patch": {
       "mode": "soft",
       "soft_fail": false,
@@ -8432,6 +8618,7 @@
      "best_decoy_id": "decoy_p4_m_to_v",
      "best_decoy_ipsae_cd": 0.6785841176775792,
      "best_decoy_rank": 1,
+     "decoy_panel_size": 10,
      "decoy_scores": {
       "decoy_p4_m_to_a": 0.39486136402569716,
       "decoy_p4_m_to_v": 0.6785841176775792,
@@ -8444,6 +8631,8 @@
       "decoy_p7_t_to_a": 0.5341190317290524,
       "decoy_p8_q_to_a": 0.05454815615178635
      },
+     "decoys_missing": [],
+     "decoys_scored": 10,
      "margin_status": "computed",
      "on_target_ipsae_cd": 0.45996453000944765,
      "on_target_rank": 5,
@@ -8687,6 +8876,7 @@
      "verdict_criteria": {
       "alpha3_Ig_atom_contacts": 0,
       "b2m_atom_contacts": 0,
+      "framework_footing_assessable": true,
       "framework_footing_is_groove_proximal": true,
       "groove_proximal_fraction_of_chainA": 1.0,
       "meets_tcr_contact_depth": true,
@@ -8721,7 +8911,16 @@
       "threshold": 1
      },
      "motif_hits": [],
+     "n_terminal_glutamine": {
+      "hard_fail": false,
+      "residue": "M"
+     },
      "pass": false,
+     "poly_q": {
+      "hard_fail": false,
+      "longest_run": 1,
+      "max_run": 2
+     },
      "sap_patch": {
       "mode": "soft",
       "soft_fail": false,
@@ -8755,6 +8954,7 @@
      "best_decoy_id": "decoy_p7_t_to_a",
      "best_decoy_ipsae_cd": 0.4687349565269622,
      "best_decoy_rank": 1,
+     "decoy_panel_size": 10,
      "decoy_scores": {
       "decoy_p4_m_to_a": 0.024974831706563477,
       "decoy_p4_m_to_v": 0.426282543608075,
@@ -8767,6 +8967,8 @@
       "decoy_p7_t_to_a": 0.4687349565269622,
       "decoy_p8_q_to_a": 0.05238401507503502
      },
+     "decoys_missing": [],
+     "decoys_scored": 10,
      "margin_status": "computed",
      "on_target_ipsae_cd": 0.24026643432751346,
      "on_target_rank": 4,
@@ -9013,6 +9215,7 @@
      "verdict_criteria": {
       "alpha3_Ig_atom_contacts": 0,
       "b2m_atom_contacts": 0,
+      "framework_footing_assessable": true,
       "framework_footing_is_groove_proximal": true,
       "groove_proximal_fraction_of_chainA": 1.0,
       "meets_tcr_contact_depth": true,
@@ -9046,7 +9249,16 @@
       "threshold": 1
      },
      "motif_hits": [],
+     "n_terminal_glutamine": {
+      "hard_fail": false,
+      "residue": "V"
+     },
      "pass": true,
+     "poly_q": {
+      "hard_fail": false,
+      "longest_run": 1,
+      "max_run": 2
+     },
      "sap_patch": {
       "mode": "soft",
       "soft_fail": false,
@@ -9080,6 +9292,7 @@
      "best_decoy_id": "decoy_p6_i_to_a",
      "best_decoy_ipsae_cd": 0.43717036547192434,
      "best_decoy_rank": 1,
+     "decoy_panel_size": 10,
      "decoy_scores": {
       "decoy_p4_m_to_a": 0.0,
       "decoy_p4_m_to_v": 0.01568364686475143,
@@ -9092,6 +9305,8 @@
       "decoy_p7_t_to_a": 0.0,
       "decoy_p8_q_to_a": 0.01149153654976433
      },
+     "decoys_missing": [],
+     "decoys_scored": 10,
      "margin_status": "computed",
      "on_target_ipsae_cd": 0.005974362120038042,
      "on_target_rank": 7,
@@ -9343,6 +9558,7 @@
      "verdict_criteria": {
       "alpha3_Ig_atom_contacts": 0,
       "b2m_atom_contacts": 0,
+      "framework_footing_assessable": true,
       "framework_footing_is_groove_proximal": true,
       "groove_proximal_fraction_of_chainA": 1.0,
       "meets_tcr_contact_depth": true,
@@ -9383,7 +9599,16 @@
        "start": "50"
       }
      ],
+     "n_terminal_glutamine": {
+      "hard_fail": false,
+      "residue": "M"
+     },
      "pass": false,
+     "poly_q": {
+      "hard_fail": false,
+      "longest_run": 0,
+      "max_run": 2
+     },
      "sap_patch": {
       "mode": "soft",
       "soft_fail": false,
@@ -9417,6 +9642,7 @@
      "best_decoy_id": "decoy_p5_w_to_f",
      "best_decoy_ipsae_cd": 0.5231821421394811,
      "best_decoy_rank": 1,
+     "decoy_panel_size": 10,
      "decoy_scores": {
       "decoy_p4_m_to_a": 0.520816592174534,
       "decoy_p4_m_to_v": 0.12478769492519981,
@@ -9429,6 +9655,8 @@
       "decoy_p7_t_to_a": 0.009791260727697447,
       "decoy_p8_q_to_a": 0.39595344372273744
      },
+     "decoys_missing": [],
+     "decoys_scored": 10,
      "margin_status": "computed",
      "on_target_ipsae_cd": 0.0891797738998594,
      "on_target_rank": 8,
@@ -9690,6 +9918,7 @@
      "verdict_criteria": {
       "alpha3_Ig_atom_contacts": 0,
       "b2m_atom_contacts": 0,
+      "framework_footing_assessable": true,
       "framework_footing_is_groove_proximal": true,
       "groove_proximal_fraction_of_chainA": 1.0,
       "meets_tcr_contact_depth": true,
@@ -9730,7 +9959,16 @@
        "start": "35"
       }
      ],
+     "n_terminal_glutamine": {
+      "hard_fail": false,
+      "residue": "S"
+     },
      "pass": false,
+     "poly_q": {
+      "hard_fail": false,
+      "longest_run": 1,
+      "max_run": 2
+     },
      "sap_patch": {
       "mode": "soft",
       "soft_fail": false,
@@ -9764,6 +10002,7 @@
      "best_decoy_id": "decoy_p4_m_to_a",
      "best_decoy_ipsae_cd": 0.634101779617168,
      "best_decoy_rank": 1,
+     "decoy_panel_size": 10,
      "decoy_scores": {
       "decoy_p4_m_to_a": 0.634101779617168,
       "decoy_p4_m_to_v": 0.016413574023522476,
@@ -9776,6 +10015,8 @@
       "decoy_p7_t_to_a": 0.024788952822435137,
       "decoy_p8_q_to_a": 0.10001933792582618
      },
+     "decoys_missing": [],
+     "decoys_scored": 10,
      "margin_status": "computed",
      "on_target_ipsae_cd": 0.0654306831581959,
      "on_target_rank": 5,
@@ -9837,1017 +10078,92 @@
    }
   ],
   "handoff": {
-   "designs": [
+   "blocked_by_design_errors": [],
+   "blocked_by_unpinned_gates": true,
+   "designs": [],
+   "eligible_count": 0,
+   "excluded": [
     {
-     "binder_sequence": "MLPGVLELEDGSRAHVEVSYDAASGRLWGYVTSVEGDSGVQPGDLIVAEGDAASRESPAVVLSLDRRGTLRLL",
-     "chain_D_plddt_mean": 71.79847945205478,
-     "contact_site": {
-      "binder_heavy_atoms": 538,
-      "chain_residue_counts": {
-       "A": 275,
-       "B": 99,
-       "C": 9,
-       "D": 73
-      },
-      "cif": "pres_rIVnI2qWY81pul3zHRrN_predicted.cif",
-      "cutoffs": {
-       "4.0": {
-        "atom_pairs": {
-         "A": 77,
-         "B": 0,
-         "C": 41
-        },
-        "b2m_atom_contacts": 0,
-        "b2m_residues_contacted": [],
-        "binder_residues_in_interface": {
-         "A": 11,
-         "B": 0,
-         "C": 7
-        },
-        "chain_A": {
-         "alpha3_Ig_atom_contacts": 0,
-         "atom_contacts_by_region": {
-          "alpha1_helix": 10,
-          "alpha2_helix": 67
-         },
-         "groove_proximal_atom_contacts": 77,
-         "groove_proximal_fraction_of_chainA": 1.0,
-         "residues_by_region": {
-          "alpha1_helix": [
-           65,
-           66,
-           69,
-           73
-          ],
-          "alpha2_helix": [
-           146,
-           149,
-           150,
-           151,
-           152,
-           154,
-           155
-          ]
-         }
-        },
-        "min_distance": {
-         "A": 2.07563060887529,
-         "B": 19.290761381534427,
-         "C": 2.4802347082080773
-        },
-        "peptide": {
-         "anchor_P2_P9_atom_contacts": 0,
-         "per_position_atom_contacts": {
-          "1": 0,
-          "2": 0,
-          "3": 0,
-          "4": 15,
-          "5": 14,
-          "6": 4,
-          "7": 7,
-          "8": 1,
-          "9": 0
-         },
-         "positions_contacted": [
-          4,
-          5,
-          6,
-          7,
-          8
-         ],
-         "tcr_facing_P4_P8_atom_contacts": 41,
-         "tcr_facing_P4_P8_positions_hit": [
-          4,
-          5,
-          6,
-          7,
-          8
-         ]
-        },
-        "peptide_fraction_of_atom_contacts": 0.3474576271186441,
-        "peptide_fraction_of_residue_pairs": 0.3448275862068966,
-        "residue_pairs": {
-         "A": 19,
-         "B": 0,
-         "C": 10
-        },
-        "total_interface_atom_pairs": 118
-       },
-       "5.0": {
-        "atom_pairs": {
-         "A": 266,
-         "B": 0,
-         "C": 159
-        },
-        "b2m_atom_contacts": 0,
-        "b2m_residues_contacted": [],
-        "binder_residues_in_interface": {
-         "A": 18,
-         "B": 0,
-         "C": 9
-        },
-        "chain_A": {
-         "alpha3_Ig_atom_contacts": 0,
-         "atom_contacts_by_region": {
-          "alpha1_helix": 70,
-          "alpha2_helix": 196
-         },
-         "groove_proximal_atom_contacts": 266,
-         "groove_proximal_fraction_of_chainA": 1.0,
-         "residues_by_region": {
-          "alpha1_helix": [
-           65,
-           66,
-           69,
-           72,
-           73,
-           75
-          ],
-          "alpha2_helix": [
-           146,
-           149,
-           150,
-           151,
-           152,
-           154,
-           155
-          ]
-         }
-        },
-        "min_distance": {
-         "A": 2.07563060887529,
-         "B": 19.290761381534427,
-         "C": 2.4802347082080773
-        },
-        "peptide": {
-         "anchor_P2_P9_atom_contacts": 0,
-         "per_position_atom_contacts": {
-          "1": 0,
-          "2": 0,
-          "3": 0,
-          "4": 33,
-          "5": 57,
-          "6": 22,
-          "7": 25,
-          "8": 22,
-          "9": 0
-         },
-         "positions_contacted": [
-          4,
-          5,
-          6,
-          7,
-          8
-         ],
-         "tcr_facing_P4_P8_atom_contacts": 159,
-         "tcr_facing_P4_P8_positions_hit": [
-          4,
-          5,
-          6,
-          7,
-          8
-         ]
-        },
-        "peptide_fraction_of_atom_contacts": 0.37411764705882355,
-        "peptide_fraction_of_residue_pairs": 0.32,
-        "residue_pairs": {
-         "A": 34,
-         "B": 0,
-         "C": 16
-        },
-        "total_interface_atom_pairs": 425
-       }
-      },
-      "design_id": "pres_rIVnI2qWY81pul3zHRrN",
-      "verdict": "peptide-directed",
-      "verdict_criteria": {
-       "alpha3_Ig_atom_contacts": 0,
-       "b2m_atom_contacts": 0,
-       "framework_footing_is_groove_proximal": true,
-       "groove_proximal_fraction_of_chainA": 1.0,
-       "meets_tcr_contact_depth": true,
-       "meets_tcr_position_breadth": true,
-       "no_peptide_remote_framework_contact": true,
-       "tcr_facing_atom_contacts": 41,
-       "tcr_facing_positions_hit": 5
-      },
-      "verdict_reason": "engages 5 of 5 TCR-facing positions [4, 5, 6, 7, 8] with 41 heavy-atom contacts; all framework contact is groove-proximal (alpha1/alpha2 helices and groove floor) with zero alpha3 Ig and zero b2m contact - the canonical TCR-like footprint"
-     },
      "design_id": "pres_rIVnI2qWY81pul3zHRrN",
-     "developability_score": 0.7,
-     "gates": {
-      "fail_reasons": [
-       "specificity_margin:0.085826<0.15",
-       "liability_filters:fail"
-      ],
-      "hard_pass": false,
-      "soft_pass": false
-     },
-     "iptm": 0.9355947971343994,
-     "liability_filters": {
-      "allow": "none",
-      "developability_score": 0.7,
-      "exposed_oxidation": {
-       "hard_fail": true,
-       "residue_counts": {
-        "M": 1,
-        "W": 1
-       },
-       "sequence_proxy": true,
-       "threshold": 1
-      },
-      "motif_hits": [
-       {
-        "match": "DG",
-        "motif": "DG",
-        "start": "9"
-       },
-       {
-        "match": "DS",
-        "motif": "DS",
-        "start": "36"
-       }
-      ],
-      "pass": false,
-      "sap_patch": {
-       "mode": "soft",
-       "soft_fail": false,
-       "status": "skipped_no_sap"
-      },
-      "unpaired_cys": {
-       "count": 0,
-       "hard_fail": false
-      }
-     },
-     "provenance": {
-      "artifact_paths": {
-       "metrics_json": "pres_rIVnI2qWY81pul3zHRrN/metrics.json",
-       "pae_npz": "pres_rIVnI2qWY81pul3zHRrN/pae.npz",
-       "predicted_cif": "pres_rIVnI2qWY81pul3zHRrN/pres_rIVnI2qWY81pul3zHRrN_predicted.cif"
-      },
-      "design_id": "pres_rIVnI2qWY81pul3zHRrN",
-      "display_alias": "NYESO1-pres_rIVnI2qWY81pul3zHRrN",
-      "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
-      "pins": {
-       "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
-       "binder_chain": "D",
-       "contact_cutoff_angstrom": 4.0,
-       "worker_commit": "70b6c6c",
-       "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
-       "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
-      }
-     },
-     "rank": 1,
-     "specificity": {
-      "best_decoy_id": "decoy_p5_w_to_a",
-      "best_decoy_ipsae_cd": 0.1359698698421536,
-      "best_decoy_rank": 2,
-      "decoy_scores": {
-       "decoy_p4_m_to_a": 0.004737074030434471,
-       "decoy_p4_m_to_v": 0.0,
-       "decoy_p4_p5_p6_triple": 0.08272775708155078,
-       "decoy_p4v_p5a": 0.0,
-       "decoy_p5_w_to_a": 0.1359698698421536,
-       "decoy_p5_w_to_f": 0.023845028921437347,
-       "decoy_p6_i_to_a": 0.011780355241470407,
-       "decoy_p6a_p7a": 0.0,
-       "decoy_p7_t_to_a": 0.1253662488676991,
-       "decoy_p8_q_to_a": 0.0
-      },
-      "margin_status": "computed",
-      "on_target_ipsae_cd": 0.2217962365730534,
-      "on_target_rank": 1,
-      "rank_margin": 1,
-      "rank_margin_fleet_text": -1,
-      "specificity_margin": 0.085826
-     },
-     "tier0": {
-      "cif": "pres_rIVnI2qWY81pul3zHRrN_predicted.cif",
-      "counts": {
-       "buried_anchor_residues_contacted": [],
-       "coldspots_contacted": 0,
-       "coldspots_contacted_by_chain": {},
-       "coldspots_declared": 212,
-       "contacted_by_chain": {
-        "A": [
-         65,
-         66,
-         69,
-         73,
-         146,
-         149,
-         150,
-         151,
-         152,
-         154,
-         155
-        ],
-        "B": [],
-        "C": [
-         4,
-         5,
-         6,
-         7,
-         8
-        ]
-       },
-       "contacted_in_epitope_shell": 16,
-       "contacted_off_epitope_shell": 0,
-       "contacted_target_residues": 16,
-       "epitope_shell_size_by_chain": {
-        "A": 63,
-        "B": 0,
-        "C": 9
-       },
-       "hotspots_contacted": 5,
-       "hotspots_declared": 5
-      },
-      "design_id": "pres_rIVnI2qWY81pul3zHRrN",
-      "hotspot_contact_fraction": 1.0,
-      "item_1_off_epitope_contact_fraction": 0.0,
-      "item_2_coldspot_contact_fraction": 0.0,
-      "item_3_buried_anchor_contact_count": 0,
-      "item_4_invariant_surface": "SKIPPED: biotite unavailable; no proxy substituted"
-     }
+     "fail_reasons": [
+      "specificity_margin:0.085826<0.15",
+      "liability_filters:fail"
+     ],
+     "rank": 1
     },
     {
-     "binder_sequence": "SLPVYYAPVGGPDQGSALVEVPVRVGETREVTLDFSGAAPEGVHTLTIEAVSEEQALLTYPDGTVRTVPLYAD",
-     "chain_D_plddt_mean": 82.02186301369862,
-     "contact_site": {
-      "binder_heavy_atoms": 541,
-      "chain_residue_counts": {
-       "A": 275,
-       "B": 99,
-       "C": 9,
-       "D": 73
-      },
-      "cif": "pres_KvvXtVa6yakB17EmB1Ge_predicted.cif",
-      "cutoffs": {
-       "4.0": {
-        "atom_pairs": {
-         "A": 66,
-         "B": 0,
-         "C": 69
-        },
-        "b2m_atom_contacts": 0,
-        "b2m_residues_contacted": [],
-        "binder_residues_in_interface": {
-         "A": 11,
-         "B": 0,
-         "C": 12
-        },
-        "chain_A": {
-         "alpha3_Ig_atom_contacts": 0,
-         "atom_contacts_by_region": {
-          "alpha1_helix": 30,
-          "alpha2_helix": 36
-         },
-         "groove_proximal_atom_contacts": 66,
-         "groove_proximal_fraction_of_chainA": 1.0,
-         "residues_by_region": {
-          "alpha1_helix": [
-           65,
-           66,
-           68,
-           69,
-           72,
-           73
-          ],
-          "alpha2_helix": [
-           146,
-           149,
-           150,
-           151,
-           152,
-           155,
-           158
-          ]
-         }
-        },
-        "min_distance": {
-         "A": 2.508069190054373,
-         "B": 18.326288120255015,
-         "C": 2.5425243423613475
-        },
-        "peptide": {
-         "anchor_P2_P9_atom_contacts": 0,
-         "per_position_atom_contacts": {
-          "1": 0,
-          "2": 0,
-          "3": 5,
-          "4": 10,
-          "5": 23,
-          "6": 7,
-          "7": 11,
-          "8": 13,
-          "9": 0
-         },
-         "positions_contacted": [
-          3,
-          4,
-          5,
-          6,
-          7,
-          8
-         ],
-         "tcr_facing_P4_P8_atom_contacts": 64,
-         "tcr_facing_P4_P8_positions_hit": [
-          4,
-          5,
-          6,
-          7,
-          8
-         ]
-        },
-        "peptide_fraction_of_atom_contacts": 0.5111111111111111,
-        "peptide_fraction_of_residue_pairs": 0.48717948717948717,
-        "residue_pairs": {
-         "A": 20,
-         "B": 0,
-         "C": 19
-        },
-        "total_interface_atom_pairs": 135
-       },
-       "5.0": {
-        "atom_pairs": {
-         "A": 297,
-         "B": 0,
-         "C": 281
-        },
-        "b2m_atom_contacts": 0,
-        "b2m_residues_contacted": [],
-        "binder_residues_in_interface": {
-         "A": 19,
-         "B": 0,
-         "C": 15
-        },
-        "chain_A": {
-         "alpha3_Ig_atom_contacts": 0,
-         "atom_contacts_by_region": {
-          "alpha1_helix": 150,
-          "alpha2_helix": 147
-         },
-         "groove_proximal_atom_contacts": 297,
-         "groove_proximal_fraction_of_chainA": 1.0,
-         "residues_by_region": {
-          "alpha1_helix": [
-           62,
-           65,
-           66,
-           68,
-           69,
-           72,
-           73,
-           76
-          ],
-          "alpha2_helix": [
-           146,
-           149,
-           150,
-           151,
-           152,
-           154,
-           155,
-           158,
-           163
-          ]
-         }
-        },
-        "min_distance": {
-         "A": 2.508069190054373,
-         "B": 18.326288120255015,
-         "C": 2.5425243423613475
-        },
-        "peptide": {
-         "anchor_P2_P9_atom_contacts": 0,
-         "per_position_atom_contacts": {
-          "1": 0,
-          "2": 0,
-          "3": 16,
-          "4": 42,
-          "5": 110,
-          "6": 29,
-          "7": 42,
-          "8": 42,
-          "9": 0
-         },
-         "positions_contacted": [
-          3,
-          4,
-          5,
-          6,
-          7,
-          8
-         ],
-         "tcr_facing_P4_P8_atom_contacts": 265,
-         "tcr_facing_P4_P8_positions_hit": [
-          4,
-          5,
-          6,
-          7,
-          8
-         ]
-        },
-        "peptide_fraction_of_atom_contacts": 0.486159169550173,
-        "peptide_fraction_of_residue_pairs": 0.4090909090909091,
-        "residue_pairs": {
-         "A": 39,
-         "B": 0,
-         "C": 27
-        },
-        "total_interface_atom_pairs": 578
-       }
-      },
-      "design_id": "pres_KvvXtVa6yakB17EmB1Ge",
-      "verdict": "peptide-directed",
-      "verdict_criteria": {
-       "alpha3_Ig_atom_contacts": 0,
-       "b2m_atom_contacts": 0,
-       "framework_footing_is_groove_proximal": true,
-       "groove_proximal_fraction_of_chainA": 1.0,
-       "meets_tcr_contact_depth": true,
-       "meets_tcr_position_breadth": true,
-       "no_peptide_remote_framework_contact": true,
-       "tcr_facing_atom_contacts": 64,
-       "tcr_facing_positions_hit": 5
-      },
-      "verdict_reason": "engages 5 of 5 TCR-facing positions [4, 5, 6, 7, 8] with 64 heavy-atom contacts; all framework contact is groove-proximal (alpha1/alpha2 helices and groove floor) with zero alpha3 Ig and zero b2m contact - the canonical TCR-like footprint"
-     },
      "design_id": "pres_KvvXtVa6yakB17EmB1Ge",
-     "developability_score": 0.85,
-     "gates": {
-      "fail_reasons": [
-       "specificity_margin:0.006154<0.15",
-       "liability_filters:fail"
-      ],
-      "hard_pass": false,
-      "soft_pass": true
-     },
-     "iptm": 0.9825169444084167,
-     "liability_filters": {
-      "allow": "none",
-      "developability_score": 0.85,
-      "exposed_oxidation": {
-       "hard_fail": false,
-       "residue_counts": {
-        "M": 0,
-        "W": 0
-       },
-       "sequence_proxy": true,
-       "threshold": 1
-      },
-      "motif_hits": [
-       {
-        "match": "DG",
-        "motif": "DG",
-        "start": "61"
-       }
-      ],
-      "pass": false,
-      "sap_patch": {
-       "mode": "soft",
-       "soft_fail": false,
-       "status": "skipped_no_sap"
-      },
-      "unpaired_cys": {
-       "count": 0,
-       "hard_fail": false
-      }
-     },
-     "provenance": {
-      "artifact_paths": {
-       "metrics_json": "pres_KvvXtVa6yakB17EmB1Ge/metrics.json",
-       "pae_npz": "pres_KvvXtVa6yakB17EmB1Ge/pae.npz",
-       "predicted_cif": "pres_KvvXtVa6yakB17EmB1Ge/pres_KvvXtVa6yakB17EmB1Ge_predicted.cif"
-      },
-      "design_id": "pres_KvvXtVa6yakB17EmB1Ge",
-      "display_alias": "NYESO1-pres_KvvXtVa6yakB17EmB1Ge",
-      "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
-      "pins": {
-       "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
-       "binder_chain": "D",
-       "contact_cutoff_angstrom": 4.0,
-       "worker_commit": "70b6c6c",
-       "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
-       "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
-      }
-     },
-     "rank": 2,
-     "specificity": {
-      "best_decoy_id": "decoy_p6_i_to_a",
-      "best_decoy_ipsae_cd": 0.6906080357060309,
-      "best_decoy_rank": 2,
-      "decoy_scores": {
-       "decoy_p4_m_to_a": 0.40429239837535347,
-       "decoy_p4_m_to_v": 0.5699962178514313,
-       "decoy_p4_p5_p6_triple": 0.0,
-       "decoy_p4v_p5a": 0.0744477089933046,
-       "decoy_p5_w_to_a": 0.0,
-       "decoy_p5_w_to_f": 0.5820150607297724,
-       "decoy_p6_i_to_a": 0.6906080357060309,
-       "decoy_p6a_p7a": 0.6556040396773143,
-       "decoy_p7_t_to_a": 0.5968884440826748,
-       "decoy_p8_q_to_a": 0.32816918457316735
-      },
-      "margin_status": "computed",
-      "on_target_ipsae_cd": 0.6967623884137182,
-      "on_target_rank": 1,
-      "rank_margin": 1,
-      "rank_margin_fleet_text": -1,
-      "specificity_margin": 0.006154
-     },
-     "tier0": {
-      "cif": "pres_KvvXtVa6yakB17EmB1Ge_predicted.cif",
-      "counts": {
-       "buried_anchor_residues_contacted": [],
-       "coldspots_contacted": 0,
-       "coldspots_contacted_by_chain": {},
-       "coldspots_declared": 218,
-       "contacted_by_chain": {
-        "A": [
-         65,
-         66,
-         68,
-         69,
-         72,
-         73,
-         146,
-         149,
-         150,
-         151,
-         152,
-         155,
-         158
-        ],
-        "B": [],
-        "C": [
-         3,
-         4,
-         5,
-         6,
-         7,
-         8
-        ]
-       },
-       "contacted_in_epitope_shell": 19,
-       "contacted_off_epitope_shell": 0,
-       "contacted_target_residues": 19,
-       "epitope_shell_size_by_chain": {
-        "A": 57,
-        "B": 0,
-        "C": 9
-       },
-       "hotspots_contacted": 5,
-       "hotspots_declared": 5
-      },
-      "design_id": "pres_KvvXtVa6yakB17EmB1Ge",
-      "hotspot_contact_fraction": 1.0,
-      "item_1_off_epitope_contact_fraction": 0.0,
-      "item_2_coldspot_contact_fraction": 0.0,
-      "item_3_buried_anchor_contact_count": 0,
-      "item_4_invariant_surface": "SKIPPED: biotite unavailable; no proxy substituted"
-     }
+     "fail_reasons": [
+      "specificity_margin:0.006154<0.15",
+      "liability_filters:fail"
+     ],
+     "rank": 2
     },
     {
-     "binder_sequence": "MDEGARLYELTAAHPELQEEALRLLTEWEATHRLSMEQQLELTARMAEWLAETSDVEEFRERLREALEELLAR",
-     "chain_D_plddt_mean": 72.42616438356164,
-     "contact_site": {
-      "binder_heavy_atoms": 606,
-      "chain_residue_counts": {
-       "A": 275,
-       "B": 99,
-       "C": 9,
-       "D": 73
-      },
-      "cif": "pres_G3ZfGGLFJXddOc0vhQwO_predicted.cif",
-      "cutoffs": {
-       "4.0": {
-        "atom_pairs": {
-         "A": 72,
-         "B": 0,
-         "C": 46
-        },
-        "b2m_atom_contacts": 0,
-        "b2m_residues_contacted": [],
-        "binder_residues_in_interface": {
-         "A": 16,
-         "B": 0,
-         "C": 9
-        },
-        "chain_A": {
-         "alpha3_Ig_atom_contacts": 0,
-         "atom_contacts_by_region": {
-          "alpha1_helix": 45,
-          "alpha2_helix": 27
-         },
-         "groove_proximal_atom_contacts": 72,
-         "groove_proximal_fraction_of_chainA": 1.0,
-         "residues_by_region": {
-          "alpha1_helix": [
-           65,
-           69,
-           72,
-           73,
-           75,
-           76,
-           79,
-           80,
-           82
-          ],
-          "alpha2_helix": [
-           142,
-           146,
-           150,
-           151,
-           154,
-           155
-          ]
-         }
-        },
-        "min_distance": {
-         "A": 2.0640722368657545,
-         "B": 18.017198599080267,
-         "C": 2.382018113470174
-        },
-        "peptide": {
-         "anchor_P2_P9_atom_contacts": 0,
-         "per_position_atom_contacts": {
-          "1": 0,
-          "2": 0,
-          "3": 2,
-          "4": 17,
-          "5": 17,
-          "6": 0,
-          "7": 0,
-          "8": 10,
-          "9": 0
-         },
-         "positions_contacted": [
-          3,
-          4,
-          5,
-          8
-         ],
-         "tcr_facing_P4_P8_atom_contacts": 44,
-         "tcr_facing_P4_P8_positions_hit": [
-          4,
-          5,
-          8
-         ]
-        },
-        "peptide_fraction_of_atom_contacts": 0.3898305084745763,
-        "peptide_fraction_of_residue_pairs": 0.3157894736842105,
-        "residue_pairs": {
-         "A": 26,
-         "B": 0,
-         "C": 12
-        },
-        "total_interface_atom_pairs": 118
-       },
-       "5.0": {
-        "atom_pairs": {
-         "A": 343,
-         "B": 0,
-         "C": 190
-        },
-        "b2m_atom_contacts": 0,
-        "b2m_residues_contacted": [],
-        "binder_residues_in_interface": {
-         "A": 19,
-         "B": 0,
-         "C": 12
-        },
-        "chain_A": {
-         "alpha3_Ig_atom_contacts": 0,
-         "atom_contacts_by_region": {
-          "alpha1_helix": 185,
-          "alpha2_helix": 158
-         },
-         "groove_proximal_atom_contacts": 343,
-         "groove_proximal_fraction_of_chainA": 1.0,
-         "residues_by_region": {
-          "alpha1_helix": [
-           65,
-           66,
-           68,
-           69,
-           72,
-           73,
-           75,
-           76,
-           79,
-           80,
-           82,
-           83
-          ],
-          "alpha2_helix": [
-           142,
-           145,
-           146,
-           149,
-           150,
-           151,
-           154,
-           155,
-           159,
-           163
-          ]
-         }
-        },
-        "min_distance": {
-         "A": 2.0640722368657545,
-         "B": 18.017198599080267,
-         "C": 2.382018113470174
-        },
-        "peptide": {
-         "anchor_P2_P9_atom_contacts": 4,
-         "per_position_atom_contacts": {
-          "1": 0,
-          "2": 1,
-          "3": 11,
-          "4": 60,
-          "5": 86,
-          "6": 0,
-          "7": 1,
-          "8": 28,
-          "9": 3
-         },
-         "positions_contacted": [
-          2,
-          3,
-          4,
-          5,
-          7,
-          8,
-          9
-         ],
-         "tcr_facing_P4_P8_atom_contacts": 175,
-         "tcr_facing_P4_P8_positions_hit": [
-          4,
-          5,
-          7,
-          8
-         ]
-        },
-        "peptide_fraction_of_atom_contacts": 0.35647279549718575,
-        "peptide_fraction_of_residue_pairs": 0.29850746268656714,
-        "residue_pairs": {
-         "A": 47,
-         "B": 0,
-         "C": 20
-        },
-        "total_interface_atom_pairs": 533
-       }
-      },
-      "design_id": "pres_G3ZfGGLFJXddOc0vhQwO",
-      "verdict": "mixed (peptide-marginal)",
-      "verdict_criteria": {
-       "alpha3_Ig_atom_contacts": 0,
-       "b2m_atom_contacts": 0,
-       "framework_footing_is_groove_proximal": true,
-       "groove_proximal_fraction_of_chainA": 1.0,
-       "meets_tcr_contact_depth": true,
-       "meets_tcr_position_breadth": false,
-       "no_peptide_remote_framework_contact": true,
-       "tcr_facing_atom_contacts": 44,
-       "tcr_facing_positions_hit": 3
-      },
-      "verdict_reason": "touches only TCR-facing positions [4, 5, 8] with 44 heavy-atom contacts; peptide engagement is present and groove-proximal but too sparse or narrow to call a full readout"
-     },
      "design_id": "pres_G3ZfGGLFJXddOc0vhQwO",
-     "developability_score": 1.0,
-     "gates": {
-      "fail_reasons": [
-       "specificity_margin:0.000278<0.15",
-       "liability_filters:fail"
-      ],
-      "hard_pass": false,
-      "soft_pass": false
-     },
-     "iptm": 0.8731725811958313,
-     "liability_filters": {
-      "allow": "none",
-      "developability_score": 1.0,
-      "exposed_oxidation": {
-       "hard_fail": true,
-       "residue_counts": {
-        "M": 3,
-        "W": 2
-       },
-       "sequence_proxy": true,
-       "threshold": 1
-      },
-      "motif_hits": [],
-      "pass": false,
-      "sap_patch": {
-       "mode": "soft",
-       "soft_fail": false,
-       "status": "skipped_no_sap"
-      },
-      "unpaired_cys": {
-       "count": 0,
-       "hard_fail": false
-      }
-     },
-     "provenance": {
-      "artifact_paths": {
-       "metrics_json": "pres_G3ZfGGLFJXddOc0vhQwO/metrics.json",
-       "pae_npz": "pres_G3ZfGGLFJXddOc0vhQwO/pae.npz",
-       "predicted_cif": "pres_G3ZfGGLFJXddOc0vhQwO/pres_G3ZfGGLFJXddOc0vhQwO_predicted.cif"
-      },
-      "design_id": "pres_G3ZfGGLFJXddOc0vhQwO",
-      "display_alias": "NYESO1-pres_G3ZfGGLFJXddOc0vhQwO",
-      "job_id": "prot_des_TY6KzyxULq8mACflXbhn",
-      "pins": {
-       "base_image_digest": "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6",
-       "binder_chain": "D",
-       "contact_cutoff_angstrom": 4.0,
-       "worker_commit": "70b6c6c",
-       "worker_wheel": "bindi-0.2.0-py3-none-any.whl",
-       "worker_wheel_sha256": "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
-      }
-     },
-     "rank": 3,
-     "specificity": {
-      "best_decoy_id": "decoy_p6_i_to_a",
-      "best_decoy_ipsae_cd": 0.08459716578084302,
-      "best_decoy_rank": 2,
-      "decoy_scores": {
-       "decoy_p4_m_to_a": 0.00906162168506443,
-       "decoy_p4_m_to_v": 0.08299607279885608,
-       "decoy_p4_p5_p6_triple": 0.0193794969056835,
-       "decoy_p4v_p5a": 0.04159330853281887,
-       "decoy_p5_w_to_a": 0.01559231215597015,
-       "decoy_p5_w_to_f": 0.022051171116963506,
-       "decoy_p6_i_to_a": 0.08459716578084302,
-       "decoy_p6a_p7a": 0.08364452845923138,
-       "decoy_p7_t_to_a": 0.008297787375757265,
-       "decoy_p8_q_to_a": 0.022137070326863965
-      },
-      "margin_status": "computed",
-      "on_target_ipsae_cd": 0.08487528025374977,
-      "on_target_rank": 1,
-      "rank_margin": 1,
-      "rank_margin_fleet_text": -1,
-      "specificity_margin": 0.000278
-     },
-     "tier0": {
-      "cif": "pres_G3ZfGGLFJXddOc0vhQwO_predicted.cif",
-      "counts": {
-       "buried_anchor_residues_contacted": [],
-       "coldspots_contacted": 1,
-       "coldspots_contacted_by_chain": {
-        "A": [
-         82
-        ]
-       },
-       "coldspots_declared": 215,
-       "contacted_by_chain": {
-        "A": [
-         65,
-         69,
-         72,
-         73,
-         75,
-         76,
-         79,
-         80,
-         82,
-         142,
-         146,
-         150,
-         151,
-         154,
-         155
-        ],
-        "B": [],
-        "C": [
-         3,
-         4,
-         5,
-         8
-        ]
-       },
-       "contacted_in_epitope_shell": 18,
-       "contacted_off_epitope_shell": 1,
-       "contacted_target_residues": 19,
-       "epitope_shell_size_by_chain": {
-        "A": 64,
-        "B": 0,
-        "C": 9
-       },
-       "hotspots_contacted": 3,
-       "hotspots_declared": 5
-      },
-      "design_id": "pres_G3ZfGGLFJXddOc0vhQwO",
-      "hotspot_contact_fraction": 0.6,
-      "item_1_off_epitope_contact_fraction": 0.05263,
-      "item_2_coldspot_contact_fraction": 0.00465,
-      "item_3_buried_anchor_contact_count": 0,
-      "item_4_invariant_surface": "SKIPPED: biotite unavailable; no proxy substituted"
-     }
+     "fail_reasons": [
+      "specificity_margin:0.000278<0.15",
+      "liability_filters:fail"
+     ],
+     "rank": 3
+    },
+    {
+     "design_id": "pres_lppWP1t4ozGyw5s4gq3P",
+     "fail_reasons": [
+      "specificity_margin:-0.071025<0.15",
+      "liability_filters:fail"
+     ],
+     "rank": 4
+    },
+    {
+     "design_id": "pres_xpto8wJvfrJQhLVH4Mvz",
+     "fail_reasons": [
+      "specificity_margin:-0.086617<0.15",
+      "liability_filters:fail"
+     ],
+     "rank": 5
+    },
+    {
+     "design_id": "pres_Bw8vknhmXJUg72L6CGAw",
+     "fail_reasons": [
+      "specificity_margin:-0.21862<0.15"
+     ],
+     "rank": 6
+    },
+    {
+     "design_id": "pres_JA4idjMYaE8EsQKrcb6K",
+     "fail_reasons": [
+      "specificity_margin:-0.228469<0.15",
+      "liability_filters:fail"
+     ],
+     "rank": 7
+    },
+    {
+     "design_id": "pres_PfYJkQdsLag9x1R5Pt6L",
+     "fail_reasons": [
+      "specificity_margin:-0.431196<0.15"
+     ],
+     "rank": 8
+    },
+    {
+     "design_id": "pres_B8eqLRLyLSgzkVbLyC7C",
+     "fail_reasons": [
+      "specificity_margin:-0.434002<0.15",
+      "liability_filters:fail"
+     ],
+     "rank": 9
+    },
+    {
+     "design_id": "pres_2SOqXG5xbTO4FD4yB5so",
+     "fail_reasons": [
+      "specificity_margin:-0.568671<0.15",
+      "liability_filters:fail"
+     ],
+     "rank": 10
     }
    ],
+   "gate": "gates.hard_pass",
+   "note": "handoff blocked: calibration, manufacturability, species_cross_reactivity have unpinned inputs and were never evaluated",
    "recipient": "BIO Physician",
    "top_n": 3
   },

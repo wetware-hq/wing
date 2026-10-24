@@ -47,7 +47,16 @@ def _load_yaml(path: Path) -> dict:
     return yaml.safe_load(path.read_text())
 
 
-def _manifest_hash(*paths: Path) -> str:
+def _config_manifest_hash(*paths: Path) -> str:
+    """Hash of the CONFIG files named, and nothing else.
+
+    Named `_manifest_hash` until 2026-10-24, published as "manifest_hash". It
+    hashes survivor_panel.yaml and decoy_panel.yaml only, so under that name a
+    reader took it for an address of the run's artifacts. It is not: predictions
+    are unseeded and stochastic, and on 2026-10-24 two runs whose every decoy
+    structure differed published the identical hash, because the config it
+    covers had not changed. Renamed to say what it actually hashes.
+    """
     h = hashlib.sha256()
     for p in sorted(paths):
         h.update(p.name.encode())
@@ -250,10 +259,12 @@ def build_ranked_panel(
         "schema_version": "1.0.0",
         "campaign_id": "NYESO1-A0201-specificity",
         "primary_endpoint": "rank_margin (ordinal; audit-only, NOT the Path A specificity_margin gated at >= 0.15)",
-        "manifest_hash": _manifest_hash(
+        "config_manifest_hash": _config_manifest_hash(
             CAMPAIGN_DIR / "survivor_panel.yaml",
             CAMPAIGN_DIR / "decoy_panel.yaml",
         ),
+        "config_manifest_hash_covers": "survivor_panel.yaml, decoy_panel.yaml",
+        "predictions_reproducible": False,
         "designs": designs_out,
     }
 
@@ -342,7 +353,8 @@ def transport_payload(
         "transport": "T1",
         "direction": "fleet_to_case",
         "campaign_id": ranked["campaign_id"],
-        "manifest_hash": ranked["manifest_hash"],
+        "config_manifest_hash": ranked["config_manifest_hash"],
+        "predictions_reproducible": False,
         "top_designs_by_rank_margin": [
             {
                 "design_id": d["design_id"],

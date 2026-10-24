@@ -6,3 +6,7 @@ forms/
 letters/
 # build artifacts: the bindi worker wheel is built from the pinned image, not committed
 fleets/campaigns/NYESO1-A0201/dist/
+# live re-run artifact trees: a paid resubmit writes a dated tree beside the
+# committed one so it cannot overwrite it. Keep them on disk, out of git.
+fleets/campaigns/*/artifacts-live-*/
+fleets/campaigns/*/*/artifacts-live-*/

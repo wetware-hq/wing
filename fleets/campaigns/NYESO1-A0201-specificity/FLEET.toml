@@ -71,9 +71,35 @@ stage        = "output_schema_pre_judge"
 on_fail      = "reject -> [rejections] with reason_code = manufacturability"
 status       = "specified; proxy wired at Stage 3 (see [[stages]] id=3), tool pin TBD"
 
+# Read [stochasticity] before trusting any number below it.
+[stochasticity]
+# 2026-10-24: this section exists because the campaign's headline result did not
+# reproduce. Structure prediction here is STOCHASTIC and UNSEEDED.
+seeded                   = false
+seed_sent_to_api         = false   # no seed field is sent by l1b_request_builder.py
+seed_recorded            = false   # l1b_run.json stores campaign, decoy_id, model, prediction_id
+each_run_is_a_fresh_draw = true
+single_draw_reproduces   = false
+statement = "Predictions are drawn without a seed. Every run is a fresh draw from the model, not a recomputation of the previous one. A single draw does not reproduce, and no number derived from one draw - including specificity_margin and every descriptor in [descriptors] - should be read as a fixed property of a design."
+measured  = "On 2026-10-24 all 100 decoy refolds were resubmitted on identical sequences, identical decoy panel and identical scoring code. Zero of 100 per-prediction metrics records reproduced."
+
+# Measured run-to-run dispersion of the Path A gated quantity. Facts only; the
+# threshold below is UNCHANGED and the decision it raises is open as OD-5.
+[stochasticity.specificity_margin_dispersion]
+measured_on          = "2026-10-24"
+n_designs            = 10
+n_runs               = 2
+inputs               = "identical sequences, decoy panel and scoring code across both runs"
+mean_abs_difference  = 0.0637
+max_abs_difference   = 0.1174
+std_dev              = 0.0725
+gate_threshold       = 0.15
+note = "The dispersion is of the same order as the threshold it is compared against. The lead design moved 0.085826 -> 0.163938 between the two runs and so crossed the bar, changing the campaign result from 0/10 above threshold to 1/10. Neither run is wrong; the quantity is not reproducible at this precision. Threshold deliberately NOT changed - see OD-5."
+
 [gates]
 hard = ["specificity_margin >= 0.15", "buried_anchor_contacts == 0", "liability_filters.pass"]
 soft = ["iptm >= 0.60", "chain_D_plddt >= 80"]
+gate_caveat = "These thresholds are applied to a single unseeded draw; see [stochasticity.specificity_margin_dispersion] for the measured run-to-run spread of the gated quantity."
 
 [descriptors]
 stack = ["complex_iplddt", "shape_complementarity", "plddt", "min_ipsae", "ipsae", "iptm", "pae_interaction"]
@@ -136,7 +162,7 @@ note     = "Prediction endpoint with fixed binder sequence. Parent L1A LEGACY de
 [[nodes]]
 id    = "ART"
 kind  = "artifact_store"
-label = "content-addressed artifacts, mirrored off-API immediately"
+label = "artifacts mirrored off-API immediately; addressed by config + environment only, NOT by prediction output (see [provenance])"
 files = ["_predicted.cif", "metrics.json", "pae.npz"]
 
 [[nodes]]
@@ -207,7 +233,18 @@ cap_rule = "abort if projected (Boltz + Modal L2) > spend_cap_usd (14.50) at APP
 # ------------------------------------------------------------- provenance
 
 [provenance]
-content_address = ["api_version", "config_hash", "target_hash", "seed", "bindi_wheel_sha256", "base_image_digest"]
+# 2026-10-24: "seed" REMOVED from content_address. No seed is ever sent to the
+# prediction API and none is recorded, so naming it claimed an input the
+# pipeline does not set, and implied that the address pinned the prediction. It
+# does not. A resubmit of all 100 decoy refolds on identical inputs reproduced
+# none of them while every component of this address was unchanged - which is
+# precisely what a false component invites a reader to miss.
+content_address = ["api_version", "config_hash", "target_hash", "bindi_wheel_sha256", "base_image_digest"]
+content_address_scope = "configuration_and_environment_only"
+content_address_covers = "the request configuration and the scoring environment: API contract version, config, target, bindi wheel, base image"
+content_address_excludes = "prediction output - structures, interface metrics and everything derived from them, which are a fresh stochastic draw per run (see [stochasticity])"
+artifacts_reproducible_from_address = false
+reproducibility_statement = "Two runs that agree on every component of this address can still differ in every predicted structure and every derived metric. The address identifies WHAT WAS ASKED FOR, not what came back."
 image_digest = "ghcr.io/wetware-hq/bindi-fleet-env@sha256:7e8762aebc3390611aafe0b67d925e567199d519e638113a80da33b86246a8e6"
 bindi_wheel_sha256 = "6554960c1864ee3aabb64eccc7f639a78613daf2bb28b966abc27da1cb7d4e42"
 bindi_version = "0.2.0"
@@ -252,6 +289,21 @@ owner = "BIO Physician"
 question = "clinical proteome-near-neighbour and self-peptide panel"
 resolution = "deferred for this computational screen"
 status = "deferred"
+
+[[open_decisions]]
+id = "OD-5"
+owner = "Mathew"
+opened = "2026-10-24"
+question = "how to gate a stochastic, unseeded quantity: pin and record a seed, replicate and gate on a confidence interval, or revisit the fixed 0.15 threshold"
+evidence = "[stochasticity.specificity_margin_dispersion]: mean abs difference 0.0637, max 0.1174, SD 0.0725 over n=10 designs across two runs with identical inputs, against a 0.15 threshold"
+options = [
+  "pin and record a seed - makes runs reproducible and makes content_address truthful again, but a single draw is no more trustworthy for being repeatable",
+  "replicate and gate on a confidence interval - addresses the dispersion directly, but costs N times the spend: 3 replicates of 100 predictions is ~$15.00 at $0.05 each, which EXCEEDS spend_cap_usd 14.50",
+  "revisit the 0.15 threshold - widen it into a band with an explicit indeterminate verdict, or replace it with a ranked comparison against the decoy panel that needs no absolute cut",
+]
+status = "open"
+not_decided = "No gate, threshold or replicate count has been changed pending this decision. The 0.15 bar in [gates] stands as written."
+memo = "memo.md"
 
 [transport]
 direction = "one-way for evidence"

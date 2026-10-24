@@ -4,7 +4,10 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 PARENT="${ROOT}/../NYESO1-A0201"
-ARTIFACTS="${PARENT}/run-one/artifacts"
+# Overridable so a live resubmit can be written to a fresh tree instead of
+# overwriting committed artifacts. Defaults are the historical paths.
+ARTIFACTS="${ARTIFACTS:-${PARENT}/run-one/artifacts}"
+OUT_DIR="${OUT_DIR:-${ROOT}/artifacts}"
 
 # shellcheck source=../NYESO1-A0201/boltz_cli_env.sh
 source "${PARENT}/boltz_cli_env.sh"
@@ -39,8 +42,26 @@ cd "${ROOT}"
 echo "=== L1B dry-run cost estimate ==="
 "${PYTHON}" l1b_runner.py --dry-run
 
+# Skipping already-mirrored decoys is the default so a resumed run does not
+# pay twice. SKIP_EXISTING=0 forces a real, paid resubmit of every job; the
+# runner prints submitted= and skipped_existing= separately either way, so a
+# replay of old artifacts can never be mistaken for a live submit.
+SKIP_EXISTING="${SKIP_EXISTING:-1}"
+SKIP_FLAG="--skip-existing"
+if [[ "${SKIP_EXISTING}" == "0" ]]; then
+  SKIP_FLAG="--no-skip-existing"
+  echo "WARNING: SKIP_EXISTING=0 - every job will be resubmitted and PAID FOR," >&2
+  echo "  including decoys already mirrored under ${ARTIFACTS}." >&2
+fi
+
 echo "=== L1B submit + mirror (decoys only; cognate from run-one) ==="
-"${PYTHON}" l1b_runner.py --artifacts "${ARTIFACTS}" --workers 3 --approval "${APPROVAL}"
+# --state-out follows OUT_DIR: the runner's own default writes state next to
+# the campaign dir regardless of --artifacts, which would append a live run's
+# records to the committed state log. OUT_DIR's default is that same path, so
+# this changes nothing for a normal run.
+"${PYTHON}" l1b_runner.py --artifacts "${ARTIFACTS}" --workers 3 \
+  "${SKIP_FLAG}" --approval "${APPROVAL}" \
+  --state-out "${OUT_DIR}/l1b_state.jsonl"
 
 echo "=== Layer 2 + Path A specificity panel ==="
 cd "${PARENT}/run-one"
@@ -55,7 +76,7 @@ echo "=== Path B ranked panel + transport T1 ==="
 "${PYTHON}" "${ROOT}/specificity_orchestrator.py" \
   --score \
   --artifacts "${ARTIFACTS}" \
-  --ranked-out "${ROOT}/artifacts/ranked_panel.json" \
-  --transport-out "${ROOT}/artifacts/transport_t1.json"
+  --ranked-out "${OUT_DIR}/ranked_panel.json" \
+  --transport-out "${OUT_DIR}/transport_t1.json"
 
-echo "DONE specificity campaign artifacts under ${ARTIFACTS} and ${ROOT}/artifacts/"
+echo "DONE specificity campaign artifacts under ${ARTIFACTS} and ${OUT_DIR}/"

@@ -79,7 +79,7 @@ note = "Prediction, not design, through the same API. Keeping it in layer 1 is t
 [[nodes]]
 id    = "ART"
 kind  = "artifact_store"
-label = "content-addressed artifacts, mirrored off-API immediately"
+label = "artifacts mirrored off-API immediately; addressed by config + environment only, NOT by prediction output (see [provenance])"
 files = ["_predicted.cif", "metrics.json", "pae.npz"]
 
 [[nodes]]
@@ -341,7 +341,14 @@ cap_rule  = "the Modal layer-2 projection is ADDED to spent_to_date_usd and incl
 # ------------------------------------------------------------- provenance
 
 [provenance]
-content_address = ["api_version", "config_hash", "target_hash", "seed"]
+# 2026-10-24: "seed" REMOVED. No seed is sent to the prediction API by this
+# campaign or its specificity child, and none is recorded in any run record, so
+# the component named an input the pipeline does not set. Measured on this date:
+# a resubmit of 100 decoy refolds on identical inputs reproduced none of them.
+content_address = ["api_version", "config_hash", "target_hash"]
+content_address_scope = "configuration_and_environment_only"
+content_address_excludes = "prediction output; structures and interface metrics are a fresh stochastic draw per run"
+artifacts_reproducible_from_address = false
 mirroring       = "artifacts mirrored off-API immediately; 7-day retention clock"
 fan_out_shape   = "the decoy set is ten peptide mutants, so the target hash moves in nine residues only - the cheapest possible fan-out and cache shape"
 known_weakness  = "Nextflow content-addresses a strict SUPERSET of our four-tuple: it also hashes the container image, the conda/spack environment, the script text and bundled scripts. We hash none of those, and all of them can silently change results. Adopting the Nextflow input list is open decision OD-8."

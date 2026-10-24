@@ -247,6 +247,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -335,6 +336,7 @@
     "best_decoy_id": "decoy_p5_w_to_a",
     "best_decoy_ipsae_cd": 0.1359698698421536,
     "best_decoy_rank": 2,
+    "decoy_panel_size": 10,
     "decoy_scores": {
      "decoy_p4_m_to_a": 0.004737074030434471,
      "decoy_p4_m_to_v": 0.0,
@@ -347,6 +349,8 @@
      "decoy_p7_t_to_a": 0.1253662488676991,
      "decoy_p8_q_to_a": 0.0
     },
+    "decoys_missing": [],
+    "decoys_scored": 10,
     "margin_status": "computed",
     "on_target_ipsae_cd": 0.2217962365730534,
     "on_target_rank": 1,
@@ -596,6 +600,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -679,6 +684,7 @@
     "best_decoy_id": "decoy_p6_i_to_a",
     "best_decoy_ipsae_cd": 0.6906080357060309,
     "best_decoy_rank": 2,
+    "decoy_panel_size": 10,
     "decoy_scores": {
      "decoy_p4_m_to_a": 0.40429239837535347,
      "decoy_p4_m_to_v": 0.5699962178514313,
@@ -691,6 +697,8 @@
      "decoy_p7_t_to_a": 0.5968884440826748,
      "decoy_p8_q_to_a": 0.32816918457316735
     },
+    "decoys_missing": [],
+    "decoys_scored": 10,
     "margin_status": "computed",
     "on_target_ipsae_cd": 0.6967623884137182,
     "on_target_rank": 1,
@@ -946,6 +954,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -1023,6 +1032,7 @@
     "best_decoy_id": "decoy_p6_i_to_a",
     "best_decoy_ipsae_cd": 0.08459716578084302,
     "best_decoy_rank": 2,
+    "decoy_panel_size": 10,
     "decoy_scores": {
      "decoy_p4_m_to_a": 0.00906162168506443,
      "decoy_p4_m_to_v": 0.08299607279885608,
@@ -1035,6 +1045,8 @@
      "decoy_p7_t_to_a": 0.008297787375757265,
      "decoy_p8_q_to_a": 0.022137070326863965
     },
+    "decoys_missing": [],
+    "decoys_scored": 10,
     "margin_status": "computed",
     "on_target_ipsae_cd": 0.08487528025374977,
     "on_target_rank": 1,
@@ -1284,6 +1296,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -1382,6 +1395,7 @@
     "best_decoy_id": "decoy_p6_i_to_a",
     "best_decoy_ipsae_cd": 0.11445965223916987,
     "best_decoy_rank": 1,
+    "decoy_panel_size": 10,
     "decoy_scores": {
      "decoy_p4_m_to_a": 0.007453705796203876,
      "decoy_p4_m_to_v": 0.0588898567808857,
@@ -1394,6 +1408,8 @@
      "decoy_p7_t_to_a": 0.004783136562492223,
      "decoy_p8_q_to_a": 0.018327013814887775
     },
+    "decoys_missing": [],
+    "decoys_scored": 10,
     "margin_status": "computed",
     "on_target_ipsae_cd": 0.04343433100173654,
     "on_target_rank": 4,
@@ -1620,6 +1636,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -1703,6 +1720,7 @@
     "best_decoy_id": "decoy_p8_q_to_a",
     "best_decoy_ipsae_cd": 0.09237268216709374,
     "best_decoy_rank": 1,
+    "decoy_panel_size": 10,
     "decoy_scores": {
      "decoy_p4_m_to_a": 0.01700376647065136,
      "decoy_p4_m_to_v": 0.0,
@@ -1715,6 +1733,8 @@
      "decoy_p7_t_to_a": 0.0,
      "decoy_p8_q_to_a": 0.09237268216709374
     },
+    "decoys_missing": [],
+    "decoys_scored": 10,
     "margin_status": "computed",
     "on_target_ipsae_cd": 0.0057552743154277546,
     "on_target_rank": 4,
@@ -1959,6 +1979,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -2035,6 +2056,7 @@
     "best_decoy_id": "decoy_p4_m_to_v",
     "best_decoy_ipsae_cd": 0.6785841176775792,
     "best_decoy_rank": 1,
+    "decoy_panel_size": 10,
     "decoy_scores": {
      "decoy_p4_m_to_a": 0.39486136402569716,
      "decoy_p4_m_to_v": 0.6785841176775792,
@@ -2047,6 +2069,8 @@
      "decoy_p7_t_to_a": 0.5341190317290524,
      "decoy_p8_q_to_a": 0.05454815615178635
     },
+    "decoys_missing": [],
+    "decoys_scored": 10,
     "margin_status": "computed",
     "on_target_ipsae_cd": 0.45996453000944765,
     "on_target_rank": 5,
@@ -2290,6 +2314,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -2367,6 +2392,7 @@
     "best_decoy_id": "decoy_p7_t_to_a",
     "best_decoy_ipsae_cd": 0.4687349565269622,
     "best_decoy_rank": 1,
+    "decoy_panel_size": 10,
     "decoy_scores": {
      "decoy_p4_m_to_a": 0.024974831706563477,
      "decoy_p4_m_to_v": 0.426282543608075,
@@ -2379,6 +2405,8 @@
      "decoy_p7_t_to_a": 0.4687349565269622,
      "decoy_p8_q_to_a": 0.05238401507503502
     },
+    "decoys_missing": [],
+    "decoys_scored": 10,
     "margin_status": "computed",
     "on_target_ipsae_cd": 0.24026643432751346,
     "on_target_rank": 4,
@@ -2625,6 +2653,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -2701,6 +2730,7 @@
     "best_decoy_id": "decoy_p6_i_to_a",
     "best_decoy_ipsae_cd": 0.43717036547192434,
     "best_decoy_rank": 1,
+    "decoy_panel_size": 10,
     "decoy_scores": {
      "decoy_p4_m_to_a": 0.0,
      "decoy_p4_m_to_v": 0.01568364686475143,
@@ -2713,6 +2743,8 @@
      "decoy_p7_t_to_a": 0.0,
      "decoy_p8_q_to_a": 0.01149153654976433
     },
+    "decoys_missing": [],
+    "decoys_scored": 10,
     "margin_status": "computed",
     "on_target_ipsae_cd": 0.005974362120038042,
     "on_target_rank": 7,
@@ -2964,6 +2996,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -3047,6 +3080,7 @@
     "best_decoy_id": "decoy_p5_w_to_f",
     "best_decoy_ipsae_cd": 0.5231821421394811,
     "best_decoy_rank": 1,
+    "decoy_panel_size": 10,
     "decoy_scores": {
      "decoy_p4_m_to_a": 0.520816592174534,
      "decoy_p4_m_to_v": 0.12478769492519981,
@@ -3059,6 +3093,8 @@
      "decoy_p7_t_to_a": 0.009791260727697447,
      "decoy_p8_q_to_a": 0.39595344372273744
     },
+    "decoys_missing": [],
+    "decoys_scored": 10,
     "margin_status": "computed",
     "on_target_ipsae_cd": 0.0891797738998594,
     "on_target_rank": 8,
@@ -3320,6 +3356,7 @@
     "verdict_criteria": {
      "alpha3_Ig_atom_contacts": 0,
      "b2m_atom_contacts": 0,
+     "framework_footing_assessable": true,
      "framework_footing_is_groove_proximal": true,
      "groove_proximal_fraction_of_chainA": 1.0,
      "meets_tcr_contact_depth": true,
@@ -3403,6 +3440,7 @@
     "best_decoy_id": "decoy_p4_m_to_a",
     "best_decoy_ipsae_cd": 0.634101779617168,
     "best_decoy_rank": 1,
+    "decoy_panel_size": 10,
     "decoy_scores": {
      "decoy_p4_m_to_a": 0.634101779617168,
      "decoy_p4_m_to_v": 0.016413574023522476,
@@ -3415,6 +3453,8 @@
      "decoy_p7_t_to_a": 0.024788952822435137,
      "decoy_p8_q_to_a": 0.10001933792582618
     },
+    "decoys_missing": [],
+    "decoys_scored": 10,
     "margin_status": "computed",
     "on_target_ipsae_cd": 0.0654306831581959,
     "on_target_rank": 5,

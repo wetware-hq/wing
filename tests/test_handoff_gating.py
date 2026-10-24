@@ -94,7 +94,7 @@ def test_path_a_treats_a_design_with_no_gates_block_as_ineligible():
 def _ranked(*designs: tuple[str, str, bool, float]) -> dict:
     return {
         "campaign_id": "NYESO1-A0201-specificity",
-        "manifest_hash": "deadbeef",
+        "config_manifest_hash": "deadbeef",
         "designs": [
             {
                 "design_id": design_id,

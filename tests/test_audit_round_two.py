@@ -287,7 +287,9 @@ def test_a_campaign_with_no_declared_gates_is_pinned(tmp_path):
 
 def test_path_b_refuses_to_build_a_handoff_without_a_pin_report():
     with pytest.raises(ValueError, match="config_pins_report is required"):
-        so.transport_payload({"designs": [], "campaign_id": "x", "manifest_hash": "y"})
+        so.transport_payload(
+            {"designs": [], "campaign_id": "x", "config_manifest_hash": "y"}
+        )
 
 
 def test_no_hardcoded_source_job_id_is_substituted():

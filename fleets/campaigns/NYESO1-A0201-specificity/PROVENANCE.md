@@ -1,6 +1,16 @@
 # Provenance — NYESO1-A0201-specificity
 
-Pinned external dependencies for reproducible L1B → L2 → margin runs.
+Pinned external dependencies for L1B → L2 → margin runs.
+
+> **Predictions are not reproducible, and these pins do not make them so (2026-10-24).**
+> Structure prediction is stochastic and is called **without a seed**. No seed is sent to the
+> prediction API and none is recorded in `l1b_run.json`. Every run is a fresh draw. Pinning the
+> dependencies below fixes *what is asked for*; it does not fix *what comes back*.
+> Measured on 2026-10-24: all 100 decoy refolds were resubmitted on identical sequences, identical
+> decoy panel and identical scoring code, and **0 of 100** per-prediction `metrics.json` records
+> reproduced. The Path A `specificity_margin` moved by a mean absolute 0.0637 (max 0.1174,
+> SD 0.0725, n=10) against a 0.15 gate, and the lead design crossed the gate.
+> See `FLEET.toml` `[stochasticity]`, open decision OD-5, and `memo.md`.
 
 | Dependency | Pin |
 |---|---|
@@ -19,3 +29,18 @@ Every scored row must cite: `job_id`, paths to `_predicted.cif`, `metrics.json`,
 digest, and wheel SHA (see `layer2_core.provenance_block`).
 
 Artifact retention: mirror off-API within **7 days** of each Boltz job completion.
+
+## What the content address does and does not cover
+
+`FLEET.toml` `[provenance] content_address` covers the request configuration and the scoring
+environment only: API contract version, config hash, target hash, bindi wheel and base image. It
+does **not** cover prediction output. Two runs agreeing on every component of the address can
+differ in every predicted structure and every derived metric, so the address identifies what was
+asked for, not what was returned.
+
+Until 2026-10-24 the address also listed `seed`, which is never set and never recorded. That
+component was removed as a false claim. The field published in `ranked_panel.json` and
+`transport_t1.json` was renamed from `manifest_hash` to `config_manifest_hash` on the same date,
+because it hashes `survivor_panel.yaml` and `decoy_panel.yaml` and nothing else; under its old name
+it was read as covering the artifacts, and it was identical across two runs whose every structure
+differed.

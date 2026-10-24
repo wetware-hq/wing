@@ -14,6 +14,14 @@ or hand-off.
 > See **`SCORING.md`** and `FLEET.toml` `[scoring]`/`[judge]`/`[[stages]]`/`[rejections]`. Path A below
 > remains the specificity hard gate within that judge.
 
+> **Predictions are stochastic and unseeded (2026-10-24).** Every margin on this page is computed
+> from a single unseeded draw of a structure prediction. Re-running the identical inputs returns
+> different structures and therefore different margins: measured over n=10 designs across two runs
+> with identical sequences, decoy panel and code, `specificity_margin` moved by a mean absolute
+> 0.0637 (max 0.1174, SD 0.0725) against the 0.15 hard gate, and the lead design crossed the gate
+> on the second run. Read any single margin, and any ranking of margins near the gate, as one draw
+> rather than a property of the design. See `FLEET.toml` `[stochasticity]`, OD-5, and `memo.md`.
+
 ---
 
 ## Path A — ipSAE score margin (Layer 2 `--specificity-campaign`) **primary**
@@ -135,6 +143,7 @@ in `survivor_panel.yaml`.
 | OD-2 | Negative-design panel | **Resolved: targeted** |
 | OD-3 | Ten decoy sequences | **Resolved — signed panel** |
 | OD-4 | Self / proteome panel | **Deferred** |
+| OD-5 | Gating a stochastic, unseeded quantity: seed, replicate, or revisit the 0.15 threshold | Open — nothing changed pending decision |
 
 ---
 
@@ -152,7 +161,7 @@ in `survivor_panel.yaml`.
 ## Validation checklist
 
 - Token alignment: bindi `TokenAlignmentError` unchanged.
-- Deterministic JSON: `sort_keys=True` on panel outputs.
+- Deterministic JSON **serialization**: `sort_keys=True` on panel outputs. This makes the file byte-stable for a given set of values; it says nothing about the values, which come from unseeded predictions (see `FLEET.toml` `[stochasticity]`).
 - Layer 2: pure CPU; no GPU in scoring path.
 - APPR: `$14.50` spend cap.
 - Hand-off: ≤ 3 designs when margin is computable on Path A.
