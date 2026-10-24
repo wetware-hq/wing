@@ -79,14 +79,28 @@ specificity_margin = on_target_rank − best_decoy_rank
 
 ### Path B artifact layout (post-L1B)
 
+Path B reads the **same tree as Path A** — the cognate refold sits directly in the
+per-design dir, and the decoy refolds are written by
+`l1b_runner.py:mirror_prediction_to_decoy_dir` under `decoy_refolds/`:
+
 ```
-artifacts/
-  <design_id>/
-    cognate_SLLMWITQC/
-      ...
-    decoy_01_.../
-      ...
+../NYESO1-A0201/run-one/artifacts/
+  pres_<design_id>/                 # cognate; *_predicted.cif sits directly here
+    pres_<design_id>_predicted.cif
+    metrics.json
+    pae.npz
+  decoy_refolds/
+    pres_<design_id>/
+      <decoy_id>/                   # one dir per decoy peptide
+        <decoy_id>_predicted.cif
+        metrics.json
+        pae.npz
 ```
+
+`collect_peptide_artifact_dirs()` collects **both** trees and keys the cognate
+`cognate_SLLMWITQC`. It also still accepts the legacy `artifacts/<design_id>/<peptide_id>/`
+subtree from the #12 stub. Earlier revisions of this section documented only that legacy
+shape, which is not what the L1B runner writes.
 
 ### Path B commands
 

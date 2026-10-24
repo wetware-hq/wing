@@ -57,22 +57,42 @@ def decoy_peptide_entries(decoy_doc: dict) -> list[dict]:
     ]
 
 
+COGNATE_PEPTIDE_ID = "cognate_SLLMWITQC"
+
+
+def _peptide_subdirs(base: Path) -> dict[str, Path]:
+    """Per-peptide child dirs of ``base`` that hold a prediction, keyed by dir name."""
+    if not base.is_dir():
+        return {}
+    return {
+        sub.name: sub
+        for sub in sorted(p for p in base.iterdir() if p.is_dir())
+        if list(sub.glob("*_predicted.cif"))
+    }
+
+
 def collect_peptide_artifact_dirs(survivor_id: str, artifacts_root: Path) -> dict[str, Path]:
     """Map peptide_id -> directory with _predicted.cif / metrics / pae.
 
-    Layout A (run-one cognate only): ``artifacts/<pres_id>/``
-    Layout B (post-L1B): ``artifacts/<pres_id>/<peptide_id>/``
+    Three on-disk layouts coexist in this campaign and all are collected, because the
+    cognate refold and the decoy refolds live in *separate* trees:
+
+    * **Cognate (run-one):** ``artifacts/<pres_id>/`` with the ``*_predicted.cif`` sitting
+      directly in it. Keyed ``cognate_SLLMWITQC``.
+    * **Decoys (L1B):** ``artifacts/decoy_refolds/<pres_id>/<peptide_id>/``, the layout
+      written by ``l1b_runner.py:mirror_prediction_to_decoy_dir``.
+    * **Legacy per-peptide subtree:** ``artifacts/<pres_id>/<peptide_id>/``.
+
+    Finding the shallow cognate ``.cif`` must not short-circuit the walk: doing so was
+    the Path B reader bug that hid all 100 L1B decoy dirs from ``ranked_panel.json``.
     """
-    base = artifacts_root / survivor_id
-    if not base.is_dir():
-        return {}
     out: dict[str, Path] = {}
-    if (base / f"{survivor_id}_predicted.cif").is_file() or list(base.glob("*_predicted.cif")):
-        out["cognate_SLLMWITQC"] = base
-        return out
-    for sub in sorted(p for p in base.iterdir() if p.is_dir()):
-        if list(sub.glob("*_predicted.cif")):
-            out[sub.name] = sub
+    base = artifacts_root / survivor_id
+    if base.is_dir():
+        if (base / f"{survivor_id}_predicted.cif").is_file() or list(base.glob("*_predicted.cif")):
+            out[COGNATE_PEPTIDE_ID] = base
+        out.update(_peptide_subdirs(base))
+    out.update(_peptide_subdirs(artifacts_root / "decoy_refolds" / survivor_id))
     return out
 
 
