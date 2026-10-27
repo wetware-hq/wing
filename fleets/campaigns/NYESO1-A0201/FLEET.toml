@@ -167,6 +167,19 @@ chain_ids    = ["D"]
 length_range = "60..100"
 num_proteins = 300
 
+# Staged for child OD-10 Arm C route C1. NOT the default. Default modality and
+# length_range above are unchanged. Authorising a run under this block is a
+# Campaign approver decision; the exact shorter band is chosen at run time and
+# is not invented here. C2 (boltz_curated / type:binder) stays blocked (PLATFORM.md
+# 2026-10-21 live rejection). C3 (RFdiffusion+ProteinMPNN) is out of Boltz spend.
+[binder.scaffold_arm_od10]
+status = "staged_not_default"
+route = "C1"
+mechanism = "reduce HLA-side footprint relative to corrected-best HLA footprint 501.65 A2 while holding peptide engagement; OD-11 primary lever past burial ceiling 0.4666"
+default_modality_unchanged = true
+boltz_curated_blocked = true
+authorisation = "child OD-10 Arm C under OD-11 geometric objective; do not submit without Campaign approver"
+
 # ---------------------------------------------------------- negative design
 
 # Three panels built and staged 2026-10-20 after finding the request carried none.
