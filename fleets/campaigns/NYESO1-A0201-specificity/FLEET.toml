@@ -228,6 +228,8 @@ predict_endpoint  = "POST https://api.boltz.bio/compute/v1/protein/predict"
 design_request_shape = "LEGACY REQUIRED for parent L1A / run-one (verified live 2026-10-21). Do not migrate design body."
 api_contract_version = "v2026-03-01"
 prediction_model = "boltz-2.1"
+prediction_model_line = "Boltz-2 is the product line; boltz-2.1 is the API model identifier that l1b_request_builder.py actually sends, and the only value the hosted prediction endpoint documents. The hosted boltz-2.1 trails the open repository's v2.2.1 - see ../NYESO1-A0201/PLATFORM.md."
+prediction_model_decision = "OD-6 - decided 2026-10-27 with its evidence, not a silent default"
 retention_days = 7
 parent_manifest = "../NYESO1-A0201/FLEET.toml"
 
@@ -328,6 +330,33 @@ options = [
 status = "open"
 not_decided = "No gate, threshold or replicate count has been changed pending this decision, and seeding is NOT implemented: l1b_request_builder.py still sends no model_options. The 0.15 bar in [gates] stands as written. Testing the seed option settled what seeding does, not which option to take."
 memo = "memo.md"
+
+# 2026-10-27: the prediction model is now a DECIDED item rather than an inherited
+# default. OD ids in this file are file-local: the parent manifest also has an
+# OD-5 and an OD-6, and both are different questions from the ones here.
+
+[[open_decisions]]
+id = "OD-6"
+owner = "Campaign approver"
+opened = "2026-10-27"
+question = "which sequence-to-structure model this campaign predicts with"
+resolution = "Boltz-2, called as the hosted API model identifier boltz-2.1"
+resolved = "2026-10-27"
+status = "decided"
+model_line_vs_identifier = "Boltz-2 is the product line. boltz-2.1 is the model string l1b_request_builder.py actually sends and the only value the hosted prediction endpoint documents; it trails the open repository's v2.2.1."
+reason_no_successor = "No Boltz-3 exists as of 2026-10-27. The latest GitHub release is v2.2.1 (2025-09-08) and the last commit on main is 2026-05-29; Boltz PBC branched into named products - BoltzGen, BoltzProt-1, BoltzMol-1 - rather than a numbered successor. Searched the GitHub releases and tags, the open issues, the project site and the preprint servers. The hosted API model listing is ABSENT (the model-list endpoints return 404/302), not searched and found empty. A dated negative search is not proof of non-existence."
+reason_alphafold3_not_available = "AlphaFold 3 carries the stronger peptide-MHC evidence, but its weights are non-commercial and granted at Google's discretion, the generally available route via Google Cloud Model Garden is allowlisted and subscription-gated, and Google's own AlphaFold 3 documentation states it \"is a research tool and is not intended or cleared for clinical diagnostic use\" (verified wording; it does not use the words validated or approved)."
+reason_affinity_head_inapplicable = "Boltz-2's headline advance over AlphaFold 3 - the binding-affinity head - is unusable on this problem. It is capped at a small-molecule ligand chain of 128 heavy atoms, and this campaign's ligand is a 73-residue designed protein, so the differentiator does not reach our case."
+does_not_settle = "This decision does NOT close OD-5. Choosing a model says nothing about seeding. The campaign still sends no seed and no model_options at all, l1b_request_builder.py is unchanged, and the 0.15 bar in [gates] stands as written. OD-5 remains open and separately decidable."
+evidence = "Head-to-head of AlphaFold 3 against Boltz-1 and Boltz-2 scored on this campaign's own target/ligand terms, 2026-10-27, from primary sources."
+evidence_page = "https://cursor.com/canvas/store-fa3f4db5-8b13-40fb-8012-8461dd45a170/11cd408b-fe71-4b75-96f9-cc090090a810"
+
+# 2026-10-27: proposed change - make robustness to the sampler's stochasticity an
+# acceptance criterion for every run, instead of a one-off observation in a memo.
+# Adjacent to OD-5 but distinct: OD-5 asks how to gate a stochastic quantity at
+# all; this asks whether robustness to that stochasticity is itself a criterion,
+# and in what form. NOTHING HERE IS IMPLEMENTED - [gates] and the 0.15 threshold
+# are unchanged and no design was re-ranked.
 
 [transport]
 direction = "one-way for evidence"
