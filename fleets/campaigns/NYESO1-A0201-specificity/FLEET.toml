@@ -358,6 +358,44 @@ evidence_page = "https://cursor.com/canvas/store-fa3f4db5-8b13-40fb-8012-8461dd4
 # and in what form. NOTHING HERE IS IMPLEMENTED - [gates] and the 0.15 threshold
 # are unchanged and no design was re-ranked.
 
+# 2026-10-27: proposed change - make robustness to the sampler's stochasticity an
+# acceptance criterion for every run, instead of a one-off observation in a memo.
+# Adjacent to OD-5 but distinct: OD-5 asks how to gate a stochastic quantity at
+# all; this asks whether robustness to that stochasticity is itself a criterion,
+# and in what form. NOTHING HERE IS IMPLEMENTED - [gates] and the 0.15 threshold
+# are unchanged and no design was re-ranked.
+
+[[open_decisions]]
+id = "OD-7"
+owner = "Campaign approver"
+opened = "2026-10-27"
+question = "whether robustness to run-to-run dispersion is an acceptance criterion for every run, and in which form"
+adjacent_to = "OD-5 - OD-5 asks how to gate a stochastic quantity; OD-7 asks whether robustness to that stochasticity is itself a gate. Deciding OD-7 does not decide OD-5 and neither closes the other."
+selection_objective = "experimental falsifiability. Cost is NOT the selection axis - see cost_cap_trade, which is recorded as a separate explicit trade rather than folded into this choice."
+evidence = "Computed 2026-10-27 from artifacts already on disk, no new predictions: max design-wise run-to-run absolute difference 0.117352 over n=10 designs x 2 runs, mean 0.063663, min 0.015752. Only 1 of 10 designs lies within that max excursion of the 0.15 bar on either run."
+evidence_file = "/workspace/dispersion_vs_zero.md"
+options = [
+  "FORM A, dispersion-aware threshold, zero extra predictions - a single draw passes only if margin >= 0.15 + 0.117352 = 0.267352; between 0.15 and 0.267352 the verdict is provisional/indeterminate rather than pass. On the artifacts we have this gives 0 pass / 0 provisional / 10 fail on run one and 0 pass / 1 provisional / 9 fail on run two: zero passes on either run, with pres_rIVnI2qWY81pul3zHRrN reclassified from pass to provisional. Zero passes is a COST, not a defect - it is what the data says. Buys robustness with sensitivity rather than with work, but its bar is a max over a thin sample and must be recomputed as runs accumulate.",
+  "FORM B RECOMMENDED, sequential triaged replication - one draw per design, replicate only designs with |margin - 0.15| <= 0.117352 i.e. in [0.032648, 0.267352], and keep drawing a design only until its interval separates from the bar or its draw budget is spent. Exactly 1 of 10 designs enters replication on either run. 242 predictions resolves the one contested verdict at n=20 (95% CI for its SD [0.76, 1.46] x s), with 209 of those 242 - 86% - spent on the contested quantity itself. Requires a correction for the stopping rule: optional stopping biases the naive variance downward, repeated looks against a fixed bar inflate the false-pass rate, and designs stopping early carry wider intervals, so fix each draw budget in advance or adopt a group-sequential boundary, and record each verdict with its n.",
+  "FORM B NAIVE, REJECTED - uniform 3 x 100 replication, 300 predictions. Rejected on the engineering idiot index, not on price: 240 of the 300 predictions (80%) would go to designs that hard-fail a free deterministic screen, 9 of 10 designs need 0.2031 or more of drift to reach the bar so no replicate could change their verdict, replication is uniform though the observed differences span 7.4x, and n=3 gives a 95% CI for the SD of [0.52, 6.29] x s. 300 predictions spent, 0 contested verdicts resolved.",
+  "SCREENING ORDER, separable and adoptable on its own - run the sequence-only liability filters BEFORE prediction instead of after. Verified in code: liability_filters(sequence) at ../NYESO1-A0201/run-one/specificity_scoring.py:63 takes only a sequence and is deterministic and free, but is called at ../NYESO1-A0201/run-one/layer2_orchestrator.py:79 in Layer 2, after L1B submits; l1b_runner.py and l1b_request_builder.py screen nothing. On the live run 8 of 10 designs hard-fail it, so 80 of 100 predictions were spent on designs a free check rejects. MUST be adopted as screen-first-and-report with an explicit override, NOT as a selection filter: the lead design pres_rIVnI2qWY81pul3zHRrN itself hard-fails on exposed_oxidation plus two motif hits, and a strict ordering would have deleted the only positive margin in the panel and the entire reproducibility finding before any structure existed.",
+]
+recommendation = "Form B sequential and triaged, together with the screening-order item in its screen-first-and-override form. Form A is worth taking alongside it because it costs nothing and corrects the lead design's verdict today, but Form A cannot falsify anything - it reinterprets one draw against a wider bar inherited from a thin sample. Only replication yields a per-design variance."
+cost_cap_trade = "Recorded separately and explicitly, not folded into the recommendation: the sequential scheme is 242 predictions at 0.0500 each = 12.10, under spend_cap_usd 14.50, but that is a consequence of the triage and not a reason for the choice. The naive 3 x 100 variant is 15.00 and would exceed the cap, which is the same figure OD-5's replicate option records. If falsifiability demanded more draws than the cap allows, the cap is what to revisit."
+status = "open"
+not_decided = "NOTHING IS IMPLEMENTED. [gates] is unchanged, the 0.15 threshold is unchanged, no design was re-ranked, and the liability screen still runs after prediction. OD-5 remains open and is not affected by this entry."
+caveat_sample = "Every number here derives from n=2 draws per design. Two draws give a difference, not a variance: the 95% CI for a within-design SD is [0.45, 31.9] x s at n=2. The 0.117352 max is an order statistic over ten single differences from ten DIFFERENT designs, so it mixes within-design noise with between-design heterogeneity, and it estimates the worst case rather than bounding it - distribution-free, the maximum of n observations is a 95%/95% upper tolerance bound only once n >= 59."
+caveat_unreplicated_on_target = "The dispersion is DECOY-SIDE ONLY. on_target_ipsae_cd is bit-identical across both unseeded runs and both seeded arms for every design, and each run's l1b_state.jsonl contains only decoy refolds. The cognate leg has been drawn once and never repeated, so the margin's true dispersion is larger than any figure recorded here by an unknown amount. Any replicate scheme must re-draw the cognate leg or it reproduces this blind spot."
+caveat_unstable_argmax = "The margin-setting decoy changed between the two unseeded runs for 9 of 10 designs, so the two draws are not strictly the same quantity. A stopping rule should condition on argmax stability as well as on separation from the bar."
+
+# 2026-10-27: CORRECT pose. The design request declared hotspots on P4-P8 and
+# staged three non_binding panels, then sent the whole peptide and no
+# non_binding_residues. Eight of ten U-6 cognate re-draws made zero peptide
+# contact; mean pairwise binder RMSD after MHC superposition was 35.6 A. The
+# interface was unspecified, not consistently wrong. Owner authorised the free
+# pre-run corrections (narrow epitope + apply non_binding + pre-register the
+# burial readout). Nothing spent. No job submitted.
+
 [transport]
 direction = "one-way for evidence"
 payload = "artifacts/transport_t1.json"
