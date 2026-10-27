@@ -190,6 +190,68 @@ geometry. Arms 0/A/C/D not authorised by the Arm B sign-off.
 Lead rIVnI2q peptide contacts 41→0; corrected best PtpWmApc burial 0.388→0.106, P5 24→0;
 control PfYJkQds burial delta −0.079688 clears dispersion 0.078112. Results `/workspace/arm_b_w5y/analysis.json`. Spent $0.15.
 
+## Sequence discrimination — what Arm B establishes (2026-10-27)
+
+Discrimination is a **difference** in binding free energy, not an amount of binding. A binder
+that holds the cognate complex tightly and a near-neighbour almost as tightly is worthless;
+only the gap counts, and the gap can come only from the part of the sequence the binder
+physically touches.
+
+**The bound is geometric before it is chemical.** On HLA-A\*02:01 the P2 and P9 anchors are
+buried in the B and F pockets with their side chains into the groove, and are unreadable by a
+binder sitting above it. The exposed peptide face is **436.6453192558041 Å²** of
+**19,005.252522048628 Å²** of target surface (**2.3%**); P4–P8 carries **402.09598784216985 Å²**
+of that, a share of **0.920875**; Trp5 alone is **153.854047 Å²**, **35%** of all exposed peptide
+area (`/workspace/burial_ceiling/REPORT.md` §3). Everything else the binder contacts is HLA
+framework and β2-microglobulin, which are identical across every peptide that groove presents.
+A binder drawing its energy from the invariant platform reads the platform, and the peptide is
+incidental. That is the MAGE-A3 failure mode, and it is why OD-8 peptide proximity is retained
+under OD-11 rather than relaxed.
+
+**Why P5 is the readable position.** Trp5 is the most discriminable residue available. The
+indole is large, flat, rigid and amphipathic, so burying it costs desolvation that is repaid
+only by a pocket shaped for two fused rings: π-stacking or cation-π against the ring face, a
+hydrogen bond from the indole NH, van der Waals packing against two rings rather than one. Tyr
+is the conservative test precisely because it keeps aromaticity and adds a donor/acceptor
+hydroxyl while removing one ring and roughly 30 Å² of nonpolar surface. A pocket that reads
+shape and ring count rather than "aromatic" should lose most of the interface on W→Y.
+
+**What was run.** Cognate `SLLMWITQC` against `SLLMYITQC`, a single P5 Trp→Tyr substitution,
+HLA-A\*02:01 context otherwise identical; three pre-registered designs; readout and dispersion
+floor fixed before submit (`FLEET.toml` `arm_b_preregistered_*`). Results
+`/workspace/arm_b_w5y/analysis.json`, predictions `sab_pred_fnAeTHrJ0ATIjhkV9OxG`,
+`sab_pred_OG5sK0Yfo1zVQvY5CedW`, `sab_pred_WmTbeoDpKz0qm78mc9Ba`. Spent $0.15.
+
+**Result — SEQUENCE_READ, 3/3 by the pre-registered readout.** The binders read Trp5
+specifically, not the largest aromatic in that slot.
+
+| Design | Peptide contacts W→Y | P5 contacts W→Y | `peptide_burial_fraction` W→Y | Δ burial | Clears dispersion 0.078112 |
+|---|---:|---:|---|---:|---|
+| `pres_rIVnI2qWY81pul3zHRrN` (lead) | 41 → 0 | 14 → 0 | 0.4021245062673325 → 0.0 | −0.4021245062673325 | yes |
+| `pres_PtpWmApcmiT8aBXnSnVM` (OD-8 corrected best) | 74 → 11 | 24 → 0 | 0.38784321305172154 → 0.10595592828215102 | −0.28188728476957053 | yes |
+| `pres_PfYJkQdsLag9x1R5Pt6L` (control) | 52 → 42 | 34 → 22 | 0.418918000165462 → 0.339230424652425 | −0.07968757551303701 | yes, by 0.00157557551303701 |
+
+The lead lost **all 41** of its peptide contacts on a single-residue change. Its W5Y pose is not
+unbound: it holds 21 atom contacts against β2-microglobulin with zero against the peptide —
+the platform-reading mode, observed directly.
+
+**What this does not establish**, recorded with equal weight:
+
+- **Sensitivity at P5 only, not sufficiency.** Nothing here speaks to the other four readable
+  positions (P4, P6, P7, P8), which together carry 248.241942 Å² of exposed face (P4+P6+P7+P8 from the per-residue table).
+- **Nothing about the real proteome.** Near-neighbour self-peptides remain **OD-4**, still
+  deferred to the clinical lead. A binder can be Trp5-dependent and still cross-react.
+- **The control is marginal.** `pres_PfYJkQdsLag9x1R5Pt6L` clears the dispersion floor by
+  **0.00157557551303701** and holds under the pre-registration only because its P5 contacts also
+  collapsed, 34 → 22. Read it as a pass on the conjunctive readout, not as a margin.
+- **The model computed no physics.** Boltz is a learned structure model: no quantum term, no
+  explicit solvent, no force field. It reproduced the W5Y collapse because sequence-structure
+  relationships of this kind are dense in its training distribution, which is a weaker claim
+  than simulated energetics. The biochemistry above explains the real system; it does not
+  describe how the number was generated.
+- **No objective was met.** Arm B is not the geometric objective (OD-11) and does not move
+  burial fraction toward 0.4666. OD-10 — which further arms run, at what spend — stays open.
+
 ## Decoy panel
 
 `decoy_panel.yaml` — ten OD-3 signed decoys (7 single / 2 double / 1 triple on P4–P8;

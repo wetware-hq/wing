@@ -725,6 +725,20 @@ arm_b_per_design_outcomes = [
 ]
 
 arm_b_status = "completed_sequence_read"
+
+# ---- clinically-interpretable reading of the Arm B result (2026-10-27) ----
+# Prose version with the per-design table: SPECIFICITY.md, "Sequence discrimination".
+arm_b_clinical_claim = "Discrimination is a DIFFERENCE in binding free energy, not an amount of binding; a binder that holds cognate and near-neighbour almost equally is worthless. Arm B shows the engaging binders read Trp5 specifically rather than any large aromatic at P5: a single P5 W->Y substitution in an otherwise identical HLA-A*02:01 context gave SEQUENCE_READ on 3/3 pre-registered designs, and the lead pres_rIVnI2qWY81pul3zHRrN lost all 41 of its peptide contacts."
+arm_b_clinical_geometric_bound = "Discrimination is bounded geometrically before it is chemical. P2 and P9 anchors sit in the B and F pockets and are unreadable from above the groove. Exposed peptide face 436.6453192558041 A2 of 19005.252522048628 A2 target surface (2.3%); P4-P8 carries 402.09598784216985 A2, share 0.920875; Trp5 alone 153.854047 A2, 35% of exposed peptide area (burial_ceiling/REPORT.md section 3). Everything else contacted is HLA framework and beta-2-microglobulin, invariant across every peptide the groove presents - the MAGE-A3 failure mode, and why OD-8 peptide proximity is RETAINED."
+arm_b_clinical_chemistry = "Trp5 is the most discriminable residue available: the indole is large, flat, rigid and amphipathic, so burying it costs desolvation repaid only by a pocket shaped for two fused rings (pi-stacking or cation-pi against the ring face, a hydrogen bond from the indole NH, van der Waals packing against two rings rather than one). Tyr keeps aromaticity and adds a donor/acceptor hydroxyl while removing one ring and roughly 30 A2 of nonpolar surface. W->Y is therefore the conservative test that a shape-and-ring-count reader should fail."
+arm_b_clinical_platform_mode_observed = "The lead's W5Y pose is not unbound: 21 atom contacts against beta-2-microglobulin with 0 against the peptide. Platform reading observed directly, not inferred."
+arm_b_limits = [
+  "SENSITIVITY_NOT_SUFFICIENCY - establishes dependence at P5 only. Says nothing about the other four readable positions P4/P6/P7/P8 (248.241942 A2 of exposed face combined).",
+  "NO_PROTEOME_CLAIM - says nothing about near-neighbours in the real proteome. That is OD-4, still deferred to the Clinical lead. A binder can be Trp5-dependent and still cross-react.",
+  "CONTROL_IS_MARGINAL - pres_PfYJkQdsLag9x1R5Pt6L clears the dispersion floor 0.078112 by 0.00157557551303701 and holds under the pre-registration only because its P5 contacts also collapsed 34 -> 22. Not massaged; read as a pass on the conjunctive readout, not as a margin.",
+  "NOT_SIMULATED_PHYSICS - Boltz is a learned structure model: no quantum term, no explicit solvent, no force field. It reproduced the W5Y collapse because such sequence-structure relationships are dense in its training distribution, a weaker claim than simulated energetics. The biochemistry explains the real system; it does not describe how the number was generated.",
+  "NO_OBJECTIVE_MET - Arm B is not the OD-11 geometric objective and moves no design toward burial 0.4666. OD-10 (which arms, what spend) remains OPEN for the Clinical lead.",
+]
 arm_b_authorised = "2026-10-27"
 arm_b_authorised_by = "Clinical lead (Campaign approver acting as Clinical lead)"
 arm_b_signoff = "PHYSICIAN_SIGNOFF_2026-10-27.md"
