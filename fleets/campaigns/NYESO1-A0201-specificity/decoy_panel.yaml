@@ -10,6 +10,11 @@ physician_signoff:
   date: "2026-10-23"
   authority: Clinical lead
   document: PHYSICIAN_SIGNOFF_2026-10-23.md
+arm_b_extension_signoff:
+  date: "2026-10-27"
+  authority: Clinical lead
+  document: PHYSICIAN_SIGNOFF_2026-10-27.md
+  scope: "Single W5Y cognate point mutant for OD-10 Arm B only; OD-3 ten-mutant panel unchanged; OD-4 still deferred"
 
 cognate:
   peptide_id: cognate_SLLMWITQC
@@ -20,11 +25,19 @@ cognate:
 
 negative_design_panel: targeted  # OD-2 signed 2026-10-23
 
+# OD-3 signed composition (PHYSICIAN_SIGNOFF_2026-10-23.md). Unchanged by Arm B.
 composition:
   single: 7
   double: 2
   triple: 1
   total: 10
+
+# Arm B extension (PHYSICIAN_SIGNOFF_2026-10-27.md). Not part of OD-3 totals above.
+arm_b_extension:
+  single: 1
+  total: 1
+  mutant_id: decoy_p5_w_to_y
+  question: "Trp5-specific reading vs aromatic-generic at P5"
 
 self_peptides:
   _note: OD-4 deferred — clinical proteome-near-neighbour panel not used for this computational screen
@@ -32,7 +45,10 @@ self_peptides:
 
 note: >
   Ten decoy sequences signed for L1B fan-out (OD-3). Multi-mutant slot uses triple SLLAAATQC
-  (P4/P5/P6 Ala) rather than quadruple SLLAAAAQC. Path A ipSAE margin is the primary hard gate.
+  (P4/P5/P6 Ala) rather than quadruple SLLAAAAQC. Path A ipSAE margin is retained as a
+  demoted readout under OD-11 (not the campaign objective). Arm B adds one signed W5Y
+  point mutant (SLLMYITQC) under PHYSICIAN_SIGNOFF_2026-10-27.md; it is distinct from
+  the OD-3 triple SLLAAATQC and from OD-3 P5 singles SLLMAITQC / SLLMFITQC.
 
 mutants:
   - id: decoy_p4_m_to_v
@@ -95,6 +111,23 @@ mutants:
     sequence: SLLAAATQC
     proposal: false
     replaces: decoy_p4_p5_p6_p7_quad  # SLLAAAAQC not used (MHC-stability preference)
+
+  # --- Arm B extension (NOT part of OD-3 ten; see composition vs arm_b_extension) ---
+  - id: decoy_p5_w_to_y
+    class: single
+    positions_p1_p9: [5]
+    sequence: SLLMYITQC
+    proposal: false
+    arm: ARM_B_DISCRIMINATING_MUTANT
+    substitution: W5Y
+    derived_from: cognate_SLLMWITQC
+    derivation: "cognate[1:4] + Y + cognate[6:9] (1-indexed); sole difference at P5 W->Y"
+    hla: HLA-A*02:01
+    signoff: PHYSICIAN_SIGNOFF_2026-10-27.md
+    distinguished_from:
+      - decoy_p4_p5_p6_triple  # SLLAAATQC (OD-3 triple multi-mutant)
+      - decoy_p5_w_to_a        # SLLMAITQC
+      - decoy_p5_w_to_f        # SLLMFITQC
 
 open_decisions:
   - OD-1

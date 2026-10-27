@@ -95,12 +95,24 @@ def test_specificity_bundle_on_run_one(spec_mod):
 def test_decoy_panel_has_ten_mutants(spec_mod):
     panel = spec_mod.load_decoy_panel(DECOY_PANEL)
     assert panel["cognate"]["sequence"] == "SLLMWITQC"
-    assert len(panel["mutants"]) == 10
-    classes = [m["class"] for m in panel["mutants"]]
+    # OD-3 ten-mutant panel is invariant; Arm B adds W5Y as an extension.
+    od3 = [m for m in panel["mutants"] if m.get("arm") != "ARM_B_DISCRIMINATING_MUTANT"]
+    arm_b = [m for m in panel["mutants"] if m.get("id") == "decoy_p5_w_to_y"]
+    assert len(od3) == 10
+    assert panel["composition"]["total"] == 10
+    classes = [m["class"] for m in od3]
     assert classes.count("single") == 7
     assert classes.count("double") == 2
     assert classes.count("triple") == 1
     assert panel.get("panel_ready_for_l1b") is True
+    # Arm B W5Y extension (PHYSICIAN_SIGNOFF_2026-10-27.md)
+    assert len(arm_b) == 1
+    assert arm_b[0]["sequence"] == "SLLMYITQC"
+    cognate = panel["cognate"]["sequence"]
+    w5y = arm_b[0]["sequence"]
+    diffs = [(i + 1, a, b) for i, (a, b) in enumerate(zip(cognate, w5y)) if a != b]
+    assert diffs == [(5, "W", "Y")]
+    assert panel.get("arm_b_extension", {}).get("mutant_id") == "decoy_p5_w_to_y"
 
 # ---------------------------------------------------------------------------
 # developability_score honesty
