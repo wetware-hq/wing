@@ -88,14 +88,36 @@ def liability_filters(
         or n_term_gln_fail
         or poly_q_fail
     )
-    score = 1.0 - 0.15 * len(motifs)
+    # The motif-only quantity this function has always computed. Kept under its
+    # own name so the fix destroys no information.
+    motif_subscore = 1.0 - 0.15 * len(motifs)
     if sap_soft_fail:
-        score -= 0.1
-    score = max(0.0, round(score, 4))
+        motif_subscore -= 0.1
+    motif_subscore = max(0.0, round(motif_subscore, 4))
+
+    # `developability_score` was this motif-only number, while `hard_fail` above
+    # also counts unpaired cysteine, exposed oxidation, N-terminal glutamine and
+    # poly-Q. A design whose only liability was one of those four reported a
+    # perfect 1.0 from the same dict that declared it dead - pres_G3ZfGGLFJXddOc0vhQwO
+    # scored 1.0 on 3 Met and 2 Trp. Because the score is also the panel's
+    # secondary rank key, that lie was not confined to reporting.
+    #
+    # A hard fail IS a developability verdict, so the summary must not read clean
+    # for a design this same call has just failed. The score is floored at 0.0 in
+    # that case rather than given invented per-liability weights, which would be
+    # manufacturing numbers the campaign never specified. The verdict and the
+    # motif subscore are both returned so the two cannot be read apart.
+    #
+    # This is not a second gate: `pass` is computed independently above and is
+    # unchanged, and nothing here blocks a handoff that liability_filters did not
+    # already block.
+    score = 0.0 if hard_fail else motif_subscore
 
     return {
         "pass": not hard_fail,
         "developability_score": score,
+        "developability_score_hard_failed": hard_fail,
+        "developability_motif_subscore": motif_subscore,
         "motif_hits": motifs,
         "unpaired_cys": {"count": cys_count, "hard_fail": unpaired_cys_fail},
         "exposed_oxidation": {

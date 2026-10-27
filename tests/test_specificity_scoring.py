@@ -101,3 +101,80 @@ def test_decoy_panel_has_ten_mutants(spec_mod):
     assert classes.count("double") == 2
     assert classes.count("triple") == 1
     assert panel.get("panel_ready_for_l1b") is True
+
+# ---------------------------------------------------------------------------
+# developability_score honesty
+#
+# developability_score was computed from sequence motif hits alone while
+# `pass` also counted unpaired cysteine, exposed oxidation, N-terminal
+# glutamine and poly-Q. A design whose only liability was one of those four
+# reported a perfect 1.0 from the same dict that declared it a hard fail.
+# The real case is pres_G3ZfGGLFJXddOc0vhQwO: zero motif hits (score 1.0)
+# but 3 Met and 2 Trp, so exposed_oxidation.hard_fail is True. The score is
+# also the panel's secondary rank key, so the lie was not confined to
+# reporting. This is not a second gate: `pass` remains the only verdict.
+# ---------------------------------------------------------------------------
+
+# Verbatim from artifacts/layer2_bundle.json.
+_G3ZF_SEQ = (
+    "MDEGARLYELTAAHPELQEEALRLLTEWEATHRLSMEQQLELTARMAEWLAETSDVEEFRERLREALEELLAR"
+)
+
+# Sequences of the two designs that genuinely pass, which must be unaffected.
+_CLEAN_SEQS = {
+    "pres_Bw8vknhmXJUg72L6CGAw": (
+        "SLEEAVEFAGRALDKIFAGEALSEEERRRLEEALRLARATVERLGGALDEEGRLAAEAENLARTTLAAEALRA"
+    ),
+    "pres_PfYJkQdsLag9x1R5Pt6L": (
+        "VEVLEENDETVKLYAKKGETLGEAEAKAKEIAASKGYDDAVITGVLEGDVPQDARLDDVLAVDAVLEFRFVSD"
+    ),
+}
+
+
+def test_g3zf_really_is_the_case_described(spec_mod):
+    """Guard the premise, so this test cannot silently stop testing anything."""
+    liab = spec_mod.liability_filters(_G3ZF_SEQ)
+    assert liab["motif_hits"] == []
+    assert liab["exposed_oxidation"]["residue_counts"] == {"M": 3, "W": 2}
+    assert liab["exposed_oxidation"]["hard_fail"] is True
+    assert liab["pass"] is False
+
+
+def test_g3zf_does_not_report_a_perfect_developability_score(spec_mod):
+    """The headline defect: dead by the gate, perfect by the score."""
+    liab = spec_mod.liability_filters(_G3ZF_SEQ)
+    assert liab["pass"] is False
+    assert liab["developability_score"] != 1.0
+
+
+def test_no_hard_failing_sequence_can_present_as_clean(spec_mod):
+    """The general invariant, over every liability the gate recognises."""
+    cases = [
+        _G3ZF_SEQ,
+        "QLEEAVEFAGRALDKIFAGEALSEEERRRLEEALRLARATVERLGGALDEEGRLAAEAENLARTTLAAEALRA",
+        "SLEEAVEFAGRALDKIFAGEALSEEERRRLEEALRLARATVERLGGALDEEGRLAAEAENLARTTLAAEALRC",
+        "SLEEAVEFAGRALDKIFAGEALSEEERRRLEEALRLARATVERLGGALDEEGRLAAEAENLARTTLQQQQQQA",
+    ]
+    for seq in cases:
+        liab = spec_mod.liability_filters(seq)
+        assert liab["pass"] is False, f"expected a hard fail for {seq[:12]}..."
+        assert liab["developability_score"] == 0.0, (
+            f"hard-failing sequence {seq[:12]}... reported "
+            f"developability_score={liab['developability_score']}"
+        )
+
+
+def test_the_hard_fail_verdict_travels_with_the_score(spec_mod):
+    """The score and the verdict must not be separable by a consumer."""
+    liab = spec_mod.liability_filters(_G3ZF_SEQ)
+    assert liab["developability_score_hard_failed"] is True
+    # The motif-only quantity is preserved, not destroyed, under its own name.
+    assert liab["developability_motif_subscore"] == 1.0
+
+
+def test_genuinely_clean_designs_are_unchanged(spec_mod):
+    for design_id, seq in _CLEAN_SEQS.items():
+        liab = spec_mod.liability_filters(seq)
+        assert liab["pass"] is True, design_id
+        assert liab["developability_score"] == 1.0, design_id
+        assert liab["developability_score_hard_failed"] is False, design_id
