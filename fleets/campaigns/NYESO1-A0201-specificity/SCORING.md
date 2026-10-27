@@ -7,8 +7,11 @@
 
 This document specifies the multi-objective judge that supersedes scalar ranking. The legacy
 `[ranking]` key (margin → developability → iptm) survives **only** as a lexicographic tie-break
-*within* a single Pareto rank. Specificity itself is still gated by Path A (`specificity_margin >= 0.15`,
-see `SPECIFICITY.md`); this document adds how the surviving candidates are *judged and selected*.
+*within* a single Pareto rank. Specificity axis under OD-11 is geometric
+(`peptide_burial_fraction` toward 0.4666; demoted `specificity_margin` sign-test
+mean > 0 over N=10, unlinked; prior ≥ 0.15 retired — see `SPECIFICITY.md` /
+`FLEET.toml` `[objective]`); this document adds how the surviving candidates are
+*judged and selected*.
 
 ## 1. Four axes, no scalar composite (feedback #1, #6)
 
@@ -17,7 +20,7 @@ The terminal judge scores every candidate on four **independent** axes and retur
 | Axis | What it measures | Direction |
 |---|---|---|
 | `potency` | binding strength, reweighted toward a **k_off / residence-time proxy** over equilibrium iptm (#6) | higher better |
-| `specificity` | Path A ipSAE `specificity_margin` (cognate − best decoy) | higher better |
+| `specificity` | OD-11 geometric `peptide_burial_fraction` (primary); demoted Path A `specificity_margin` sign-test unlinked | higher better |
 | `developability` | `developability_score` + manufacturability floor | higher better |
 | `immunogenicity_safety` | immunogenicity proxy + species cross-reactivity | higher better |
 
@@ -71,7 +74,7 @@ sequences deferred alongside OD-4.
 `[[stages]]`:
 
 1. **broad_adversarial_pre_filter** — broad generation + adversary negative-design pre-filter + liability OUTPUT SCHEMA gate.
-2. **structure_rescore_paralog** — structure re-scoring + decoy/paralog panels (Path A margin ≥ 0.15).
+2. **structure_rescore_paralog** — structure re-scoring + decoy/paralog panels (OD-11 geometric objective; demoted margin sign-test mean > 0 over N=10).
 3. **full_triad** — developability / immunogenicity / manufacturability triad, per format.
 4. **pareto_render** — terminal Pareto render; each survivor marks its sacrificed axis.
 

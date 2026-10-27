@@ -120,9 +120,78 @@ headroom_run_2         = 0.000285
 note = "Pinning the seed narrowed the run-to-run margin difference ~197-fold but did NOT make predictions identical. The residual 0.000397 EXCEEDS run 2's headroom of 0.000285 above the 0.15 bar and is the same order as run 1's 0.000682, so a near-threshold verdict is still not established by one seeded draw. Neither seeded margin reproduces either unseeded margin (0.085826, 0.163938), and the margin-setting decoy changed identity (decoy_p5_w_to_a unseeded -> decoy_p6a_p7a seeded). n=2 per condition: demonstrates non-identity, cannot estimate a variance."
 
 [gates]
-hard = ["specificity_margin >= 0.15", "buried_anchor_contacts == 0", "liability_filters.pass"]
+# OD-11 (2026-10-27): specificity_margin >= 0.15 RETIRED as campaign objective
+# (uncalibrated; compounded by Finding 0). Margin computation is NOT deleted;
+# see [objective] and OD-11 for the demoted sign-test. Other hard gates unchanged.
+hard = ["buried_anchor_contacts == 0", "liability_filters.pass"]
 soft = ["iptm >= 0.60", "chain_D_plddt >= 80"]
-gate_caveat = "These thresholds are applied to a single unseeded draw; see [stochasticity.specificity_margin_dispersion] for the measured run-to-run spread of the gated quantity."
+retired_from_hard = "specificity_margin >= 0.15"
+retired_by = "OD-11"
+retired_reason = "uncalibrated: no in-vitro series or published correspondence establishes that 0.15 means discrimination; compounded by Finding 0 (U-6), the margin's two legs were never produced by one pipeline"
+gate_caveat = "Hard gates no longer include a fixed margin cut (OD-11). Margin is retained demoted as a sign test (mean > 0 over N draws; see [objective]); dispersion in [stochasticity.specificity_margin_dispersion] still applies to every margin number. Geometric objective pair in [objective]; absolute peptide-area floor UNSET."
+
+# ---------------------------------------------------------------- objective (OD-11)
+# Campaign objective is geometric, unlinked from the demoted margin. Floor on
+# absolute buried peptide area is UNSET: control engaging n=5 is too thin (OD-5).
+[objective]
+primary = "geometry"
+status = "specified_not_wired"
+authorised_by = "Campaign approver: DISCARD threshold; use geometry, unlinked; keep margin as arbitrary quantity, accept > 0"
+pair = [
+  "peptide_burial_fraction measured against pre-registered geometric ceiling 0.4666 (burial_ceiling/REPORT.md: full peptide coverage, HLA footprint held fixed)",
+  "absolute floor on buried_vs_peptide_A2 (A2) — UNSET; see degeneracy_floor",
+]
+geometric_ceiling = 0.4666
+geometric_ceiling_source = "/workspace/burial_ceiling/REPORT.md"
+control_burial_fraction_band = "0.0..0.419 (interface_geometry; pre-registered under OD-8)"
+degeneracy_floor_status = "UNSET"
+degeneracy_floor_quantity = "buried_vs_peptide_A2"
+degeneracy_floor_why_unset = "Control engaging subset (peptide_burial_fraction > 0) has n=5. A min over five values is an order statistic over a handful; inventing a cut from it would repeat OD-5. OD-7 caveat_sample already records that a distribution-free 95%/95% upper tolerance bound on an order statistic requires n >= 59."
+degeneracy_floor_control_panel = "Same structures that established the 0.0..0.419 burial-fraction band: interface_geometry (10 U-6 cognate draws of the lead + 3 design-job structures)."
+degeneracy_floor_control_buried_vs_peptide_A2 = [
+  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+  217.4968723639522, 221.14675998267649, 245.33227666516814,
+  282.86076566598604, 310.02789921366,
+]
+degeneracy_floor_control_engaging_n = 5
+degeneracy_floor_control_engaging_min = 217.4968723639522
+degeneracy_floor_control_engaging_max = 310.02789921366
+degeneracy_floor_control_engaging_median = 245.33227666516814
+degeneracy_floor_control_engaging_mean = 255.3729147782886
+degeneracy_floor_derivation_rule = "Once the engaging control subset (peptide_burial_fraction > 0 on the control panel above) reaches n >= 59 (the distribution-free 95%/95% tolerance size already cited in OD-7 caveat_sample), floor = min(buried_vs_peptide_A2) over that engaging subset, pre-registered BEFORE the next objective-scoring run — the same discipline that pre-registered 0.419 as the burial-fraction control max. Corrected-run (OD-8 treatment) values must NOT be folded into the control panel after the fact."
+degeneracy_floor_data_needed = "Every future batch records buried_vs_peptide_A2 on every design (already computed by interface_geometry / correct_pose_run readout). Engaging control n must accumulate to >= 59 before the floor is set. Until then the objective pair is not fully scorable as pass/fail; burial fraction is reported against 0.4666 and absolute area is reported."
+reference_corrected_best = "pres_PtpWmApcmiT8aBXnSnVM: buried peptide SASA lost 315.62907420817675 A2 of 436.6453192558041 available (coverage 0.7228500118726081); binder BSA vs peptide 317.82899900754546 A2; peptide_burial_fraction 0.38784321305172165"
+reference_control_ceiling_case = "pres_PfYJkQdsLag9x1R5Pt6L: buried peptide SASA lost 250.99195400538082 A2 of 438.4648511809471 available (coverage 0.572433464915984); binder BSA vs peptide 282.86076566598604 A2; peptide_burial_fraction 0.4189180001654619"
+margin_role = "demoted"
+margin_acceptance = "sign test on a distribution: sample mean of N margins > 0"
+margin_N = 10
+margin_N_basis = "Same N as the U-6 equal-footing series that produced the standing baseline (1/20 positive across two series of 10; means -0.113344 and -0.035232). Declared before the run. Consistent with OD-7: a single draw is not a verdict."
+margin_criterion = "central_tendency"
+margin_criterion_detail = "Pass the demoted floor when mean(specificity_margin over N=10 unseeded equal-footing draws) > 0. Proportion-positive is reported, not the pass criterion: at N=10 one draw at the measured unpinned-seed dispersion 0.078112 can swing the proportion without moving the mean across zero."
+margin_dispersion_basis = "unpinned-seed abs difference on the lead 0.078112 ([stochasticity.seeded_dispersion].unseeded_abs_difference_same_design); wider than most values whose sign is at issue"
+margin_standing = "Equal-footing re-draw: 1/20 positive, 0/20 >= 0.15; means -0.113344 (artifacts/) and -0.035232 (artifacts-live-2026-10-24/). Present lead fails the > 0 floor too."
+margin_necessary_not_sufficient = true
+unlinked = true
+unlinked_rule = "Geometry and margin neither validate nor veto each other. Neither may be computed from or adjusted by the other. A design passing geometry while failing the margin sign-test is RECORDED AS A DISAGREEMENT, not resolved in favour of either."
+disagreement_store = "artifacts/disagreements.jsonl"
+disagreement_store_justification = "Sibling of the existing artifacts/rejections.jsonl (same JSONL idiom). New file justified: stuffing a geometry-pass/margin-fail into rejections.jsonl would treat a demoted-margin miss as a rejection of a geometry pass and so link the two, violating unlinked_rule."
+disagreement_record_fields = [
+  "design_id",
+  "geometry_verdict",
+  "peptide_burial_fraction",
+  "buried_vs_peptide_A2",
+  "margin_sign_test_verdict",
+  "margin_mean",
+  "margin_N",
+  "margin_proportion_positive",
+  "cognate_prediction_ids",
+  "decoy_prediction_ids",
+  "pipeline",
+  "note",
+]
+disagreement_series_seed = "U-6 Spearman rho(burial, cognate_ipsae_cd) = -0.5276 on n=10 draws of the lead — recorded as the first disagreement-series entry, NOT as evidence against OD-8 targeting"
+peptide_proximity_targeting = "RETAINED (OD-8). Not relaxed. Biological safety requirement, not a scoring device: 7/10 first-run binders contacted beta2-microglobulin (present on all nucleated cells); groove-reading is the MAGE-A3 clinical failure mode. An uncalibrated score may not overrule it."
+does_not_authorise = "No spend, no Boltz job, no wiring. Specification only."
 
 [descriptors]
 stack = ["complex_iplddt", "shape_complementarity", "plddt", "min_ipsae", "ipsae", "iptm", "pae_interaction"]
@@ -282,15 +351,122 @@ job_id     = "prot_des_TY6KzyxULq8mACflXbhn"
 artifacts  = "../NYESO1-A0201/run-one/artifacts/"
 caveat     = "Positive control only — primary ipSAE margin pending until L1B decoy_refolds/ populated"
 
+# -------------------------------------------------------- decision ROI
+# 2026-10-27: Campaign approver — EXPECTED ROI; CONVERGENCE; AUTO RESOLVE
+# bottom 80% of OPEN using simple engineering heuristics. Authorised.
+# No Boltz job, no spend, no commit in this pass.
+
+[decision_roi]
+definition = "ROI = blockage / effort_cost. blockage = how much campaign progress is blocked while this OD stays open. effort_cost = effort and spend to resolve it (denominator). Higher ROI = close first. Selection axis is engineering idiot index; dollars are recorded, not the ranking axis."
+blockage_scale = [
+  "0 = closed (decided / resolved / deferred) — excluded from the resolve set",
+  "1 = residual limb already largely settled by another OD; confusion risk only",
+  "2 = documentation inconsistency that can mislead a runner or scorer",
+  "3 = protocol path ambiguous; efficiency or form of a gate at stake",
+  "4 = geometric objective incompletely scorable / major lever blocked",
+  "5 = no experimental progress possible until decided",
+]
+effort_cost_scale = [
+  "1 = documentation only, or adopt an already-stated recommendation; $0",
+  "2 = small engineering; no Boltz spend",
+  "3 = moderate engineering or Boltz spend <= $2",
+  "4 = spend inside spend_cap_usd ($2..14.50) OR needs clinical sign-off",
+  "5 = exceeds spend_cap_usd OR needs wet-lab OR would invent a numeric threshold",
+]
+auto_resolve_rule = "Rank OPEN ODs by ROI descending. Auto-resolve the bottom 80%. Keep the top 20% for Campaign approver. A heuristic resolution must be the conservative, reversible, cheapest-defensible option; mark resolution_mode = \"auto_heuristic\", name the heuristic, and set reopen_trigger. NEVER auto-resolve an item that spends money, requires clinical sign-off, or weakens an existing gate — escalate those regardless of rank. If a heuristic would invent a numeric threshold, pre-register the derivation rule instead (OD-11 floor discipline)."
+authorised_by = "Campaign approver: EXPECTED ROI; CONVERGENCE; AUTO RESOLVE bottom 80%; RETURN remaining open"
+scored_on = "2026-10-27"
+closed_excluded = [
+  "OD-2 resolved (targeted panel)",
+  "OD-3 resolved (signed decoy panel)",
+  "OD-4 deferred (Clinical lead; proteome/self panel)",
+  "OD-6 decided (Boltz-2 / boltz-2.1)",
+  "OD-8 decided (CORRECT pose)",
+  "OD-9 decided (prediction endpoint both legs)",
+  "OD-11 decided (geometry objective; 0.15 retired)",
+]
+# Ranked OPEN set (descending ROI). Arithmetic shown; scores not massaged.
+# OD-10: blockage 5 / effort 1 = 5.00 — KEEP OPEN (top 20%; also spends if authorised)
+# OD-7:  blockage 3 / effort 1 = 3.00 — AUTO-RESOLVED (merged with OD-5)
+# OD-1:  blockage 2 / effort 1 = 2.00 — AUTO-RESOLVED (reconcile provisional_gates)
+# OD-5:  blockage 2 / effort 1 = 2.00 — AUTO-RESOLVED (merged with OD-7)
+# Bottom 80% of n_open=4 → resolve 3; keep 1.
+n_open_scored = 4
+n_auto_resolved = 3
+n_kept_open = 1
+remaining_open = ["OD-10"]
+deferred_not_in_resolve_set = ["OD-4"]
+
+[[decision_roi.scores]]
+id = "OD-10"
+status_at_scoring = "open"
+blockage = 5
+effort_cost = 1
+roi = 5.00
+blockage_reason = "No arm may run and no experimental progress is possible until spend/run is authorised. Campaign design is written; authorisation is the gate."
+effort_reason = "Decision itself is one Campaign-approver word. Consequence of a yes may spend; that forbids auto-resolve, it does not raise the cost of deciding."
+rank = 1
+auto_resolved = false
+escalate_reason = "Authorising any paid arm spends money. Arm B needs Clinical lead. Auto-resolve forbidden regardless of rank. Remains OPEN."
+
+[[decision_roi.scores]]
+id = "OD-7"
+status_at_scoring = "open"
+blockage = 3
+effort_cost = 1
+roi = 3.00
+blockage_reason = "Form A/B still framed on the retired 0.15 cut; screening-order (80% of live-run predictions spent on liability fails) not adopted as policy; adjacent to OD-5."
+effort_reason = "Supersede retired bars and adopt screen-first-and-override as policy: documentation / policy only, $0. Wiring is later engineering, not this decision."
+rank = 2
+auto_resolved = true
+merged_with = "OD-5"
+
+[[decision_roi.scores]]
+id = "OD-1"
+status_at_scoring = "open_no_status_field"
+blockage = 2
+effort_cost = 1
+roi = 2.00
+blockage_reason = "provisional_gates still quote margin >= 0.15, which OD-11 retired. A runner reading OD-1 alone would score against a retired objective."
+effort_reason = "Adopt the already-stated recommendation (Boltz-native) and supersede provisional_gates by name to match OD-11. $0. Does not pin the permanently unpinned calibration gate (K6)."
+rank = 3
+auto_resolved = true
+
+[[decision_roi.scores]]
+id = "OD-5"
+status_at_scoring = "open"
+blockage = 2
+effort_cost = 1
+roi = 2.00
+blockage_reason = "Option-3 substance already exercised by OD-11; residual seed vs replicate-CI limbs create protocol ambiguity for the demoted sign-test."
+effort_reason = "Record: gate by OD-11 unseeded sign-test; reject replicate-CI (exceeds cap); do not adopt seed for the demoted test. $0. No threshold invented."
+rank = 4
+auto_resolved = true
+merged_with = "OD-7"
+
 # -------------------------------------------------------- open decisions
 
 [[open_decisions]]
 id = "OD-1"
 owner = "Campaign approver"
+opened = "2026-10-23"
 question = "thresholds: Boltz-native recalibration, or reinstate AF2 initial guess"
 recommendation = "Boltz-native recalibration on this run"
-provisional_gates = "margin >= 0.15, buried_anchor_contacts == 0, liability_filters.pass"
-reopen_trigger = "calibration / wet-lab bar"
+recommendation_retained = "Historical recommendation kept; auto-resolution adopts it rather than deleting it."
+prior_provisional_gates = "margin >= 0.15, buried_anchor_contacts == 0, liability_filters.pass"
+provisional_gates_superseded_by = "OD-11"
+provisional_gates_supersession_reason = "prior provisional_gates quoted margin >= 0.15, which OD-11 retired as campaign objective (uncalibrated; Finding 0). Superseded by name, not deleted."
+provisional_gates = "buried_anchor_contacts == 0, liability_filters.pass; geometric objective per [objective]; demoted margin mean > 0 over N=10 (not a hard gate)"
+status = "decided"
+resolution_mode = "auto_heuristic"
+resolved = "2026-10-27"
+resolution = "Adopt the stated recommendation: Boltz-native recalibration on this computational screen. Do NOT reinstate AF2 initial guess. provisional_gates SUPERSEDED by name to match OD-11 hard gates and [objective]; margin demoted, not hard. Does NOT pin the permanently unpinned calibration gate (K6 / transport handoff_block_reason)."
+heuristic = "adopt_stated_recommendation_and_reconcile_superseded_gates"
+roi_blockage = 2
+roi_effort_cost = 1
+roi = 2.00
+reopen_trigger = "calibration / wet-lab bar (unchanged); or Campaign approver overturns Boltz-native for this screen"
+not_changed = "buried_anchor_contacts == 0, liability_filters.pass, soft gates, OD-8 targeting, OD-9, OD-11 objective, permanently unpinned calibration/manufacturability/species_cross_reactivity."
 
 [[open_decisions]]
 id = "OD-2"
@@ -307,6 +483,7 @@ question = "ten exact SLLMWITQC mutant decoy sequences"
 resolution = "signed in decoy_panel.yaml (triple multi-mutant SLLAAATQC)"
 resolved = "2026-10-23"
 signoff = "PHYSICIAN_SIGNOFF_2026-10-23.md"
+extension_2026_10_27 = "Arm B W5Y point mutant SLLMYITQC added under PHYSICIAN_SIGNOFF_2026-10-27.md. OD-3 ten-mutant panel itself UNCHANGED (composition.total remains 10). Extension is arm_b_extension, not a re-opening of the ten."
 
 [[open_decisions]]
 id = "OD-4"
@@ -327,8 +504,20 @@ options = [
   "replicate and gate on a confidence interval - addresses the dispersion directly, but costs N times the spend: 3 replicates of 100 predictions is ~$15.00 at $0.05 each, which EXCEEDS spend_cap_usd 14.50",
   "revisit the 0.15 threshold - widen it into a band with an explicit indeterminate verdict, or replace it with a ranked comparison against the decoy panel that needs no absolute cut",
 ]
-status = "open"
-not_decided = "No gate, threshold or replicate count has been changed pending this decision, and seeding is NOT implemented: l1b_request_builder.py still sends no model_options. The 0.15 bar in [gates] stands as written. Testing the seed option settled what seeding does, not which option to take."
+status = "decided"
+resolution_mode = "auto_heuristic"
+resolved = "2026-10-27"
+merged_with = "OD-7"
+merge_reason = "Same underlying question after OD-11: how a stochastic demoted-margin quantity is gated, and whether robustness to that stochasticity is itself a criterion. Resolving the two separately invites inconsistency on seed / replicate / screening. Both ids preserved."
+resolution = "Gate the demoted margin by the OD-11 distributional sign-test (mean > 0 over N=10 unseeded equal-footing draws; both legs sab_pred_* per OD-9). Option 3 (revisit 0.15) SUPERSEDED by OD-11 (0.15 retired as objective). Replicate-and-gate-on-CI REJECTED: ~$15.00 exceeds spend_cap_usd 14.50 (no spend authorised by this auto-resolution). Pin-and-record-a-seed NOT adopted for the demoted sign-test: OD-11 requires unseeded draws so the sign-test reads the dispersion it claims to; seeding remains NOT implemented in l1b_request_builder.py. Joint with OD-7 on screening-order and superseded Form A/B bars."
+heuristic = "cheapest_defensible_under_cap_and_od11_unseeded"
+roi_blockage = 2
+roi_effort_cost = 1
+roi = 2.00
+reopen_trigger = "spend_cap_usd raised enough for a pre-registered replicate-CI design; OR Campaign approver authorises seeding for content_address honesty as a separate limb that does not replace the unseeded sign-test; OR wet-lab calibration supplies an external margin scale"
+od11_interaction = "OD-11 (2026-10-27) exercises option-3 substance: 0.15 RETIRED as objective; demoted margin accepts at mean > 0 over N=10 unseeded draws. Auto-resolution (2026-10-27) closes the remaining seed and replicate-CI limbs under the heuristic above; merged with OD-7."
+not_implemented = "seeding is NOT implemented: l1b_request_builder.py still sends no model_options. Replicate-and-gate-on-CI is NOT adopted. No replicate count changed. No threshold invented."
+not_changed = "buried_anchor_contacts == 0, liability_filters.pass, soft gates, OD-8 targeting, OD-9, OD-11 objective and unlinked rule, decoy_panel.yaml, spend_cap_usd 14.50."
 memo = "memo.md"
 
 # 2026-10-27: the prediction model is now a DECIDED item rather than an inherited
@@ -347,7 +536,7 @@ model_line_vs_identifier = "Boltz-2 is the product line. boltz-2.1 is the model 
 reason_no_successor = "No Boltz-3 exists as of 2026-10-27. The latest GitHub release is v2.2.1 (2025-09-08) and the last commit on main is 2026-05-29; Boltz PBC branched into named products - BoltzGen, BoltzProt-1, BoltzMol-1 - rather than a numbered successor. Searched the GitHub releases and tags, the open issues, the project site and the preprint servers. The hosted API model listing is ABSENT (the model-list endpoints return 404/302), not searched and found empty. A dated negative search is not proof of non-existence."
 reason_alphafold3_not_available = "AlphaFold 3 carries the stronger peptide-MHC evidence, but its weights are non-commercial and granted at Google's discretion, the generally available route via Google Cloud Model Garden is allowlisted and subscription-gated, and Google's own AlphaFold 3 documentation states it \"is a research tool and is not intended or cleared for clinical diagnostic use\" (verified wording; it does not use the words validated or approved)."
 reason_affinity_head_inapplicable = "Boltz-2's headline advance over AlphaFold 3 - the binding-affinity head - is unusable on this problem. It is capped at a small-molecule ligand chain of 128 heavy atoms, and this campaign's ligand is a 73-residue designed protein, so the differentiator does not reach our case."
-does_not_settle = "This decision does NOT close OD-5. Choosing a model says nothing about seeding. The campaign still sends no seed and no model_options at all, l1b_request_builder.py is unchanged, and the 0.15 bar in [gates] stands as written. OD-5 remains open and separately decidable."
+does_not_settle = "This decision does NOT close OD-5. Choosing a model says nothing about seeding. The campaign still sends no seed and no model_options at all; l1b_request_builder.py is unchanged. SUPERSEDED_NOTE (2026-10-27): the clause 'the 0.15 bar in [gates] stands as written' is historically true of this OD's resolve day and is now stale — OD-11 later retired 0.15 from [gates].hard; OD-5/OD-7 were later auto-resolved (see those entries). This OD's resolution (Boltz-2) is unchanged."
 evidence = "Head-to-head of AlphaFold 3 against Boltz-1 and Boltz-2 scored on this campaign's own target/ligand terms, 2026-10-27, from primary sources."
 evidence_page = "https://cursor.com/canvas/store-fa3f4db5-8b13-40fb-8012-8461dd45a170/11cd408b-fe71-4b75-96f9-cc090090a810"
 
@@ -375,8 +564,18 @@ options = [
 ]
 recommendation = "Form B sequential and triaged, together with the screening-order item in its screen-first-and-override form. Form A is worth taking alongside it because it costs nothing and corrects the lead design's verdict today, but Form A cannot falsify anything - it reinterprets one draw against a wider bar inherited from a thin sample. Only replication yields a per-design variance."
 cost_cap_trade = "Recorded separately and explicitly, not folded into the recommendation: the sequential scheme is 242 predictions at 0.0500 each = 12.10, under spend_cap_usd 14.50, but that is a consequence of the triage and not a reason for the choice. The naive 3 x 100 variant is 15.00 and would exceed the cap, which is the same figure OD-5's replicate option records. If falsifiability demanded more draws than the cap allows, the cap is what to revisit."
-status = "open"
-not_decided = "NOTHING IS IMPLEMENTED. [gates] is unchanged, the 0.15 threshold is unchanged, no design was re-ranked, and the liability screen still runs after prediction. OD-5 remains open and is not affected by this entry."
+status = "decided"
+resolution_mode = "auto_heuristic"
+resolved = "2026-10-27"
+merged_with = "OD-5"
+merge_reason = "Same underlying question after OD-11: how a stochastic demoted-margin quantity is gated, and whether robustness to that stochasticity is itself a criterion. Both ids preserved."
+resolution = "Form A and Form B bars built on 0.15 SUPERSEDED for the demoted margin by the OD-11 mean > 0 over N=10 unseeded sign-test (joint with OD-5). Form B NAIVE remains REJECTED on the engineering idiot index. SCREENING ORDER ADOPTED as policy: screen-first-and-report with explicit override — NOT as a selection filter (the lead hard-fails liability; a strict filter would have deleted it). This decision adopts the policy; it does not wire the ordering into l1b_runner.py / l1b_request_builder.py (engineering under Arm 0 / L1B path). The n >= 59 figure in caveat_sample remains a recorded statistical fact consumed by [objective].degeneracy_floor_derivation_rule; it is not a Form-B draw budget and is not re-opened here. Robustness-as-acceptance-criterion for the demoted margin IS the OD-11 sign-test on a sample."
+heuristic = "supersede_retired_bars_adopt_free_screen_first"
+roi_blockage = 3
+roi_effort_cost = 1
+roi = 3.00
+reopen_trigger = "Campaign approver reinstates a fixed margin magnitude cut; OR screen-first-and-override is found to delete a class of designs that later prove geometrically superior on equal footing; OR a pre-registered replicate scheme is authorised inside the spend cap for a quantity other than the retired 0.15 bar"
+not_implemented = "NOTHING IS WIRED by this auto-resolution. Liability screen still runs after prediction until Arm 0 / L1B engineering lands the screen-first ordering. [gates].hard unchanged by this OD (0.15 already retired by OD-11). No design re-ranked. No spend."
 caveat_sample = "Every number here derives from n=2 draws per design. Two draws give a difference, not a variance: the 95% CI for a within-design SD is [0.45, 31.9] x s at n=2. The 0.117352 max is an order statistic over ten single differences from ten DIFFERENT designs, so it mixes within-design noise with between-design heterogeneity, and it estimates the worst case rather than bounding it - distribution-free, the maximum of n observations is a 95%/95% upper tolerance bound only once n >= 59."
 caveat_unreplicated_on_target = "The dispersion is DECOY-SIDE ONLY. on_target_ipsae_cd is bit-identical across both unseeded runs and both seeded arms for every design, and each run's l1b_state.jsonl contains only decoy refolds. The cognate leg has been drawn once and never repeated, so the margin's true dispersion is larger than any figure recorded here by an unknown amount. Any replicate scheme must re-draw the cognate leg or it reproduces this blind spot."
 caveat_unstable_argmax = "The margin-setting decoy changed between the two unseeded runs for 9 of 10 designs, so the two draws are not strictly the same quantity. A stopping rule should condition on argmax stability as well as on separation from the bar."
@@ -419,13 +618,244 @@ changed_files = [
 not_changed = "OD-6, OD-7, developability_score fix, [gates], the 0.15 threshold, and the historical run-one request JSON files (they document what was submitted)."
 
 
+
+# 2026-10-27: Finding 0 (U-6). The two legs of Path A specificity_margin were
+# never produced by the same pipeline. A campaign that chases 0.15 without
+# fixing this measures an artefact. Decided here as a measurement protocol;
+# [gates] and the 0.15 threshold are UNCHANGED.
+
+[[open_decisions]]
+id = "OD-9"
+owner = "Campaign approver"
+opened = "2026-10-27"
+question = "which single endpoint Path A uses for BOTH legs of specificity_margin"
+status = "decided"
+resolution = "structure-and-binding prediction endpoint only (sab_pred_*), via l1b_request_builder.build_structure_and_binding_payload, for the cognate leg AND every decoy leg. Design-job (prot_des_*) on-target scores are NOT a Path A margin input."
+resolved = "2026-10-27"
+authorised_by = "owner reply Design CAMPAIGN to clear the threshold; protocol decided as a premise of that design"
+evidence = "U-6 Finding 0: on-target came from design job prot_des_TY6KzyxULq8mACflXbhn (schema helix_fraction/loop_fraction/sheet_fraction/min_interaction_pae); decoys from sab_pred_* (schema all_sample_results/binding_metrics/...). Schemas disjoint beyond six shared confidence fields. On equal footing the lead design gives 0/20 combinations >= 0.15; means -0.113344 (artifacts/) and -0.035232 (artifacts-live-2026-10-24/). Recorded positive margins were artefacts of subtracting prediction decoys from a design-job on-target."
+evidence_file = "/workspace/cognate_redraw/FINDINGS.md"
+why_prediction_not_design = "Only the prediction endpoint can produce both legs under one schema and one request builder. The design endpoint emits a different metrics schema and has no decoy path. Standardising on design would leave decoys undefined."
+cost_in_evidence = "Every previously recorded Path A margin that used a design-job on-target is non-gating under this protocol, including the lead's recorded 0.163938. Cognate must be re-predicted (sab_pred_*) before any margin is reported as a gate input. That is a loss of prior 'pass' claims, not a change to the 0.15 number."
+implementation_status = "NOT YET WIRED into layer2_orchestrator.py / specificity_scoring.py. The protocol is decided; the fail-loud guard that refuses a mixed-pipeline margin is the first engineering step of OD-10 Arm 0, and is not implemented in this design commit."
+does_not_settle = "At resolve time: Did NOT change [gates], the 0.15 threshold, OD-5, or OD-7. Did NOT make any design good. Did NOT authorise spend. SUPERSEDED_NOTE (2026-10-27): OD-11 later retired 0.15; OD-5/OD-7 later auto-resolved. This OD's resolution (prediction endpoint both legs) is unchanged."
+not_changed = "At resolve time: [gates], specificity_margin >= 0.15, buried_anchor_contacts == 0, liability_filters.pass, OD-5, OD-7, OD-8. SUPERSEDED_NOTE (2026-10-27): OD-11 retired 0.15 from hard; OD-5/OD-7 auto-resolved. Anchors, liability, OD-8 targeting unchanged."
+
+# 2026-10-27: campaign design. Originally written to clear Path A
+# specificity_margin >= 0.15; RECONCILED under OD-11 to a geometric objective
+# with demoted margin. Design only: no Boltz job, no spend.
+# UPDATE existing campaign (this file) rather than a new fleets/campaigns/*
+# directory: the decoy panel, L1B builder and OD series already live here;
+# a scaffold arm calls parent L1A and returns survivors into this campaign.
+
+[[open_decisions]]
+id = "OD-10"
+owner = "Campaign approver"
+opened = "2026-10-27"
+question = "how this campaign pursues the geometric objective (OD-11) on equal footing, given Finding 0 and the geometric burial ceiling"
+status = "open"
+roi_blockage = 5
+roi_effort_cost = 1
+roi = 5.00
+roi_rank = 1
+auto_resolve_eligible = false
+escalate_reason = "Top ROI among OPEN (5.00). Auto-resolve forbidden: authorising any paid arm spends money; Arm B requires Clinical lead sign-off; weakening a gate is forbidden. Remains the Campaign approver decision."
+reconciled_by = "OD-11"
+objective = "FALSIFIABLE under OD-11 / [objective]: produce at least one design whose peptide_burial_fraction moves toward the pre-registered geometric ceiling 0.4666, with absolute buried_vs_peptide_A2 reported (floor UNSET until engaging control n >= 59), AND buried_anchor_contacts == 0 AND liability_filters.pass. Margin sign-test (mean > 0 over N=10) is necessary-but-not-sufficient and UNLINKED. Aspiration ('better binders') is not the claim. Prior OD-10 objective SUPERSEDED by OD-11; see prior_objective_superseded."
+prior_objective_superseded = "Prior text: under OD-9, specificity_margin >= 0.15 AND buried_anchor_contacts == 0 AND liability_filters.pass. Superseded by OD-11: 0.15 retired as objective (uncalibrated; Finding 0)."
+prerequisite = "OD-9 for any reported margin (demoted or otherwise). OD-11 for the geometric objective. Any arm that reports a Path A margin without a cognate sab_pred_* refold is measuring an artefact (K1)."
+premises = [
+  "Finding 0 is closed by OD-9; mixed-pipeline margins are forbidden",
+  "Burial ceiling is geometric: peptide is 2.3% of target SASA (436.6 A2 exposed; 92.1% from P4-P8; Trp5 35%); corrected-best covers 0.723 of the peptide face; projecting to FULL peptide coverage with HLA footprint held fixed gives peptide_burial_fraction only 0.4666 (/workspace/burial_ceiling/REPORT.md). Raising peptide grip alone cannot break ~0.47 burial; Arm C (smaller HLA footprint) is the lever past the ceiling",
+  "OD-11: geometry is the objective; margin is demoted (mean > 0 over N=10) and UNLINKED. The U-6 Spearman rho(burial, cognate_ipsae_cd) = -0.5276 is a disagreement-series seed, NOT evidence against OD-8 targeting and NOT a reason to relax peptide proximity",
+  "Peptide-proximity targeting (OD-8) is RETAINED: biological safety, not a scoring device (7/10 first-run binders contacted beta2m; MAGE-A3 failure mode)",
+  "Scaffold with a smaller HLA footprint remains a live lever (geometry report ranked item 4; Science 2025 TCR-like helical bundles on this exact target). Treated as Arm C, costed, not asserted",
+]
+update_vs_new = "UPDATE this campaign. Path A computation, the decoy panel, L1B, and OD-1..OD-11 live here. A new fleets/campaigns/* directory would duplicate the panel without carrying the Finding 0 / OD-5 / OD-7 / OD-11 record. Parent NYESO1-A0201 gains only a staged scaffold-arm binder note; default modality stays custom_protein."
+
+# ---- kill conditions (named; a mood is not a kill) ----
+kill_conditions = [
+  "K1_FINDING0 - any Path A margin whose cognate leg is not a sab_pred_* prediction built by l1b_request_builder is non-gating; reporting it as a pass (or as a demoted sign-test input) kills the claim (OD-9). RETAINED under OD-11.",
+  "K2_HONOUR - on an arm that depends on epitope_residues / non_binding_residues, if hotspot_contact_fraction collapses to the pre-OD-8 near-zero pattern (control: 8/10 U-6 draws at 0 peptide contact), the arm's null is 'fields not honoured' and that arm stops; it does not count as a biology null. RETAINED under OD-11.",
+  "K3_BURIAL_STRATEGY - SUPERSEDED by OD-11. Prior text killed further burial-raising spend when Arm A found no equal-footing margin >= 0.15 and Spearman rho(burial, margin) <= 0. Under OD-11 burial fraction IS the objective and is unlinked from margin, so a null coupling cannot kill burial-aimed spend. Retained in this list as a named superseded condition so it is not silently dropped.",
+  "K4_SCAFFOLD - UPDATED under OD-11. Arm C null: HLA-side binder BSA reduced relative to the pre-registered corrected-best HLA footprint 501.649048595058 A2, peptide engagement held (hotspot_contact_fraction > 0), yet peptide_burial_fraction does not move toward the geometric ceiling 0.4666 relative to the control max 0.419. Kills scaffold-as-denominator-fix under the current vendor and request shape. (Prior null was 'no equal-footing margin >= 0.15'; that margin clause is retired.)",
+  "K5_VOLUME - UPDATED under OD-11. Arm D null at its pre-registered N: zero designs improve peptide_burial_fraction toward 0.4666 with non-zero buried_vs_peptide_A2 (floor still UNSET) under OD-8 targeting. Kills custom_protein + OD-8 targeting at that N; it does not kill Arm C. (Prior null was 'zero designs reach equal-footing margin >= 0.15'.)",
+  "K6_UNPINNED_HANDOFF - UPDATED under OD-11. Meeting the geometric objective is necessary not sufficient for promotion: handoff stays blocked while the three permanently unpinned gates (calibration, manufacturability, species_cross_reactivity) remain unpinned (transport_t1.json handoff_block_reason). K6 does not kill the computational objective; it blocks T1 handoff. (Prior text said 'clearing 0.15'.)",
+]
+
+# ---- arms ----
+arm_0_name = "ARM_0_PROTOCOL"
+arm_0_mechanism = "Wire OD-9: Path A refuses mixed-pipeline margins; every scored design that reports a margin (demoted sign-test included) gets a cognate sab_pred_* refold through l1b_request_builder before margin is computed. Engineering first; then cheap re-score of designs already on disk."
+arm_0_proves = "That subsequent margin numbers are commensurable. Without this, no demoted sign-test counts."
+arm_0_null = "Not an experimental null. If the guard cannot be wired without weakening [gates], stop and reopen rather than ship a soft check."
+arm_0_cost_boltz = "0 for the guard. Re-score one design = 1 cognate + 10 decoys = 11 predictions x $0.0500 = $0.55 (rate confirmed by estimate-cost on the design floor and by U-6/correct-pose prediction/design estimates at $0.0500/unit)."
+arm_0_od11 = "RETAINED. Unaffected by retiring 0.15; OD-9 single-pipeline requirement still binds every reported margin."
+
+arm_a_name = "ARM_A_DISAGREEMENT_SERIES"
+arm_a_prior_name = "ARM_A_BURIAL_MARGIN_COUPLING"
+arm_a_mechanism = "Equal-footing Path A (OD-9) on a burial-stratified slice of designs already on disk from the OD-8 corrected run (burial span 0.0 to 0.38784321305172165; 8/10 engage). REPURPOSED under OD-11: no longer tests whether burial raises margin in order to clear 0.15. Now accumulates (geometry, margin) pairs into artifacts/disagreements.jsonl under the unlinked rule."
+arm_a_proves = "Whether geometry and the demoted margin disagree on equal footing, and records each disagreement. Does NOT decide whether burial-aimed spend proceeds (that is the objective itself). Does NOT treat rho as evidence against OD-8 targeting."
+arm_a_null = "Not a strategy-kill null under OD-11. A negative Spearman or a failure of any design to clear mean margin > 0 is a disagreement-series entry, not a kill of burial-aimed arms. Prior null (no margin >= 0.15 AND rho <= 0 triggers K3) is SUPERSEDED with K3."
+arm_a_cost_boltz = "Minimum informative: 3 designs spanning low/mid/high burial x 11 predictions = 33 x $0.0500 = $1.65. Full engaging set: 8 x 11 = 88 x $0.0500 = $4.40. Prefer minimum first (idiot index)."
+arm_a_od11 = "REPURPOSED, not retired. Cheapest way to grow the disagreement series and to accrue equal-footing margin draws toward the demoted sign-test. Does not gate Arm C or Arm D."
+
+arm_b_name = "ARM_B_DISCRIMINATING_MUTANT"
+arm_b_mechanism = "Add one peptide-mutant decoy at author P5 Trp->Tyr (W5Y) to the screen for designs that engage Trp5. Sequence = cognate with that single substitution, derived in-repo from decoy_panel.yaml cognate (SLLMWITQC -> SLLMYITQC); HLA-A*02:01 unchanged. Written into decoy_panel.yaml under PHYSICIAN_SIGNOFF_2026-10-27.md. Johansen et al. 2025 used W5Y on this target as an undesired-binding filter."
+arm_b_proves = "Whether cognate engagement that concentrates on Trp5 is selective for Trp vs Tyr at P5. A cognate>>W5Y gap supports peptide-side reading; a collapsed gap says the pose is aromatic-generic. Complements burial fraction; does not replace it."
+arm_b_null = "Cognate and W5Y engagement indistinguishable on the pre-registered designs (see arm_b_preregistered). Means Trp5 contact is not a specificity mechanism; does not by itself kill Arm C or Arm D."
+arm_b_cost_boltz = "Incremental 1 prediction per design once cognates exist. 3 designs = $0.15. estimate-cost must confirm $0.0500/unit before submit; abort and report if estimate disagrees."
+arm_b_blocked_on = "CLEARED 2026-10-27. Clinical lead (Campaign approver acting as Clinical lead) signed PHYSICIAN_SIGNOFF_2026-10-27.md authorising the W5Y panel extension and Arm B spend only."
+
+arm_b_run_completed_australia_sydney = "2026-10-27"
+arm_b_spent_usd = 0.15
+arm_b_n_designs = 3
+arm_b_prediction_ids = [
+  "sab_pred_fnAeTHrJ0ATIjhkV9OxG",
+  "sab_pred_OG5sK0Yfo1zVQvY5CedW",
+  "sab_pred_WmTbeoDpKz0qm78mc9Ba",
+]
+arm_b_campaign_call = "SEQUENCE_READ"
+arm_b_campaign_plain = "On the pre-registered set, engagement drops on W5Y for all three designs (majority SEQUENCE_READ). Binders read Trp5 specifically more than a generic large aromatic at P5. Lead rIVnI2q: peptide contacts 41->0, burial 0.402->0.0. Corrected best PtpWmApc: burial 0.388->0.106, P5 contacts 24->0. Control PfYJkQds: burial delta -0.079688 clears dispersion 0.078112; P5 contacts 34->22, still peptide-directed."
+arm_b_results_path = "/workspace/arm_b_w5y/analysis.json"
+arm_b_dispersion_floor = 0.078112
+arm_b_per_design_outcomes = [
+  "pres_PfYJkQdsLag9x1R5Pt6L=SEQUENCE_READ",
+  "pres_rIVnI2qWY81pul3zHRrN=SEQUENCE_READ",
+  "pres_PtpWmApcmiT8aBXnSnVM=SEQUENCE_READ",
+]
+
+arm_b_status = "completed_sequence_read"
+arm_b_authorised = "2026-10-27"
+arm_b_authorised_by = "Clinical lead (Campaign approver acting as Clinical lead)"
+arm_b_signoff = "PHYSICIAN_SIGNOFF_2026-10-27.md"
+arm_b_authorisation_scope = "Extend decoy_panel.yaml with single W5Y point mutant; spend on Arm B only. NOT authorised: Arm 0, Arm A, Arm C, Arm D. NOT changed: OD-3 ten-mutant panel, OD-4 deferred proteome panel, spend_cap_usd 14.50. No commit, no push."
+arm_b_od11 = "RETAINED. Unaffected by retiring 0.15."
+arm_b_derived_sequence = "SLLMYITQC"
+arm_b_derivation = "From decoy_panel.yaml cognate SLLMWITQC: replace 1-indexed position 5 W with Y. Verified sole difference at P5. Distinct from OD-3 triple SLLAAATQC and OD-3 P5 singles SLLMAITQC / SLLMFITQC."
+# Pre-registered BEFORE submit (same discipline as burial control max 0.419). Do not alter after results.
+arm_b_preregistered_question = "Do the engaging binders read Trp5 specifically, or do they read whatever large aromatic sits at P5?"
+arm_b_preregistered_designs = [
+  "pres_PfYJkQdsLag9x1R5Pt6L - control designjob; 34 of 52 peptide contacts on P5; burial fraction 0.4189180001654619; buried_vs_peptide_A2 282.86076566598604",
+  "pres_rIVnI2qWY81pul3zHRrN - designjob_lead; P5 contacts 14 of 41 peptide; burial fraction 0.4021245062673322; buried_vs_peptide_A2 310.02789921366; also the U-6 redraw subject",
+  "pres_PtpWmApcmiT8aBXnSnVM - OD-8 corrected best; buries 315.62907420817675 A2 of 436.6453192558041 available peptide; peptide_burial_fraction 0.38784321305172165; hotspots_hit [4,5,6,7,8]",
+]
+arm_b_preregistered_reference_points = [
+  "PfYJkQds: 34 of 52 peptide contacts on P5 (interface_geometry/FINDINGS.md) — do not alter",
+  "corrected best pres_PtpWmApcmiT8aBXnSnVM: buried peptide 315.629 A2 of 436.645 available; burial fraction 0.387843 — do not alter",
+  "Trp5 exposed SASA 153.854 A2 = 35% of all exposed peptide area (burial_ceiling/REPORT.md) — do not alter",
+  "Unseeded margin dispersion 0.078112 — noise floor for declaring a drop vs a null",
+]
+arm_b_preregistered_quantities = [
+  "peptide_position_contacts (esp. P5) and total peptide contacts (C) via interface_geometry/analyse.py at contact_cutoff_angstrom 4.0",
+  "peptide_burial_fraction (= frac_buried_against_peptide)",
+  "buried_vs_peptide_A2",
+  "demoted specificity_margin / cognate-vs-W5Y ipSAE_CD gap — reported, not gating (OD-11 unlinked)",
+  "iptm and binding_confidence from prediction metrics.json — reported alongside",
+]
+arm_b_preregistered_outcomes = [
+  "SEQUENCE_READ (Trp5-specific) - on the pre-registered designs, W5Y engagement drops relative to cognate by more than the dispersion floor 0.078112 on burial fraction AND/OR peptide contacts collapse (P5 contacts fall to near zero while cognate P5 was dominant). Supports peptide-side sequence reading.",
+  "SHAPE_READ (aromatic-generic) - W5Y engagement comparable to cognate: burial-fraction |delta| <= 0.078112 AND peptide contacts remain with P5 still contacted. Binders are reading shape/aromaticity at P5, not Trp specifically; specificity story weaker than burial numbers suggest.",
+  "NULL - observed delta sits inside the dispersion floor 0.078112 with no clear contact collapse. Not a win for either reading; record as null, do not massage.",
+]
+arm_b_preregistered_comparison = "For each of the three designs: analyse cognate CIF (already on disk; no re-predict) and the new W5Y sab_pred_* CIF with the same analyse.py. Report raw numbers; no rounding to favour an outcome. Geometry and demoted margin stay UNLINKED (OD-11): a geometry SEQUENCE_READ with a collapsed ipSAE gap (or the reverse) goes to artifacts/disagreements.jsonl."
+arm_b_n_predictions = 3
+
+arm_c_name = "ARM_C_SCAFFOLD_FOOTPRINT"
+arm_c_mechanism = "New designs whose architecture is chosen to reduce the HLA-side footprint while keeping peptide contact: TCR-like helical-bundle geometry (geometry report ranked item 4; Science 2025 adv3813 / adv0422 on this exact pMHC). Smaller HLA BSA is the proposed path past the 0.4666 burial projection (denominator reduction) — under OD-11 this is the primary lever on the geometric objective, not a means to 0.15."
+arm_c_routes = [
+  "C1 STAGED on legacy request shape - keep modality custom_protein, tighten length_range below the current 60..100 to force a smaller body (exact band is a Campaign approver choice at run time; not invented here). Same l1a_request_builder path. Lowest engineering idiot index among scaffold routes",
+  "C2 BLOCKED for now - binder.type boltz_curated / design_motifs requires the type:binder request shape, which was REJECTED LIVE 2026-10-21 (PLATFORM.md; HTTP 400 binder_specification required). Not available until that shape is accepted or a new migration is authorised",
+  "C3 OUT OF BOLTZ SPEND - RFdiffusion + ProteinMPNN + AF2 filter on our GPUs (Johansen / Baker pipelines). New infrastructure, not an estimate-cost line. Recorded as a route, not costed in Boltz units",
+]
+arm_c_proves = "Whether reducing HLA footprint (denominator) raises peptide_burial_fraction toward 0.4666 when numerator-only peptide-grip raising cannot."
+arm_c_null = "HLA-side binder BSA below the pre-registered corrected-best HLA footprint, peptide engagement held (hotspot_contact_fraction > 0), yet peptide_burial_fraction does not move toward 0.4666 relative to control max 0.419. Triggers K4_SCAFFOLD."
+arm_c_cost_boltz = "C1 floor: design num_proteins=10 = $0.50 (estimate-cost confirmed $0.0500/unit on correct_pose_run) + L1B on liability-pass survivors only. Worst-case L1B if all 10 pass the free liability screen: 10 x 11 = 110 x $0.0500 = $5.50; total $6.00. Screen-first-and-override (OD-7 screening order) before L1B."
+arm_c_od11 = "UPDATED. Live lever on the geometric objective (denominator). No longer framed as a path to margin >= 0.15."
+
+arm_d_name = "ARM_D_SCALED_OD8_CUSTOM_PROTEIN"
+arm_d_mechanism = "Larger custom_protein batch under the OD-8 wire (epitope C:[3,4,5,6,7], targeted non_binding + peptide anchors). Mechanism: engagement rate already moved (8/10 vs 2/10); volume may raise peptide_burial_fraction toward 0.4666 within the numerator-only bound, and accrues buried_vs_peptide_A2 toward the eventual floor."
+arm_d_proves = "Whether OD-8 targeting + custom_protein volume improves the geometric objective without a scaffold change."
+arm_d_null = "At pre-registered N, zero designs improve peptide_burial_fraction toward 0.4666 with non-zero buried_vs_peptide_A2. Triggers K5_VOLUME; does not kill Arm C."
+arm_d_cost_boltz = "N=100 designs = $5.00 at $0.0500/unit, then L1B only on liability-pass survivors."
+arm_d_gate = "No longer gated on Arm A (K3 superseded). Default order under OD-11: Arm 0, then Arm C as the ceiling lever and/or Arm D for volume under OD-8; Arm A parallel as disagreement accumulator; Arm B completed 2026-10-27 (SEQUENCE_READ; PHYSICIAN_SIGNOFF_2026-10-27.md)."
+arm_d_od11 = "UPDATED. Volume for geometric objective, not for clearing 0.15. Arm A no longer gates it."
+
+# ---- pre-registered readouts (FIXED before any OD-10/OD-11 run; report-only unless noted) ----
+pre_registered = [
+  "OBJECTIVE_GEOMETRY - peptide_burial_fraction against geometric ceiling 0.4666; absolute buried_vs_peptide_A2 reported; floor UNSET (OD-11 / [objective])",
+  "MARGIN_DEMOTED_SIGN_TEST - mean(specificity_margin) > 0 over N=10 unseeded equal-footing draws; both legs sab_pred_* (OD-9); necessary-but-not-sufficient; unlinked from geometry",
+  "EQUAL_FOOTING_LEAD_BASELINE - lead design 1/20 positive, 0/20 >= 0.15; means -0.113344 and -0.035232 (U-6). Present lead fails the demoted > 0 floor. Any claim of improvement is against this baseline, not against the mixed-pipeline 0.163938",
+  "BURIAL_CONTROL - peptide_burial_fraction control distribution 0.0..0.419 (interface_geometry); OD-8 corrected batch max 0.38784321305172165; report-only comparison band, not a gate",
+  "BURIAL_GEOMETRIC_CEILING - full peptide coverage at fixed HLA footprint projects burial 0.4666 (burial_ceiling/REPORT.md); upper bound for numerator-only strategies; objective reference under OD-11",
+  "HLA_FOOTPRINT_CONTROL - corrected-best (pres_PtpWmApcmiT8aBXnSnVM) binder BSA vs peptide 317.82899900754546 A2, vs A+B+C 819.4780476026035 A2, so HLA-side footprint 501.649048595058 A2; Arm C compares against this, report-only",
+  "U6_BURIAL_IPSAE_CORR - Spearman rho(burial, cognate_ipsae_cd) = -0.5276 on n=10 U-6 draws of the lead; recorded as disagreement-series seed, NOT as evidence against targeting (OD-11 unlinked)",
+  "HOTSPOT_HONOUR - hotspot_contact_fraction as #215 check; OD-8 batch values [1.0, 0.6, 0.8, 0.4, 0.4, 0.0, 0.6, 0.6, 0.8, 0.0] are the post-honour reference, not a gate",
+  "HARD_GATES - buried_anchor_contacts == 0 and liability_filters.pass remain hard; soft iptm >= 0.60 and chain_D_plddt >= 80 unchanged; specificity_margin >= 0.15 RETIRED from hard (OD-11)",
+  "ARM_B_W5Y - designs/quantities/outcomes fixed in arm_b_preregistered_* BEFORE submit; cognate refs PfYJkQds 34/52 P5, PtpWmApc burial 0.387843, Trp5 153.854 A2 (35%); dispersion floor 0.078112; SEQUENCE_READ vs SHAPE_READ vs NULL",
+  "DEGENERACY_FLOOR_CONTROL - buried_vs_peptide_A2 on control panel [0 x8, 217.4968723639522, 221.14675998267649, 245.33227666516814, 282.86076566598604, 310.02789921366]; engaging n=5; floor UNSET until engaging n >= 59",
+]
+
+# ---- decision rule ----
+decision_rule = [
+  "1. Arm 0 first. No margin number (demoted sign-test included) counts until OD-9 is wired as a fail-loud refusal of mixed-pipeline inputs",
+  "2. Geometric objective is primary (OD-11). Arm C is the live lever past the 0.4666 ceiling (denominator). Arm D scales OD-8 targeting for numerator progress within the ceiling and accrues absolute-area data toward the floor",
+  "3. Arm A runs in parallel as the disagreement-series accumulator; it does NOT gate Arm C or Arm D (K3 superseded)",
+  "4. Arm B AUTHORISED 2026-10-27 (PHYSICIAN_SIGNOFF_2026-10-27.md); may run; it never alone satisfies the objective. Arms 0/A/C/D still require separate authorisation",
+  "5. STOP WIN - at least one design meets the geometric objective pair once the area floor is set (until then: burial fraction moves toward 0.4666, absolute area reported, floor unset so full pass/fail is not scorable), AND buried_anchor_contacts == 0 AND liability_filters.pass; record design id, burial fraction, buried_vs_peptide_A2, HLA footprint, hotspot_contact_fraction, and the demoted margin sign-test result (pass or disagreement)",
+  "6. STOP LOSE - K4 and K5 both fire. Computational campaign has not moved the geometric objective under the levers tested; escalate outside this vendor/settings or to wet-lab owned by Clinical lead",
+  "7. K6 always: a WIN does not populate T1 handoff while calibration, manufacturability, species_cross_reactivity stay unpinned",
+  "8. UNLINKED: a geometry pass with a margin sign-test fail is written to artifacts/disagreements.jsonl and is not resolved in favour of either quantity",
+]
+
+recommendation = "Arm B authorised 2026-10-27 and is the only paid arm in flight. Arm 0 wiring (no spend) still recommended next. Arm A at $1.65 remains a disagreement-series accumulator, not a strategy gate. Arm C is the live lever on the geometric ceiling; Arm D is volume under OD-8. Do not run A/C/D without a further word. Cost is information; selection axis is engineering idiot index. Degeneracy floor remains UNSET until engaging control n >= 59 — do not invent it."
+cost_cap_trade = "Recorded separately: spend_cap_usd 14.50 stands. Arm A minimum $1.65 and Arm C floor $6.00 each fit; Arm D $5.00 design + L1B on survivors fits only if survivors are few or the cap is revisited. Cap is not a reason to prefer an arm."
+status_note = "OPEN for further spend/run authorisation (Arm 0/A/C/D). Ranked ROI #1. Arm B COMPLETED 2026-10-27 (SEQUENCE_READ; spent $0.15; PHYSICIAN_SIGNOFF_2026-10-27.md). Arms 0/A/C/D not authorised and not implemented. W5Y SLLMYITQC in decoy_panel.yaml; OD-3 ten unchanged; OD-4 still deferred. [gates].hard per OD-11; anchors and liability unchanged."
+not_decided = "Arm B authorised 2026-10-27 (PHYSICIAN_SIGNOFF_2026-10-27.md); Arm 0/A/C/D still unauthorised. decoy_panel.yaml extended with W5Y only (OD-3 ten unchanged). binder.modality remains custom_protein. C2/C3 routes are recorded, not chosen. Degeneracy floor value is UNSET. OD-5/OD-7 seeding and replicate-CI limbs are auto-resolved (unseeded OD-11 sign-test; CI rejected on cap; screen-first policy adopted, not wired) — they no longer block this OD; spend/run authorisation does."
+not_changed = "buried_anchor_contacts == 0, liability_filters.pass, soft gates, OD-8 resolution (peptide proximity RETAINED), decoy_panel.yaml, liability_filters, manufacturability, species_cross_reactivity, calibration anchors, OD-9 single-pipeline requirement."
+evidence_files = [
+  "/workspace/cognate_redraw/FINDINGS.md",
+  "/workspace/burial_ceiling/REPORT.md",
+  "/workspace/interface_geometry/FINDINGS.md",
+  "/workspace/interface_geometry/interface_metrics.json",
+  "/workspace/correct_pose_run/FINDINGS.md",
+]
+
+# 2026-10-27: Campaign approver decided across several messages:
+# DISCARD the 0.15 threshold; use geometry instead, UNLINKED from the margin;
+# keep the margin as an arbitrary quantity with acceptance at > 0.
+# Authorised writing this up ("Go for it"). No spend, no job, no commit.
+
+[[open_decisions]]
+id = "OD-11"
+owner = "Campaign approver"
+opened = "2026-10-27"
+question = "retire specificity_margin >= 0.15 as the campaign objective; replace with geometry unlinked from a demoted margin sign-test at > 0"
+status = "decided"
+resolved = "2026-10-27"
+authorised_by = "Campaign approver replies: DISCARD (threshold); use geometry, unlinked; keep margin as arbitrary quantity, accept > 0; Go for it"
+resolution = "OBJECTIVE becomes the geometric pair in [objective]: peptide_burial_fraction against pre-registered ceiling 0.4666, AND an absolute floor on buried_vs_peptide_A2. Floor UNSET (control engaging n=5 too thin; derivation rule and data needed pre-registered; OD-5). MARGIN DEMOTED not deleted: acceptance at mean > 0 over N=10 unseeded equal-footing draws (central tendency; dispersion basis 0.078112); necessary-but-not-sufficient. UNLINKED: geometry and margin neither validate nor veto each other; disagreements to artifacts/disagreements.jsonl. Peptide-proximity targeting (OD-8) RETAINED. 0.15 RETIRED from [gates].hard with reason; margin computation retained; buried_anchor_contacts and liability_filters.pass NOT weakened."
+retired_threshold = "specificity_margin >= 0.15"
+retired_reason = "uncalibrated: no in-vitro series or published correspondence establishes that 0.15 means discrimination; compounded by Finding 0 (U-6), the margin's two legs were never produced by one pipeline"
+standing_margin = "Equal-footing re-draw 1/20 positive, 0/20 >= 0.15; means -0.113344 and -0.035232. Present lead fails the demoted > 0 floor."
+od10_reconciliation = "OD-10 objective, arms, kill conditions and decision rule rewritten for the geometric objective. K3 SUPERSEDED (named, not silently dropped). K4/K5/K6 UPDATED. Arm A REPURPOSED to disagreement-series accumulator. Arm C becomes the primary ceiling lever. Arm D ungated from Arm A. Arm 0 and Arm B retained."
+od5_od7_interaction = "Option-3 substance (revisit 0.15) exercised here. OD-5 and OD-7 were subsequently AUTO-RESOLVED and MERGED (2026-10-27, resolution_mode = auto_heuristic): demoted margin gated by this OD's unseeded mean > 0 over N=10; replicate-CI rejected (exceeds spend_cap_usd 14.50); seed not adopted for the demoted sign-test; Form A/B 0.15 bars superseded; screen-first-and-override adopted as policy (not wired). See OD-5 / OD-7 / [decision_roi]."
+implementation_status = "Specification written into [objective], [gates], OD-10, OD-11. NOT YET WIRED into layer2_orchestrator.py / specificity_scoring.py / tier0_targeting.py. artifacts/disagreements.jsonl not yet created (first write creates it). No job submitted, nothing spent."
+does_not_settle = "Does NOT set the degeneracy floor value. Does NOT authorise spend or any arm run. Does NOT make any design good. Does NOT relax OD-8 peptide proximity. (OD-5/OD-7 seeding and replicate limbs later closed by auto-heuristic merge; not by this OD.)"
+not_changed = "buried_anchor_contacts == 0, liability_filters.pass, soft gates, OD-8 targeting, OD-9 single-pipeline protocol, decoy_panel.yaml, margin computation code path (demoted, not deleted)."
+evidence_files = [
+  "/workspace/burial_ceiling/REPORT.md",
+  "/workspace/interface_geometry/interface_metrics.json",
+  "/workspace/cognate_redraw/FINDINGS.md",
+]
+
+
 [transport]
 direction = "one-way for evidence"
 payload = "artifacts/transport_t1.json"
 payloads = [
   "T1 ranked panel - design id, sequence, specificity_margin, decoy ranks, developability_score, provenance hash",
 ]
-rule = "top ≤ 3 designs by primary specificity_margin (path A) with decoy ranks and provenance"
+rule = "top ≤ 3 designs by geometric objective (peptide_burial_fraction toward 0.4666, buried_vs_peptide_A2 reported; OD-11) with demoted margin sign-test, decoy ranks and provenance; geometry-margin disagreements listed, not resolved"
 handoff_top_n = 3
 
 # ================================================================
@@ -453,8 +883,10 @@ reweight    = "toward k_off / residence-time proxy; iptm is confirmatory, not pr
 direction   = "higher_better"
 
 [scoring.axes.specificity]
-primary   = "specificity_margin"   # Path A ipSAE C|D difference; hard gate >= 0.15
+primary   = "peptide_burial_fraction"   # OD-11 geometric objective; ceiling 0.4666
+secondary = "specificity_margin"        # demoted sign-test mean > 0 over N=10; unlinked; not a hard gate
 direction = "higher_better"
+note      = "OD-11: geometry is the objective; margin is demoted and unlinked. Prior hard gate specificity_margin >= 0.15 is retired."
 
 [scoring.axes.developability]
 descriptors = ["developability_score", "manufacturability_floor"]
@@ -527,7 +959,7 @@ rejects_to = "artifacts/rejections.jsonl"
 [[stages]]
 id   = 2
 name = "structure_rescore_paralog"
-does = "structure re-scoring + decoy/paralog panels (Path A ipSAE specificity_margin >= 0.15)"
+does = "structure re-scoring + decoy/paralog panels (geometric objective OD-11; demoted margin sign-test mean > 0 over N=10, unlinked)"
 rejects_to = "artifacts/rejections.jsonl"
 
 [[stages]]
