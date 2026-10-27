@@ -5,28 +5,75 @@
     "metric_definitions": "BindCraft2 v1.0.4 bindcraft/epitope_targeting.py:25-29, bindcraft/filters.py:200-227,423-432",
     "chain_layout": "FLEET.toml [target.chain_A] domains + numbering_note; verified against all ten run-one CIFs by contact_analysis.assert_layout"
   },
-
   "epitope_shell_cutoff_angstrom": 10.0,
   "contact_cutoff_angstrom": 4.0,
-
   "hotspots": {
-    "C": [4, 5, 6, 7, 8],
-    "_note": "The solvent-exposed, TCR-facing face of the bound peptide. P1/P3 are partly occluded and P2/P9 are the buried anchors, so neither is a hotspot."
+    "C": [
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "_note": "The solvent-exposed, TCR-facing face of the bound peptide. P1/P3 are partly occluded and P2/P9 are the buried anchors, so neither is a hotspot. 1-based author numbers. On the wire (design API) these become epitope_residues [3,4,5,6,7] via l1a_request_builder.py \u2014 corrected 2026-10-27; run one sent [0..8]."
   },
-
   "buried_anchors": {
-    "C": [2, 9],
+    "C": [
+      2,
+      9
+    ],
     "_note": "Held inside the groove and not solvent-accessible. UPGRADES.md item 3: expected contact count is 0; any non-zero is a geometric red flag about the pose, not a selectivity signal."
   },
-
   "coldspots": {
     "_definition": "DECISION PENDING - see _coldspot_ambiguity. Currently: all of chain B, all of alpha_3, and those alpha_1/alpha_2 helix residues that fall OUTSIDE the hotspot-derived epitope shell.",
     "B": "all",
-    "A_ranges": [[183, 275]],
-    "A_helix_ranges_minus_shell": [[57, 84], [138, 180]],
+    "A_ranges": [
+      [
+        183,
+        275
+      ]
+    ],
+    "A_helix_ranges_minus_shell": [
+      [
+        57,
+        84
+      ],
+      [
+        138,
+        180
+      ]
+    ],
     "_coldspot_ambiguity": "UPGRADES.md names 'the alpha1/alpha2 rims' as coldspot but the rim is not defined anywhere in the repo. Defining it as helix-outside-the-shell makes the coldspot set depend on the shell cutoff, which is itself an uncalibrated free parameter (G7 Limits). An alternative is to declare an explicit rim residue list from the published TCR footprint literature. This file implements the first and records that the choice is unresolved."
   },
-
-  "invariant_surface_chains": ["A", "B"],
-  "discriminating_surface_chains": ["C"]
+  "invariant_surface_chains": [
+    "A",
+    "B"
+  ],
+  "discriminating_surface_chains": [
+    "C"
+  ],
+  "_indexing": {
+    "hotspots_and_buried_anchors": "1-based mature / CIF author numbers (P4 = 4). Used by tier0_targeting against CIF seq ids.",
+    "design_api_epitope_and_non_binding": "0-based per chain on the sequence path. Conversion: API index = author - 1. Built by l1a_request_builder.py.",
+    "proved_by": [
+      "FLEET.toml numbering_note and epitope_indexing",
+      "PLATFORM.md '0-based per chain, as verified live'",
+      "negative_design.evidence.numbering / over_marking"
+    ]
+  },
+  "peptide_non_binding": {
+    "C": [
+      1,
+      2,
+      9
+    ],
+    "_note": "1-based author numbers for positions that must be in non_binding_residues on the design request, not merely absent from epitope_residues. P2/P9 are buried_anchors; P1 is an anchor-class N-terminus the geometry brief named. P3 is deliberately omitted: partly occluded, not shown buried by our SASA."
+  },
+  "pre_registered_control": {
+    "peptide_burial_fraction_min": 0.0,
+    "peptide_burial_fraction_max": 0.419,
+    "source": "/workspace/interface_geometry/FINDINGS.md",
+    "dated": "2026-10-27",
+    "note": "Report-only control distribution. Not a gate."
+  }
 }

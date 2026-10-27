@@ -143,7 +143,23 @@ length   = 99
 [target.chain_C]
 molecule         = "peptide"
 sequence         = "SLLMWITQC"
-epitope_residues = [0, 1, 2, 3, 4, 5, 6, 7, 8]   # 0-based, per-chain, verified live
+epitope_residues = [3, 4, 5, 6, 7]               # 0-based API indices = author P4-P8 (Met4,Trp5,Ile6,Thr7,Gln8). Narrowed 2026-10-27 (CORRECT pose / child OD-8): was [0..8] whole peptide including buried anchors. Indexing convention unchanged (0-based, per-chain, verified live). Rationale in the epitope_rationale table below.
+
+
+# 2026-10-27 CORRECT pose (authorised by owner "CORRECT pose"): the request now
+# carries the declared hotspot intent rather than the whole peptide. Rationale
+# and what this does NOT settle live in the child campaign as OD-8.
+[target.chain_C.epitope_rationale]
+indexing              = "0-based API indices on the design sequence path. 0-based index = mature author number - 1. Proved by PLATFORM.md ('0-based per chain, as verified live'), this file's numbering_note, and the negative-design panel convention (author 183-274 -> 0-based 182-273). targeting_flags.json hotspots use 1-based author/CIF numbers; conversion is author - 1. The prediction API is a different path and rejects these fields."
+chosen_api_0based     = [3, 4, 5, 6, 7]
+chosen_author_1based  = [4, 5, 6, 7, 8]
+chosen_residues       = "Met4, Trp5, Ile6, Thr7, Gln8"
+why                   = "Reconciles three sources without inventing a fourth: (1) targeting_flags.json already declared hotspots C:[4,5,6,7,8]; (2) intersection of Johansen et al. (L3,M4,W5,T7) and the peptide-centric TCR-mimic set (M4,W5,T7,Q8) is M4,W5,T7, and our flags add I6 and Q8 which engaging poses in our own structures do contact; (3) interface_geometry on our structures (4.0 A heavy-atom) shows every peptide contact in engaging poses falls on P4-P8, with zero contacts to P1/P2/P3/P9. Keeping the request aligned with targeting_flags closes the declared-intent-not-on-the-wire failure; adding Johansen's L3 while flags exclude P3 as partly occluded would reintroduce drift."
+excluded_and_why      = "P1/P2/P9 go in non_binding_residues (not merely absent from epitope) so the API's binding/not-binding distinction is used. P3 is neither epitope nor non_binding: flags call it partly occluded, not buried, and the geometry SASA measured binder burial against partners rather than peptide-side exposure, so a buried claim for P3 would be invented."
+peptide_non_binding_api_0based = [0, 1, 8]
+peptide_non_binding_author_1based = [1, 2, 9]
+was                   = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+builder               = "l1a_request_builder.py - the only path that may produce a design request body after 2026-10-27"
 
 [binder]
 modality     = "custom_protein"
@@ -196,7 +212,34 @@ panel_costs       = "whether any of the three panels changes cost is UNVERIFIED 
 honoured          = "whether the hosted BoltzGen honours non_binding_residues AT ALL is UNVERIFIED - see risk boltzgen_backend_version and OD-7."
 aggressive_cost   = "a ~9-residue epitope is a very small interface for a 60-100 aa binder; the aggressive panel may be geometrically unsatisfiable or yield designs that cannot express or fold. Published de novo pMHC binders DO contact helix. Treat it as an experiment, not a default."
 sign_off          = "targeted panel signed Clinical lead 2026-10-23 (OD-2); specificity decoys signed in child campaign NYESO1-A0201-specificity. None submitted, nothing spent until APPR."
+applied_2026_10_27 = "CORRECT pose: l1a_request_builder.py now expands all three panels and puts the signed targeted panel on the wire by default, PLUS peptide anchors C:[0,1,8] (P1,P2,P9) in non_binding_residues. conservative and aggressive are buildable but not the default; aggressive remains an experiment per aggressive_cost. No job submitted, nothing spent."
 source_note       = "this block absorbs nonbinding-panel-2026-10-20.md, consolidated away 2026-10-21; the panels themselves were already machine-readable above."
+
+# ---------------------------------------------------- pre-registered readouts
+# 2026-10-27 CORRECT pose. Report-only. No threshold. No gate. Inventing a bar
+# without calibration would repeat the OD-5 mistake.
+
+[pre_registered_readouts]
+status = "RECORDED-NON-GATING"
+gate   = false
+
+[pre_registered_readouts.peptide_burial_fraction]
+what = "peptide share of binder buried surface: buried_SASA(D vs C) / buried_SASA(D vs A+B+C)"
+method = "heavy-atom contacts at contact_cutoff_angstrom 4.0; Shrake-Rupley SASA, probe 1.4 A, 256 sphere points, Bondi radii; burial of binder against a partner = SASA(D alone) - SASA(D in the D+partner pair). Same method as /workspace/interface_geometry/analyse.py."
+implementation = "run-one/tier0_targeting.py::peptide_burial_fraction"
+control_distribution_min = 0.0
+control_distribution_max = 0.419
+control_distribution_note = "Pre-registered control from the interface-geometry analysis of the current panel (design-job structures and U-6 cognate re-draws), 2026-10-27: peptide share of binder burial ranged 0.0% to 41.9%. A re-run is compared against this range; the range is NOT a pass/fail bar."
+control_source = "/workspace/interface_geometry/FINDINGS.md"
+threshold = "NONE - report only. No calibration exists for a gate on this quantity."
+
+[pre_registered_readouts.hotspot_contact_fraction]
+what = "fraction of declared hotspot residues (targeting_flags C P4-P8) contacted by the binder at 4.0 A"
+method = "residue-level heavy-atom contact, campaign contact_cutoff_angstrom"
+implementation = "run-one/tier0_targeting.py::analyse_design (already computed; purpose recorded here)"
+purpose = "BoltzGen issue #215 honour check: if the hosted service silently ignores epitope_residues / non_binding_residues, a re-run under the narrowed request will still show near-zero hotspot contact on most draws. This metric distinguishes 'fields not honoured' from 'fields honoured but did not help'."
+issue = "https://github.com/HeliXonProtein/BoltzGen/issues/215"
+threshold = "NONE - report only. Not a gate."
 
 # ------------------------------------------------------------- descriptors
 

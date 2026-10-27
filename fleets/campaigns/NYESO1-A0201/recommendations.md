@@ -33,7 +33,7 @@ Peptide in all submitted and mirrored structures: **`SLLMWITQC`** (9-mer), HLA-A
 
 4. **Affinity ceiling (conceptual).** For pMHC, optimise **selectivity and footprint**, not maximal interface confidence. Treat high `iptm` with high invariant-surface fraction as **risk** (`UPGRADES.md` §6; run-one Spearman +0.636 vs item 4, n=10). Do not rank designs by `iptm` alone.
 5. **Allele exclusivity (in silico).** Decoy refolds (L1B) keep **the same HLA** and vary **peptide only** — the designed screen for cross-peptide behaviour. HLA-B/C panels are **wet-lab** (CASE handoff), not layer-1 today.
-6. **Negative design.** Three staged `non_binding_residues` panels exist in `FLEET.toml`; **none were applied in run one**. Default recommendation remains **`targeted`** panel pending Campaign approver + Clinical lead (OD-2). Aggressive panel may be **geometrically unsatisfiable** on a 9-residue epitope — treat as experiment, not default.
+6. **Negative design.** Three staged `non_binding_residues` panels exist in `FLEET.toml`; **none were applied in run one**. As of 2026-10-27 (CORRECT pose / child OD-8) `l1a_request_builder.py` expands all three and puts the signed **`targeted`** panel on the wire by default (OD-2), plus peptide anchors P1/P2/P9 in `non_binding_residues` on chain C. Aggressive remains an experiment, not the default. No job submitted under the corrected body yet.
 
 ---
 

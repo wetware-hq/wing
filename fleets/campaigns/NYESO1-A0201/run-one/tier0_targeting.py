@@ -38,6 +38,14 @@ What each number is and is not evidence of (UPGRADES.md section 4):
   invariant_surface_fraction     evidence of framework engagement, i.e. the hazard named in
                                  UPGRADES.md section 2.
                                  NOT evidence of peptide specificity.
+  peptide_burial_fraction        peptide share of binder buried surface (CORRECT pose
+                                 pre-registered readout). Report-only; no threshold.
+                                 Distinguishes peptide-directed burial from groove affinity.
+  hotspot_contact_fraction       ALSO the BoltzGen issue #215 honour check: after a re-run
+                                 with narrowed epitope / non_binding on the wire, a still-
+                                 near-zero value means the hosted service likely ignored the
+                                 fields; a rise that still leaves burial on the groove means
+                                 the fields were honoured but did not help. Report-only.
 
 G6 audit - which projection losses these depend on: NONE. These are computed on full 3D
 heavy-atom coordinates, not on the G1 cylindrical projection, so no azimuthal, truncation
@@ -203,6 +211,131 @@ def invariant_surface_fraction(cif_path: Path, flags: dict) -> dict | None:
     }
 
 
+# Bondi radii + Shrake-Rupley constants for peptide_burial_fraction. Kept local so
+# the metric does not depend on biotite (absent from the pinned image) and matches
+# /workspace/interface_geometry/analyse.py exactly.
+_BONDI = {"C": 1.70, "N": 1.55, "O": 1.52, "S": 1.80, "P": 1.80, "SE": 1.90}
+_PROBE = 1.4
+_N_SPHERE = 256
+
+
+def _sphere_points(n: int = _N_SPHERE) -> np.ndarray:
+    import math
+
+    i = np.arange(n) + 0.5
+    phi = np.arccos(1 - 2 * i / n)
+    th = math.pi * (1 + 5**0.5) * i
+    return np.stack(
+        [np.cos(th) * np.sin(phi), np.sin(th) * np.sin(phi), np.cos(phi)], axis=1
+    )
+
+
+_SPHERE = _sphere_points()
+
+
+def _sasa_per_atom(coords: np.ndarray, radii: np.ndarray) -> np.ndarray:
+    """Shrake-Rupley per-atom SASA (A^2)."""
+    import math
+
+    r = radii + _PROBE
+    out = np.zeros(len(coords))
+    for i in range(len(coords)):
+        d = np.linalg.norm(coords - coords[i], axis=1)
+        nb = np.where((d < r + r[i]) & (d > 0))[0]
+        pts = coords[i] + _SPHERE * r[i]
+        if len(nb):
+            dd = np.linalg.norm(pts[:, None, :] - coords[nb][None, :, :], axis=2)
+            acc = ~(dd < r[nb][None, :]).any(1)
+        else:
+            acc = np.ones(_N_SPHERE, dtype=bool)
+        out[i] = 4 * math.pi * r[i] ** 2 * acc.sum() / _N_SPHERE
+    return out
+
+
+def peptide_burial_fraction(cif_path: Path) -> dict:
+    """Peptide share of binder buried surface. Pre-registered readout, not a gate.
+
+    Method (stated so a re-run is reproducible; identical to interface_geometry):
+      * heavy atoms only
+      * Shrake-Rupley, probe 1.4 A, 256 sphere points, Bondi radii
+      * burial of binder against a partner = SASA(D alone) - SASA(D in D+partner)
+      * fraction = burial_vs_peptide / burial_vs_A+B+C
+
+    Returns None-valued fields rather than raising when a chain is missing, so the
+    orchestrator can record the gap. No threshold is applied anywhere.
+    """
+    import gemmi
+
+    st = gemmi.read_structure(str(cif_path))
+    st.setup_entities()
+    st.remove_hydrogens()
+    chains: dict[str, tuple[np.ndarray, list]] = {}
+    for c in st[0]:
+        coords, info = [], []
+        for res in c:
+            for atom in res:
+                el = atom.element.name.upper()
+                if el in ("H", "D"):
+                    continue
+                coords.append([atom.pos.x, atom.pos.y, atom.pos.z])
+                info.append((res.seqid.num, res.name, el))
+        if coords:
+            chains[c.name] = (np.asarray(coords, dtype=float), info)
+
+    needed = (BINDER_CHAIN, HEAVY_CHAIN, B2M_CHAIN, PEPTIDE_CHAIN)
+    missing = [c for c in needed if c not in chains]
+    if missing:
+        return {
+            "peptide_burial_fraction": None,
+            "skipped": f"missing chains {missing}",
+            "method": (
+                "Shrake-Rupley probe 1.4 A, 256 points, Bondi radii; "
+                "burial = SASA(D alone) - SASA(D in D+partner)"
+            ),
+        }
+
+    def _radii(info):
+        return np.array([_BONDI.get(e, 1.70) for _, _, e in info])
+
+    def sasa_of_D(partners: tuple[str, ...]) -> float:
+        co = [chains[BINDER_CHAIN][0]]
+        inf = list(chains[BINDER_CHAIN][1])
+        for p in partners:
+            co.append(chains[p][0])
+            inf.extend(chains[p][1])
+        stacked = np.vstack(co)
+        s = _sasa_per_atom(stacked, _radii(inf))
+        return float(s[: len(chains[BINDER_CHAIN][0])].sum())
+
+    free = sasa_of_D(())
+    with_pep = sasa_of_D((PEPTIDE_CHAIN,))
+    with_all = sasa_of_D((HEAVY_CHAIN, B2M_CHAIN, PEPTIDE_CHAIN))
+    buried_pep = free - with_pep
+    buried_total = free - with_all
+    frac = (buried_pep / buried_total) if buried_total > 1e-6 else None
+    return {
+        "peptide_burial_fraction": None if frac is None else round(frac, 5),
+        "binder_sasa_free_A2": round(free, 2),
+        "binder_buried_vs_peptide_A2": round(buried_pep, 2),
+        "binder_buried_total_A2": round(buried_total, 2),
+        "method": (
+            "Shrake-Rupley probe 1.4 A, 256 points, Bondi radii; "
+            "burial = SASA(D alone) - SASA(D in D+partner); "
+            "fraction = burial_vs_C / burial_vs_A+B+C"
+        ),
+        "control_distribution": {
+            "min": 0.0,
+            "max": 0.419,
+            "note": (
+                "pre-registered 2026-10-27 from interface_geometry; "
+                "report-only, not a bar"
+            ),
+        },
+        "gate": False,
+    }
+
+
+
 def analyse_design(
     design_id: str,
     cif_path: Path,
@@ -283,6 +416,9 @@ def analyse_design(
         rec["item_4_invariant_surface"] = (
             sasa if sasa else "SKIPPED: biotite unavailable; no proxy substituted"
         )
+        # Pre-registered CORRECT pose readout. Independent of biotite; always computed
+        # when SASA is requested. Report-only - see FLEET.toml [pre_registered_readouts].
+        rec["peptide_burial_fraction"] = peptide_burial_fraction(cif_path)
     return rec
 
 
@@ -430,10 +566,19 @@ def manifest_payload(
         "provenance": {
             "off_epitope_contact_fraction": "BindCraft2 filters.py:423-432",
             "coldspot_contact_fraction": "BindCraft2 filters.py:219-227",
-            "hotspot_contact_fraction": "BindCraft2 filters.py:209-217",
+            "hotspot_contact_fraction": (
+                "BindCraft2 filters.py:209-217; ALSO BoltzGen issue #215 honour "
+                "check for whether epitope_residues / non_binding_residues were "
+                "honoured by the hosted service (CORRECT pose 2026-10-27)"
+            ),
             "epitope_shell": "BindCraft2 epitope_targeting.py:25-29, EPITOPE_CUTOFF=10.0",
             "buried_anchor_contact_count": "OURS (UPGRADES.md item 3)",
             "invariant_surface_fraction": "OURS (UPGRADES.md item 4)",
+            "peptide_burial_fraction": (
+                "OURS (CORRECT pose 2026-10-27); Shrake-Rupley probe 1.4 A, "
+                "256 points, Bondi; same method as interface_geometry/analyse.py; "
+                "pre-registered control 0.0-0.419; report-only, not a gate"
+            ),
         },
         "caveats": [
             "Predicted coordinates, not experimental; every number inherits the predictor's "
@@ -445,6 +590,11 @@ def manifest_payload(
             "helices, which makes a LOW off-epitope fraction easier to achieve than it reads.",
             "Nothing here says a contact is favourable; it says only where contact fell.",
             "The coldspot definition is unresolved - see _coldspot_ambiguity in the flags file.",
+            "hotspot_contact_fraction after a re-run with narrowed targeting is the "
+            "BoltzGen #215 honour check: near-zero on most draws means the fields were "
+            "likely ignored; do not read a low value as 'did not help' without that check.",
+            "peptide_burial_fraction is pre-registered and report-only. The 0.0-0.419 "
+            "control is a distribution to compare against, not a threshold.",
         ],
         "designs": designs,
         "errors": errors,

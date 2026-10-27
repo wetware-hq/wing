@@ -358,13 +358,6 @@ evidence_page = "https://cursor.com/canvas/store-fa3f4db5-8b13-40fb-8012-8461dd4
 # and in what form. NOTHING HERE IS IMPLEMENTED - [gates] and the 0.15 threshold
 # are unchanged and no design was re-ranked.
 
-# 2026-10-27: proposed change - make robustness to the sampler's stochasticity an
-# acceptance criterion for every run, instead of a one-off observation in a memo.
-# Adjacent to OD-5 but distinct: OD-5 asks how to gate a stochastic quantity at
-# all; this asks whether robustness to that stochasticity is itself a criterion,
-# and in what form. NOTHING HERE IS IMPLEMENTED - [gates] and the 0.15 threshold
-# are unchanged and no design was re-ranked.
-
 [[open_decisions]]
 id = "OD-7"
 owner = "Campaign approver"
@@ -395,6 +388,36 @@ caveat_unstable_argmax = "The margin-setting decoy changed between the two unsee
 # interface was unspecified, not consistently wrong. Owner authorised the free
 # pre-run corrections (narrow epitope + apply non_binding + pre-register the
 # burial readout). Nothing spent. No job submitted.
+
+[[open_decisions]]
+id = "OD-8"
+owner = "Campaign approver"
+opened = "2026-10-27"
+question = "aim the designer at the peptide face rather than the whole pMHC, and pre-register the readouts that tell a re-run apart from buying affinity on the invariant groove"
+status = "decided"
+resolution = "narrow epitope_residues to API 0-based [3,4,5,6,7] (author P4-P8); put the signed targeted non_binding panel on the wire by default with peptide anchors C:[0,1,8] also marked not-binding; report peptide_burial_fraction and hotspot_contact_fraction with no threshold"
+resolved = "2026-10-27"
+authorised_by = "owner reply CORRECT pose to the interface-geometry report"
+what_was_wrong = "targeting_flags.json declared hotspots C:[4,5,6,7,8] and FLEET.toml staged three non_binding panels, but run-one request-legacy-submitted.json sent epitope_residues C:[0..8] (whole peptide including buried anchors) and no non_binding_residues at all. Declared intent never reached the wire."
+evidence_geometry = "8 of 10 U-6 unseeded cognate re-draws made zero peptide contact; the two that engaged and the three design-job structures buried at most 41.9% of binder surface against peptide (lead 40.2%); mean pairwise binder RMSD after MHC superposition 35.6 A. Interface unspecified, not consistently wrong. Specificity and affinity are the same geometric problem (invariant HLA-A*02:01 groove)."
+evidence_file = "/workspace/interface_geometry/FINDINGS.md"
+evidence_figure = "/workspace/interface_contact_pattern.png"
+evidence_issue_215 = "https://github.com/HeliXonProtein/BoltzGen/issues/215"
+indexing = "Design API sequence path is 0-based per chain (PLATFORM.md verified live; FLEET.toml numbering_note: 0-based = author - 1). targeting_flags hotspots are 1-based author/CIF numbers. Wire set [3,4,5,6,7] = author P4-P8. Off-by-one would silently target the wrong residues."
+residue_set_why = "Chosen set is author P4-P8 (Met4,Trp5,Ile6,Thr7,Gln8), matching targeting_flags. Intersection of Johansen (L3,M4,W5,T7) and peptide-centric TCRm (M4,W5,T7,Q8) is M4,W5,T7; our flags add I6 and Q8, which engaging poses in our structures do contact. Johansen's L3 is excluded because flags call P3 partly occluded and our engaging poses never contacted it - adding it would reintroduce request/declaration drift."
+panels_applied = "All three FLEET.toml panels (conservative, targeted, aggressive) are well-specified and now expand through l1a_request_builder.py. Default on the wire is targeted (OD-2 signed 2026-10-23). Peptide anchors P1/P2/P9 added to non_binding on chain C for every panel. P3 left unmarked (neither epitope nor non_binding) because burial was not shown. Aggressive remains an experiment, not the default."
+readouts = "peptide_burial_fraction (Shrake-Rupley 1.4 A, 256 points, Bondi; burial = SASA(D alone)-SASA(D in D+partner); fraction = vs-C / vs-A+B+C) and hotspot_contact_fraction (already computed; purpose now recorded as the #215 honour check). Both report-only. Pre-registered control for burial: 0.0 to 0.419 from the current panel. No threshold - inventing a bar without calibration would repeat OD-5."
+does_not_settle = "Does NOT fix Finding 0 (design-job vs prediction pipeline mismatch) from U-6. Does NOT make the lead design good. Does NOT verify that the hosted service honours epitope_residues or non_binding_residues at all - that remains open under parent OD-7 (boltzgen_backend_version) and is exactly what hotspot_contact_fraction on a re-run is for. No design or prediction job was submitted; estimate-cost remains the only free probe authorised without a further spend decision."
+builder = "../NYESO1-A0201/l1a_request_builder.py"
+changed_files = [
+  "../NYESO1-A0201/l1a_request_builder.py",
+  "../NYESO1-A0201/FLEET.toml ([target.chain_C] epitope, epitope_rationale, pre_registered_readouts, negative_design.evidence.applied_2026_10_27)",
+  "../NYESO1-A0201/targeting_flags.json (_indexing, peptide_non_binding, pre_registered_control)",
+  "../NYESO1-A0201/run-one/tier0_targeting.py (peptide_burial_fraction + #215 purpose on hotspot_contact_fraction)",
+  "tests/test_l1a_request_builder.py",
+]
+not_changed = "OD-6, OD-7, developability_score fix, [gates], the 0.15 threshold, and the historical run-one request JSON files (they document what was submitted)."
+
 
 [transport]
 direction = "one-way for evidence"

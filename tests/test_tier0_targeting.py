@@ -184,3 +184,55 @@ def test_fleet_toml_gating_descriptors_are_untouched_by_this_work():
             f"{name} appears in FLEET.toml; a recorded-non-gating metric was promoted to a "
             "gate without the user's decision"
         )
+
+
+def test_peptide_burial_fraction_is_report_only_and_uses_stated_method():
+    """CORRECT pose readout: peptide share of binder burial, no threshold."""
+    import gemmi
+
+    # Tiny synthetic complex: binder atom near a peptide atom, far from MHC.
+    st = gemmi.Structure()
+    st.add_model(gemmi.Model("1"))
+    model = st[0]
+
+    def add_chain(cid, atoms):
+        ch = gemmi.Chain(cid)
+        for i, (name, xyz) in enumerate(atoms, start=1):
+            res = gemmi.Residue()
+            res.name = "ALA"
+            res.seqid = gemmi.SeqId(str(i), " ")
+            atom = gemmi.Atom()
+            atom.name = "CA"
+            atom.element = gemmi.Element("C")
+            atom.pos = gemmi.Position(*xyz)
+            res.add_atom(atom)
+            ch.add_residue(res)
+        model.add_chain(ch)
+
+    add_chain("A", [("CA", (100.0, 0.0, 0.0))])  # far MHC
+    add_chain("B", [("CA", (100.0, 10.0, 0.0))])  # far b2m
+    add_chain("C", [("CA", (1.5, 0.0, 0.0))])     # peptide next to binder
+    add_chain("D", [("CA", (0.0, 0.0, 0.0))])      # binder
+
+    import tempfile
+    with tempfile.TemporaryDirectory() as td:
+        cif = pathlib.Path(td) / "tiny.cif"
+        st.make_mmcif_document().write_file(str(cif))
+        out = t0.peptide_burial_fraction(cif)
+
+    assert out["gate"] is False
+    assert out["control_distribution"]["min"] == 0.0
+    assert out["control_distribution"]["max"] == 0.419
+    assert "Shrake-Rupley" in out["method"]
+    assert "1.4" in out["method"]
+    assert out["peptide_burial_fraction"] is not None
+    # Binder is next to peptide and far from MHC, so almost all burial is peptide.
+    assert out["peptide_burial_fraction"] > 0.5
+
+
+def test_hotspot_contact_fraction_purpose_names_issue_215():
+    """The honour-check purpose must stay on the record next to the number."""
+    src = (RUN_ONE / "tier0_targeting.py").read_text()
+    assert "215" in src
+    assert "honour" in src.lower() or "honor" in src.lower()
+    assert "peptide_burial_fraction" in src
